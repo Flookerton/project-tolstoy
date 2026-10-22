@@ -65,13 +65,6 @@
     root.style.setProperty("--glow-sage", sage);
   }
 
-  // Escape HTML to prevent any injection from sample content
-  function esc(text) {
-    var div = document.createElement("div");
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
   // Build a card element
   function buildCard(post, isLead) {
     var card = document.createElement("article");

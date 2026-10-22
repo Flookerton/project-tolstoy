@@ -281,3 +281,31 @@ test("the default threshold is Balanced (0.5)", () => {
   assert.deepStrictEqual(ids(withDefault.json), ids(explicit.json));
   assert.strictEqual(THRESHOLD, 0.5);
 });
+
+test("a batch that cannot be renumbered is left exactly as it was, with nothing reported", () => {
+  // One entry carries a numeric sortIndex, so renumber() would fail. A reordered
+  // batch that X would not read in the new order is worse than an unchanged one.
+  const json = smallBatch([
+    cursor("1", "Top", "400"),
+    post("5001", "calm_one", "Repotted the basil this morning.", 399),
+    post("5002", "rude_one", "You are an idiot and a clown.", "398"),
+    cursor("2", "Bottom", "397")
+  ]);
+  const before = JSON.parse(JSON.stringify(json));
+  const result = rerankTimeline(json, scorePost, THRESHOLD);
+
+  assert.deepStrictEqual(result.json, before, "the batch comes back untouched");
+  assert.strictEqual(result.checked, 0, "nothing is reported for a batch Tolstoy left alone");
+  assert.deepStrictEqual(result.moved, [], "nothing moved");
+});
+
+test("a batch with no sortIndex at all is left alone too", () => {
+  const json = smallBatch([
+    post("5003", "calm_two", "The cat approved of the plan.", undefined),
+    post("5004", "rude_two", "You are a moron.", undefined)
+  ]);
+  const before = JSON.parse(JSON.stringify(json));
+  const result = rerankTimeline(json, scorePost, THRESHOLD);
+  assert.deepStrictEqual(result.json, before);
+  assert.strictEqual(result.checked, 0);
+});

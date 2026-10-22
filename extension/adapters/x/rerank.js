@@ -229,7 +229,23 @@
     return true;
   }
 
+  // renumber() can only do its job when every entry carries a string sortIndex.
+  // The check happens before anything is touched, so a batch that cannot be
+  // renumbered is left exactly as X sent it and nothing is reported for it.
+  function canRenumber(entries) {
+    for (var i = 0; i < entries.length; i += 1) {
+      if (typeof entries[i].sortIndex !== "string") {
+        return false;
+      }
+    }
+    return true;
+  }
+
   function rerankBatch(entries, scoreFn, threshold, moved) {
+    if (!canRenumber(entries)) {
+      return 0;
+    }
+
     var units = [];
     var checked = 0;
 
@@ -264,11 +280,25 @@
     });
     var order = cool.concat(hot);
 
+    // The order and the sortIndex values X sent, so a failure halfway can put
+    // everything back exactly as it was.
+    var sentOrder = entries.slice();
+    var sentIndexes = entries.map(function (entry) {
+      return entry.sortIndex;
+    });
+
     order.forEach(function (unit, position) {
       entries[units[position].index] = unit.entry;
     });
 
-    renumber(entries);
+    if (!renumber(entries)) {
+      entries.length = 0;
+      Array.prototype.push.apply(entries, sentOrder);
+      for (var restore = 0; restore < entries.length; restore += 1) {
+        entries[restore].sortIndex = sentIndexes[restore];
+      }
+      return 0;
+    }
 
     hot.forEach(function (unit) {
       if (unit.best) {

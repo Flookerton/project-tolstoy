@@ -48,7 +48,7 @@ Every rule Tolstoy uses to score a post is in [`extension/scoring/rules.js`](ext
 
 - [`docs/design-system.md`](docs/design-system.md): how Tolstoy looks and sounds.
 - [`docs/research-notes.md`](docs/research-notes.md): how the research tools read a feed, and what Tolstoy does differently.
-- [`tests/`](tests): the scorer and the reranker, with `node --test tests`.
+- [`tests/`](tests): the scorer and the reranker. Run them with `node --test` from the repository root, on Node 18 or later. No dependencies.
 
 ## License
 

@@ -212,7 +212,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 16px;
+  min-height: 44px;
+  padding: 0 16px;
   border: 1px solid var(--glass-border);
   border-radius: var(--radius-pill);
   background: var(--glass-bg);
@@ -349,18 +350,33 @@
 /* ------------------------------------------------------------------ controls */
 
 .toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   width: 44px;
-  height: 26px;
+  min-height: 44px;
   flex: 0 0 auto;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--toggle-off);
+  border: 0;
+  background: none;
   cursor: pointer;
 }
 
-.toggle[aria-checked="true"] {
+/* The track stays 44 by 26, exactly as the design system and the mockup show,
+   while the button around it is 44px tall, so the thing you tap or click is a
+   comfortable target. */
+.toggle-track {
+  display: block;
+  position: relative;
+  width: 44px;
+  height: 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--toggle-off);
+}
+
+.toggle[aria-checked="true"] .toggle-track {
   border-color: var(--accent);
   background: var(--accent);
 }
@@ -393,7 +409,7 @@
 .segmented {
   display: flex;
   gap: 4px;
-  padding: 4px;
+  padding: 3px;
   border: 1px solid var(--line);
   border-radius: var(--radius-pill);
   background: var(--segmented-track);
@@ -401,7 +417,7 @@
 
 .segmented-option {
   flex: 1 1 0;
-  min-height: 36px;
+  min-height: 44px;
   padding: 0 12px;
   border: 0;
   border-radius: var(--radius-pill);

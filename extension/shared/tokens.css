@@ -53,6 +53,9 @@
   --glass-shadow: 0 8px 24px rgba(90, 60, 30, 0.08);
   --dim-backdrop: rgba(43, 33, 23, 0.32);
 
+  /* Segmented control track, from the design system's temperature control. */
+  --segmented-track: #EADCC6;
+
   /* Shape, motion, type. */
   --radius-large: 24px;
   --radius-card: 16px;
@@ -95,5 +98,6 @@
     --glass-border: rgba(243, 235, 221, 0.16);
     --glass-shadow: 0 8px 24px rgba(24, 18, 14, 0.45);
     --dim-backdrop: rgba(36, 28, 23, 0.55);
+    --segmented-track: #4C3D30;
   }
 }

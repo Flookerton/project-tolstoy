@@ -1,0 +1,477 @@
+/* Tolstoy shared components, used by every Tolstoy page.
+   Tokens live in tokens.css, the rules in docs/design-system.md, and the four
+   approved mockups in docs/mockups/. Type sizes come from the design system's
+   table and nothing else. Hairlines, not shadows: only glass gets a shadow.
+   Night mode comes from the tokens, so nothing here needs its own dark rules. */
+
+/* ---------------------------------------------------------------- type roles */
+
+.display-xl {
+  font-family: var(--font-reading);
+  font-weight: 400;
+  font-size: 48px;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.display {
+  font-family: var(--font-reading);
+  font-weight: 400;
+  font-size: 40px;
+  line-height: 1.18;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+.section-heading {
+  font-family: var(--font-reading);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1.25;
+  letter-spacing: -0.008em;
+}
+
+.panel-heading {
+  font-family: var(--font-reading);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.3;
+}
+
+.reading {
+  font-family: var(--font-reading);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.45;
+}
+
+.eyebrow {
+  font-family: var(--font-interface);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.meta {
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.section-meta {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.centered {
+  text-align: center;
+}
+
+/* ------------------------------------------------------------------ surfaces */
+
+.paper-card {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+  background: var(--paper);
+}
+
+.paper-sunk {
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-card);
+  background: var(--paper-sunk);
+}
+
+.large-container {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-large);
+  background: var(--paper);
+}
+
+.glass-panel {
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-card);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-panel-raised {
+  box-shadow: var(--glass-shadow);
+}
+
+.card-body {
+  padding: 24px;
+}
+
+.divider {
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: var(--line);
+}
+
+/* ------------------------------------------------------------------- buttons */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-interface);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.btn-primary:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.btn-secondary {
+  border-color: var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  background: var(--paper-sunk);
+}
+
+.btn-glass {
+  border-color: var(--glass-border);
+  background: var(--glass-bg);
+  color: var(--ink);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.btn-glass:hover {
+  background: var(--paper);
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* A 44px round button for the sliders glyph and anything like it. */
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+  color: var(--ink-2);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+
+.icon-button:hover {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+/* --------------------------------------------------------------- small parts */
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
+  background: var(--glass-bg);
+  color: var(--ink-2);
+  font-family: var(--font-interface);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  cursor: pointer;
+}
+
+.status-pill:hover {
+  color: var(--ink);
+  background: var(--paper);
+}
+
+.status-pill-static {
+  cursor: default;
+}
+
+.status-pill-static:hover {
+  color: var(--ink-2);
+  background: var(--glass-bg);
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-pill);
+  background: var(--calm);
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--paper-sunk);
+  color: var(--ink-3);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  flex: 0 0 auto;
+  border-radius: var(--radius-pill);
+  background: var(--placeholder);
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-card);
+  background: var(--placeholder);
+  color: var(--ink-3);
+  font-size: 14px;
+}
+
+/* A list inside a panel: hairlines and accent dots, never inner boxes. */
+.dot-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dot-list li {
+  position: relative;
+  padding: 12px 0 12px 20px;
+  border-top: 1px solid var(--line);
+}
+
+.dot-list li:first-child {
+  border-top: 0;
+}
+
+.dot-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 18px;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+}
+
+/* A numbered list with ink on placeholder circles, from mockup 2. */
+.numbered-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: numbered;
+}
+
+.numbered-list li {
+  position: relative;
+  padding: 0 0 16px 40px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.numbered-list li:last-child {
+  padding-bottom: 0;
+}
+
+.numbered-list li::before {
+  counter-increment: numbered;
+  content: counter(numbered);
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-pill);
+  background: var(--placeholder);
+  color: var(--ink);
+  font-family: var(--font-interface);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* ------------------------------------------------------------------ controls */
+
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 26px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--toggle-off);
+  cursor: pointer;
+}
+
+.toggle[aria-checked="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+
+.toggle-knob {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--radius-pill);
+  background: var(--paper);
+  box-shadow: 0 1px 2px rgba(90, 60, 30, 0.2);
+  transition: transform 200ms ease;
+}
+
+.toggle[aria-checked="true"] .toggle-knob {
+  transform: translateX(18px);
+}
+
+.toggle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggle:disabled .toggle-knob {
+  box-shadow: none;
+}
+
+.segmented {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  background: var(--segmented-track);
+}
+
+.segmented-option {
+  flex: 1 1 0;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--ink-2);
+  font-family: var(--font-interface);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.segmented-option[aria-checked="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+/* ---------------------------------------------------------------- trust line */
+
+.trust-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+
+.trust-line a,
+.trust-line button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.trust-line a:hover,
+.trust-line button:hover {
+  color: var(--ink);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  color: var(--ink-2);
+}
+
+/* ------------------------------------------------------------------- a11y bits */
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Every interactive element gets the rust ring. A heading focused by script is
+   not interactive, so it gets none. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+[role="switch"]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+[tabindex="-1"]:focus,
+[tabindex="-1"]:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle-knob {
+    transition: none;
+  }
+}

@@ -1,0 +1,138 @@
+/* The story reading page. One story a day, so there is no next and no previous,
+   and the only link on the page is the way back home. */
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-interface);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--ombre-1) 0%, var(--ombre-2) 48%, var(--ground) 100%);
+}
+
+.hero-sun {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(640px 420px at 88% -10%, var(--hero-sun), var(--hero-sun-clear) 70%);
+  animation: sun-breathe var(--breath) ease-in-out infinite;
+}
+
+@keyframes sun-breathe {
+  0%,
+  100% {
+    opacity: 0.72;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.hero-inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 32px;
+  padding-bottom: 32px;
+}
+
+.wordmark {
+  margin: 0;
+  padding-top: 0.45em;
+  font-family: var(--font-reading);
+  font-weight: 500;
+  font-size: 28px;
+  line-height: 1;
+  color: var(--ink);
+}
+
+.wordmark-t {
+  position: relative;
+  display: inline-block;
+  margin-right: -0.06em;
+}
+
+.wordmark-hat {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% - 0.13em);
+  width: 0.72em;
+  height: auto;
+  overflow: visible;
+  transform: translateX(-50%);
+}
+
+.hat-crown,
+.hat-brim {
+  fill: var(--hat-body);
+}
+
+.hat-band {
+  fill: var(--hat-band);
+}
+
+.story {
+  max-width: 720px;
+  margin: 64px auto 0;
+}
+
+.story-eyebrow {
+  margin: 0;
+  color: var(--accent);
+}
+
+.story-headline {
+  margin: 12px 0 0;
+}
+
+.story-dek,
+.story-teller {
+  margin: 12px 0 0;
+}
+
+.story-teller {
+  color: var(--ink-2);
+}
+
+.story-body {
+  max-width: 640px;
+  margin-top: 32px;
+}
+
+.story-body p {
+  margin: 0 0 24px;
+}
+
+.story-body p:last-child {
+  margin-bottom: 0;
+}
+
+.closing {
+  margin-top: 64px;
+  padding-bottom: 64px;
+  text-align: center;
+}
+
+.closing-line {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-sun {
+    animation: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .hero-inner {
+    flex-wrap: wrap;
+  }
+}

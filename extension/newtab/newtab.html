@@ -4,77 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/components.css">
   <link rel="stylesheet" href="newtab.css">
   <title>Tolstoy Home</title>
 </head>
 <body>
-  <div class="promises-overlay" id="promises-overlay" role="dialog" aria-modal="true" aria-labelledby="promises-title" hidden>
-    <div class="promises-backdrop" id="promises-backdrop"></div>
-    <div class="promises-panel">
-      <h2 class="panel-heading" id="promises-title" tabindex="-1">Our promises</h2>
-      <ul class="promises-list">
-        <li>Feed content and history never leave your computer.</li>
-        <li>No ads, ever, inside your feed.</li>
-        <li>All code is public, so anyone can check these promises.</li>
-        <li>We lower, we never delete. You can always see what moved and why.</li>
-        <li>We score how something is said, never which view it holds.</li>
-        <li>You choose your settings and can turn any feature off.</li>
-        <li>Nothing here rewards screen time.</li>
-      </ul>
-      <button class="secondary-button" id="close-promises" type="button">Close</button>
-    </div>
-  </div>
-
   <header class="hero">
     <div class="hero-sun" aria-hidden="true"></div>
     <div class="wrap hero-inner">
       <div class="hero-top">
         <h1 class="wordmark"><span class="wordmark-t">T<svg class="wordmark-hat" viewBox="14 20 92 72" aria-hidden="true" focusable="false"><path class="hat-crown" d="M38 76 L40 34 C40 24 80 24 80 34 L82 76 Z"></path><path class="hat-band" d="M38.6 64 L81.4 64 L82 76 L38 76 Z"></path><path class="hat-brim" d="M18 78 C18 72 34 74 60 74 C86 74 102 72 102 78 C102 86 86 88 60 88 C34 88 18 86 18 78 Z"></path></svg></span>olstoy</h1>
-        <span class="status-pill">
-          <span class="status-dot" aria-hidden="true"></span>
-          Mostly calm
-        </span>
+
+        <div class="hero-actions">
+          <button class="status-pill" id="weather-pill" type="button">
+            <span class="status-dot" aria-hidden="true"></span>
+            Feed weather: mostly calm
+          </button>
+          <button class="icon-button" id="settings-button" type="button" data-icon="sliders" aria-label="Settings"></button>
+        </div>
       </div>
 
-      <p class="eyebrow hero-date" id="today-date"></p>
+      <div class="hero-center">
+        <p class="eyebrow hero-date" id="today-date"></p>
+        <p class="display-xl hero-tagline">Art is what keeps us from being strangers and enemies to one another.</p>
+        <p class="meta hero-credit">Adapted from Leo Tolstoy, <cite>What Is Art?</cite></p>
 
-      <p class="display hero-tagline">Art is what keeps us from being strangers and enemies to one another.</p>
-      <p class="meta hero-credit">Adapted from Leo Tolstoy, <cite>What Is Art?</cite></p>
-
-      <form class="search" id="search-form" role="search">
-        <label class="visually-hidden" for="search-input">Search the web</label>
-        <input class="search-input" id="search-input" type="search" name="q" placeholder="Search the web." autocomplete="off" spellcheck="false">
-        <button class="search-submit" type="submit">Search</button>
-      </form>
+        <form class="search" id="search-form" role="search">
+          <span class="icon search-icon" data-icon="search" aria-hidden="true"></span>
+          <label class="visually-hidden" for="search-input">Search the web</label>
+          <input class="search-input" id="search-input" type="search" name="q" placeholder="Search the web." autocomplete="off" spellcheck="false">
+        </form>
+      </div>
     </div>
   </header>
 
   <main class="wrap">
-    <section class="section" aria-labelledby="story-heading">
-      <h2 class="section-heading" id="story-heading">Today’s story</h2>
-      <div class="story-slot" id="story-slot"></div>
-    </section>
+    <div class="story-row">
+      <article class="story-card large-container">
+        <p class="story-photo placeholder">[Photo for the story]</p>
+        <div class="story-content">
+          <p class="eyebrow story-eyebrow">Today’s story</p>
+          <h2 class="section-heading story-headline" id="story-headline"></h2>
+          <p class="meta story-dek" id="story-dek"></p>
+          <div class="story-actions">
+            <a class="btn btn-primary" id="read-slowly" href="../story/story.html">Read slowly</a>
+            <span class="meta" id="read-time"></span>
+          </div>
+        </div>
+      </article>
 
-    <section class="section" aria-labelledby="delights-heading">
-      <h2 class="section-heading" id="delights-heading">Small delights</h2>
-      <div class="grid grid-delights" id="delights-grid"></div>
-    </section>
+      <section class="delights paper-sunk card-body" aria-labelledby="delights-heading">
+        <h2 class="panel-heading" id="delights-heading">Small delights</h2>
+        <p class="section-meta">Found in your feeds this week.</p>
+        <ul class="dot-list delights-list" id="delights-list"></ul>
+      </section>
+    </div>
 
     <section class="section" aria-labelledby="saved-heading">
-      <h2 class="section-heading" id="saved-heading">Saved from your sites</h2>
+      <h2 class="section-heading" id="saved-heading">From the people you follow</h2>
+      <p class="section-meta">The best of what you saved, across every site.</p>
       <div class="grid grid-saved" id="saved-grid"></div>
     </section>
 
-    <section class="section closing" aria-labelledby="closing-line">
-      <h2 class="section-heading closing-line" id="closing-line">You’re caught up. Go see someone.</h2>
-      <p class="trust-line">
-        <svg class="trust-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" focusable="false"><path d="M8.25 10.5 V7 a3.75 3.75 0 0 1 7.5 0 v3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path><rect x="4.5" y="10.5" width="15" height="9.5" rx="2.5" fill="currentColor"></rect></svg>
-        Nothing here left your computer.
-        <button class="promises-link" id="promises-link" type="button" aria-haspopup="dialog">Our promises</button>
+    <footer class="closing">
+      <hr class="divider">
+      <p class="panel-heading centered closing-line">You’re caught up. Go see someone.</p>
+      <p class="trust-line centered">
+        <span class="icon" data-icon="lock" aria-hidden="true"></span>
+        <a href="../welcome/welcome.html">Built on this computer. Nothing left it.</a>
       </p>
-    </section>
+    </footer>
   </main>
 
+  <script src="../shared/icons.js"></script>
   <script src="sample-content.js"></script>
   <script src="newtab.js"></script>
 </body>

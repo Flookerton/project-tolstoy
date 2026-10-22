@@ -4,6 +4,12 @@
    table and nothing else. Hairlines, not shadows: only glass gets a shadow.
    Night mode comes from the tokens, so nothing here needs its own dark rules. */
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 /* ---------------------------------------------------------------- type roles */
 
 .display-xl {
@@ -70,6 +76,15 @@
 }
 
 /* ------------------------------------------------------------------ surfaces */
+
+/* Content sits in one column, 1120px of content with 24px of air each side. */
+.wrap {
+  width: 100%;
+  max-width: 1168px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
 
 .paper-card {
   border: 1px solid var(--line);

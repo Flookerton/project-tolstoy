@@ -1,14 +1,6 @@
-/* Tolstoy Home: new tab page styles.
-   Follows docs/design-system.md. Serif for anything people read slowly,
-   sans for anything people operate. Hairlines, not shadows: paper cards have
-   a 1px border and no shadow. The only shadow on this page belongs to the
-   glass search bar. */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
+/* Tolstoy Home: new tab page, matching docs/mockups/mockup-1-tolstoy-home.webp.
+   Shared pieces come from shared/components.css; only what is specific to this
+   page is here. Nothing blinks: the one slow breath stops under reduced motion. */
 
 body {
   margin: 0;
@@ -19,66 +11,8 @@ body {
   line-height: 1.6;
 }
 
-/* Type roles. Nothing outside the design system's table. */
-.display {
-  font-family: var(--font-reading);
-  font-weight: 400;
-  font-size: 40px;
-  line-height: 1.18;
-  letter-spacing: -0.012em;
-  text-wrap: balance;
-}
+/* ---------------------------------------------------------------------- hero */
 
-.section-heading {
-  font-family: var(--font-reading);
-  font-weight: 500;
-  font-size: 28px;
-  line-height: 1.25;
-  letter-spacing: -0.008em;
-  margin: 0;
-}
-
-.panel-heading {
-  font-family: var(--font-reading);
-  font-weight: 500;
-  font-size: 22px;
-  margin: 0 0 16px;
-}
-
-.meta {
-  font-size: 14px;
-}
-
-.eyebrow {
-  font-family: var(--font-interface);
-  font-weight: 700;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* Layout: 1120px of content, 24px of air on each side. */
-.wrap {
-  width: 100%;
-  max-width: 1120px;
-  margin: 0 auto;
-  padding-left: 24px;
-  padding-right: 24px;
-}
-
-/* Hero: the ombre, ending in ground so there is no seam. */
 .hero {
   position: relative;
   overflow: hidden;
@@ -106,7 +40,7 @@ body {
 .hero-inner {
   position: relative;
   padding-top: 40px;
-  padding-bottom: 48px;
+  padding-bottom: 56px;
 }
 
 .hero-top {
@@ -116,24 +50,10 @@ body {
   gap: 16px;
 }
 
-.hero-date {
-  margin: 24px 0 0;
-  color: var(--ink-3);
-}
-
-.hero-tagline {
-  margin: 12px 0 0;
-  max-width: 720px;
-  color: var(--ink);
-}
-
-.hero-credit {
-  margin: 8px 0 0;
-  color: var(--ink-3);
-}
-
-.hero-credit cite {
-  font-style: italic;
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 /* The wordmark: the hat on the T, seated 0.13em in, 0.72em wide, straight. */
@@ -172,51 +92,56 @@ body {
   fill: var(--hat-band);
 }
 
-/* Status pill: glass over the ombre, not a link yet. */
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: var(--radius-pill);
-  border: 1px solid var(--glass-border);
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  color: var(--ink-2);
-  font-size: 14px;
-  font-weight: 600;
-  white-space: nowrap;
+.hero-center {
+  max-width: 780px;
+  margin: 48px auto 0;
+  text-align: center;
 }
 
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--calm);
+.hero-date {
+  margin: 0;
+  color: var(--ink-3);
 }
 
-/* Glass search bar. The only shadowed element on the page. */
+.hero-tagline {
+  margin: 12px 0 0;
+  color: var(--ink);
+}
+
+.hero-credit {
+  margin: 12px 0 0;
+}
+
+.hero-credit cite {
+  font-style: italic;
+}
+
+/* The glass search bar, the one element on this page with a shadow. */
 .search {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  width: 100%;
   max-width: 560px;
-  min-height: 52px;
-  margin-top: 20px;
-  padding: 4px 4px 4px 20px;
-  border-radius: var(--radius-pill);
+  min-height: 56px;
+  margin: 32px auto 0;
+  padding: 0 20px;
   border: 1px solid var(--glass-border);
+  border-radius: var(--radius-pill);
   background: var(--glass-bg);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow: var(--glass-shadow);
 }
 
+.search-icon {
+  color: var(--ink-3);
+}
+
 .search-input {
   flex: 1 1 auto;
   min-width: 0;
-  padding: 8px 0;
+  padding: 12px 0;
   border: 0;
   background: transparent;
   color: var(--ink);
@@ -231,88 +156,104 @@ body {
   opacity: 1;
 }
 
-.search-submit {
-  flex: 0 0 auto;
-  min-height: 44px;
-  padding: 0 20px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--paper);
-  color: var(--ink);
-  font-family: var(--font-interface);
+.search-input::-webkit-search-cancel-button {
+  display: none;
+}
+
+/* --------------------------------------------------------- story and delights */
+
+.story-row {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+  gap: 20px;
+  margin-top: 64px;
+}
+
+/* Measured from the mockup: the card is 749 of 1112px, the placeholder takes
+   41 percent of the card and sits flush to its edges. */
+.story-card {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1fr);
+  padding: 0;
+  overflow: hidden;
+}
+
+.story-photo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  margin: 0;
+  border-radius: 0;
+  background: var(--placeholder);
+  color: var(--ink-3);
   font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
 }
 
-.search-submit:hover {
-  background: var(--paper-sunk);
+.story-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 24px;
 }
 
-/* Sections sit 64px apart. */
+.story-eyebrow {
+  margin: 0;
+  color: var(--accent);
+}
+
+.story-headline {
+  margin: 0;
+}
+
+.story-dek {
+  margin: 0;
+}
+
+.story-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.delights {
+  border-radius: var(--radius-large);
+}
+
+.delights-list {
+  margin-top: 16px;
+}
+
+.delights-list li {
+  font-family: var(--font-reading);
+  font-size: 19px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+/* -------------------------------------------------------- from the people you follow */
+
 .section {
   margin-top: 64px;
 }
 
-.closing {
-  padding-bottom: 64px;
-}
-
-.closing-line {
-  max-width: 720px;
-}
-
-.trust-line {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 16px 0 0;
-  font-size: 14px;
-  color: var(--ink-3);
-}
-
-.trust-icon {
-  flex: 0 0 auto;
-  color: var(--ink-3);
-}
-
-.promises-link {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--accent);
-  font-family: var(--font-interface);
-  font-size: 14px;
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  cursor: pointer;
-}
-
-.promises-link:hover {
-  color: var(--accent-hover);
-}
-
-/* Grids: 4 or 3 across, 2 on medium, 1 on a phone. */
 .grid {
   display: grid;
-  gap: 24px;
+  gap: 20px;
   margin-top: 24px;
-}
-
-.grid-delights {
-  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .grid-saved {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
-/* Cards: paper, hairline, no shadow. Source, then words, then author. */
+.grid-saved > :nth-child(4) {
+  grid-column: 1 / -1;
+}
+
 .card {
   display: flex;
   flex-direction: column;
@@ -323,32 +264,19 @@ body {
   background: var(--paper);
 }
 
-.story-slot {
-  max-width: 720px;
-  margin-top: 24px;
-}
-
 .card-source {
   margin: 0;
-  color: var(--ink-3);
   font-size: 14px;
+  color: var(--ink-3);
 }
 
 .card-text {
   margin: 0;
-  color: var(--ink);
   font-family: var(--font-reading);
   font-weight: 400;
   font-size: 19px;
   line-height: 1.45;
-}
-
-.card-text p {
-  margin: 0 0 12px;
-}
-
-.card-text p:last-child {
-  margin-bottom: 0;
+  color: var(--ink);
 }
 
 .card-author {
@@ -357,125 +285,27 @@ body {
   gap: 8px;
   margin: auto 0 0;
   padding-top: 12px;
-  color: var(--ink-3);
   font-size: 14px;
-}
-
-.card-author-name {
-  color: var(--ink-2);
-  font-weight: 600;
-}
-
-.card-handle {
   color: var(--ink-3);
 }
 
-.card-avatar {
-  display: inline-flex;
-  align-items: center;
+/* -------------------------------------------------------------------- closing */
+
+.closing {
+  margin-top: 64px;
+  padding-bottom: 64px;
+  text-align: center;
+}
+
+.closing-line {
+  margin: 32px 0 0;
+}
+
+.closing .trust-line {
   justify-content: center;
-  flex: 0 0 auto;
-  width: 24px;
-  height: 24px;
-  border-radius: var(--radius-pill);
-  background: var(--placeholder);
-  color: var(--ink-2);
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 1;
+  margin-top: 12px;
 }
 
-/* The promises panel: paper over a soft dim backdrop. */
-.promises-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-
-.promises-overlay[hidden] {
-  display: none;
-}
-
-.promises-backdrop {
-  position: absolute;
-  inset: 0;
-  background: var(--dim-backdrop);
-}
-
-.promises-panel {
-  position: relative;
-  width: 100%;
-  max-width: 480px;
-  max-height: 80vh;
-  overflow-y: auto;
-  padding: 32px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-large);
-  background: var(--paper);
-}
-
-/* A list inside a panel: hairlines and accent dots, never inner boxes. */
-.promises-list {
-  list-style: none;
-  margin: 0 0 24px;
-  padding: 0;
-}
-
-.promises-list li {
-  position: relative;
-  padding: 12px 0 12px 20px;
-  border-bottom: 1px solid var(--line);
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--ink);
-}
-
-.promises-list li:last-child {
-  border-bottom: 0;
-}
-
-.promises-list li::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 20px;
-  width: 8px;
-  height: 8px;
-  border-radius: var(--radius-pill);
-  background: var(--accent);
-}
-
-.secondary-button {
-  min-height: 44px;
-  padding: 0 24px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius-pill);
-  background: var(--paper-sunk);
-  color: var(--ink);
-  font-family: var(--font-interface);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.secondary-button:hover {
-  background: var(--paper);
-}
-
-/* Focus ring on every link, button, and input. */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-[tabindex]:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-/* Nothing blinks. The one slow breath is optional. */
 @media (prefers-reduced-motion: reduce) {
   .hero-sun {
     animation: none;
@@ -483,15 +313,29 @@ input:focus-visible,
 }
 
 @media (max-width: 1023px) {
-  .grid-delights,
+  .story-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .grid-saved {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 639px) {
-  .grid-delights,
+  .story-card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .story-photo {
+    min-height: 160px;
+  }
+
   .grid-saved {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-top {
+    flex-wrap: wrap;
   }
 }

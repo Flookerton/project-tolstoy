@@ -1,174 +1,176 @@
-// Tolstoy Home: new tab page logic
-// All content comes from sample-content.js (the SAMPLE_POSTS array).
-// No network requests are made. Everything runs locally.
+// Tolstoy Home: new tab page logic.
+// All content comes from sample-content.js. No network requests are made here.
+// The one outward action on this page is the search bar, which hands the words
+// to the browser's own search engine, the same way the address bar does.
 
 (function () {
   "use strict";
 
-  var root = document.documentElement;
-
-  // Date and greeting
-  function setMasthead() {
-    var now = new Date();
+  // Today's date as an eyebrow, reads "Thursday, October 22, 2026".
+  function showDate() {
     var dateEl = document.getElementById("today-date");
-    if (dateEl) {
-      dateEl.textContent = now.toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric"
-      });
+    if (!dateEl) {
+      return;
     }
-
-    var hour = now.getHours();
-    var greeting = "Good evening";
-    if (hour >= 5 && hour < 12) {
-      greeting = "Good morning";
-    } else if (hour >= 12 && hour < 18) {
-      greeting = "Good afternoon";
-    }
-    var greetEl = document.getElementById("greeting");
-    if (greetEl) {
-      greetEl.textContent = greeting;
-    }
+    dateEl.textContent = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
   }
 
-  // Background glow colors shift with time of day
-  function setGlowColors() {
-    var hour = new Date().getHours();
-    var warm, cool, sage;
-
-    if (hour >= 5 && hour < 11) {
-      // Morning: warm amber and soft peach
-      warm = "#F2C896";
-      cool = "#E8B4A0";
-      sage = "#D4C5A0";
-    } else if (hour >= 11 && hour < 17) {
-      // Afternoon: balanced soft blue and sage
-      warm = "#E8D5B8";
-      cool = "#9DBCE0";
-      sage = "#A8C4A0";
-    } else if (hour >= 17 && hour < 21) {
-      // Evening: deeper blue with warm sunset tint
-      warm = "#D4A88C";
-      cool = "#8FA8C8";
-      sage = "#9DB8A0";
-    } else {
-      // Night: cool blue and violet
-      warm = "#7F9DB8";
-      cool = "#6B89B0";
-      sage = "#8A9AB5";
-    }
-
-    root.style.setProperty("--glow-warm", warm);
-    root.style.setProperty("--glow-cool", cool);
-    root.style.setProperty("--glow-sage", sage);
+  // One story a day, chosen by the day of the year so it is steady all day.
+  function dailyStory(stories) {
+    var now = new Date();
+    var startOfYear = Date.UTC(now.getFullYear(), 0, 1);
+    var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+    var dayOfYear = Math.floor((today - startOfYear) / 86400000);
+    return stories[dayOfYear % stories.length];
   }
 
-  // Build a card element
-  function buildCard(post, isLead) {
+  // Build one card: the source, the words, then the author.
+  function buildCard(item) {
     var card = document.createElement("article");
-    card.className = isLead ? "lead-card-inner" : "card";
+    card.className = "card";
 
-    var source = document.createElement("div");
+    var source = document.createElement("p");
     source.className = "card-source";
-    source.textContent = post.source;
-
-    var text = document.createElement("div");
-    text.className = "card-text";
-    text.textContent = post.text;
-
-    var author = document.createElement("div");
-    author.className = "card-author";
-    var nameSpan = document.createElement("span");
-    nameSpan.textContent = post.author;
-    var handleSpan = document.createElement("span");
-    handleSpan.className = "card-handle";
-    handleSpan.textContent = post.handle;
-    author.appendChild(nameSpan);
-    author.appendChild(handleSpan);
-
-    var reason = document.createElement("span");
-    reason.className = "card-reason";
-    reason.textContent = post.reason;
-
+    source.textContent = item.source;
     card.appendChild(source);
-    card.appendChild(text);
+
+    var words = document.createElement("div");
+    words.className = "card-text";
+    item.text.split("\n\n").forEach(function (paragraph) {
+      var line = document.createElement("p");
+      line.textContent = paragraph;
+      words.appendChild(line);
+    });
+    card.appendChild(words);
+
+    var author = document.createElement("p");
+    author.className = "card-author";
+
+    var avatar = document.createElement("span");
+    avatar.className = "card-avatar";
+    avatar.setAttribute("aria-hidden", "true");
+    avatar.textContent = item.author.charAt(0);
+
+    var name = document.createElement("span");
+    name.className = "card-author-name";
+    name.textContent = item.author;
+
+    var handle = document.createElement("span");
+    handle.className = "card-handle";
+    handle.textContent = item.handle;
+
+    author.appendChild(avatar);
+    author.appendChild(name);
+    author.appendChild(handle);
     card.appendChild(author);
-    card.appendChild(reason);
 
     return card;
   }
 
-  // Render content from SAMPLE_POSTS
-  function renderContent() {
-    if (typeof SAMPLE_POSTS === "undefined" || !SAMPLE_POSTS.length) {
+  function fill(containerId, items) {
+    var container = document.getElementById(containerId);
+    if (!container) {
       return;
     }
-
-    // Lead story: first post
-    var leadEl = document.getElementById("lead-card");
-    if (leadEl && SAMPLE_POSTS.length > 0) {
-      var leadCard = buildCard(SAMPLE_POSTS[0], true);
-      leadEl.appendChild(leadCard);
-    }
-
-    // Four sections from the remaining posts
-    var sections = {};
-    var sectionOrder = ["Moving", "Funny", "Curious", "Humane"];
-    for (var i = 1; i < SAMPLE_POSTS.length; i++) {
-      var post = SAMPLE_POSTS[i];
-      if (!sections[post.section]) {
-        sections[post.section] = [];
-      }
-      sections[post.section].push(post);
-    }
-
-    var grid = document.getElementById("sections-grid");
-    if (!grid) return;
-
-    sectionOrder.forEach(function (sectionName) {
-      if (!sections[sectionName]) return;
-
-      var section = document.createElement("section");
-      section.className = "feed-section";
-      section.setAttribute("aria-label", sectionName);
-
-      var heading = document.createElement("h2");
-      heading.className = "section-heading";
-      heading.textContent = sectionName;
-      section.appendChild(heading);
-
-      sections[sectionName].forEach(function (post) {
-        var card = buildCard(post, false);
-        section.appendChild(card);
-      });
-
-      grid.appendChild(section);
+    items.forEach(function (item) {
+      container.appendChild(buildCard(item));
     });
   }
 
-  // Promises panel
+  function showContent() {
+    if (typeof SAMPLE_CONTENT === "undefined") {
+      return;
+    }
+    var storySlot = document.getElementById("story-slot");
+    if (storySlot && SAMPLE_CONTENT.stories.length) {
+      storySlot.appendChild(buildCard(dailyStory(SAMPLE_CONTENT.stories)));
+    }
+    fill("delights-grid", SAMPLE_CONTENT.delights);
+    fill("saved-grid", SAMPLE_CONTENT.saved);
+  }
+
+  // The search bar hands the words to the browser's own search engine.
+  // Tolstoy sends nothing anywhere: this is the same call the address bar uses.
+  function setupSearch() {
+    var form = document.getElementById("search-form");
+    var input = document.getElementById("search-input");
+    if (!form || !input) {
+      return;
+    }
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      var text = input.value.trim();
+      if (!text) {
+        return;
+      }
+      if (typeof chrome !== "undefined" && chrome.search && chrome.search.query) {
+        chrome.search.query({ text: text, disposition: "CURRENT_TAB" });
+      }
+    });
+  }
+
+  // The promises panel, keyboard first: focus moves in, stays in, and returns.
   function setupPromises() {
     var link = document.getElementById("promises-link");
     var overlay = document.getElementById("promises-overlay");
-    var closeBtn = document.getElementById("close-promises");
+    var panel = overlay ? overlay.querySelector(".promises-panel") : null;
+    var closeButton = document.getElementById("close-promises");
     var backdrop = document.getElementById("promises-backdrop");
     var title = document.getElementById("promises-title");
     var lastFocused = null;
 
-    function openPanel() {
+    function focusable() {
+      if (!panel) {
+        return [];
+      }
+      return Array.prototype.slice.call(
+        panel.querySelectorAll("button, [href], [tabindex]:not([tabindex='-1'])")
+      );
+    }
+
+    function onKeydown(event) {
+      if (event.key === "Escape") {
+        close();
+        return;
+      }
+      if (event.key !== "Tab") {
+        return;
+      }
+      var stops = focusable();
+      if (!stops.length) {
+        return;
+      }
+      var first = stops[0];
+      var last = stops[stops.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      } else if (stops.indexOf(document.activeElement) === -1) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
+    function open() {
       lastFocused = document.activeElement;
       overlay.hidden = false;
       if (title) {
         title.focus();
-      } else if (closeBtn) {
-        closeBtn.focus();
+      } else if (closeButton) {
+        closeButton.focus();
       }
       document.addEventListener("keydown", onKeydown);
     }
 
-    function closePanel() {
+    function close() {
       overlay.hidden = true;
       document.removeEventListener("keydown", onKeydown);
       if (lastFocused) {
@@ -176,42 +178,21 @@
       }
     }
 
-    function onKeydown(e) {
-      if (e.key === "Escape") {
-        closePanel();
-      }
-      // Trap focus inside the panel
-      if (e.key === "Tab" && overlay && !overlay.hidden) {
-        var focusable = overlay.querySelectorAll("button, [href], [tabindex]:not([tabindex='-1'])");
-        if (focusable.length === 0) return;
-        var first = focusable[0];
-        var last = focusable[focusable.length - 1];
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
-    }
-
     if (link) {
-      link.addEventListener("click", openPanel);
+      link.addEventListener("click", open);
     }
-    if (closeBtn) {
-      closeBtn.addEventListener("click", closePanel);
+    if (closeButton) {
+      closeButton.addEventListener("click", close);
     }
     if (backdrop) {
-      backdrop.addEventListener("click", closePanel);
+      backdrop.addEventListener("click", close);
     }
   }
 
-  // Initialize
   function init() {
-    setMasthead();
-    setGlowColors();
-    renderContent();
+    showDate();
+    showContent();
+    setupSearch();
     setupPromises();
   }
 

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Tolstoy">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0.34" y2="1">
+      <stop offset="0" stop-color="#F8EBD8"/>
+      <stop offset="1" stop-color="#E9CFCB"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="128" height="128" rx="36" ry="36" fill="url(#tile)"/>
+  <g transform="translate(16 19.2) scale(0.8)">
+    <path d="M38 76 L40 34 C40 24 80 24 80 34 L82 76 Z" fill="#2B2117"/>
+    <path d="M38.6 64 L81.4 64 L82 76 L38 76 Z" fill="#9C4F24"/>
+    <path d="M18 78 C18 72 34 74 60 74 C86 74 102 72 102 78 C102 86 86 88 60 88 C34 88 18 86 18 78 Z" fill="#2B2117"/>
+  </g>
+</svg>

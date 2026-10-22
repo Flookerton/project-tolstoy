@@ -1,114 +1,97 @@
 // Sample content for Tolstoy Home.
-// All people and posts are fictional. No real accounts, no brand names.
+// Everything here is fictional: no real people, no real posts, no brand names,
+// no politics. Tolstoy Home shows this sample content until a later task
+// connects it to posts the person really saved.
+//
+// stories: three slow, first-person stories. One is shown per day.
+// delights: four small moments, one or two sentences each.
+// saved: six posts the person saved, from places they already read.
 
-const SAMPLE_POSTS = [
-  // Lead story (Moving)
-  {
-    section: "Moving",
-    source: "Saved from a neighborhood thread",
-    author: "Lena Marquez",
-    handle: "@lena_mends",
-    text: "The kid on the corner left his bike out in the rain again. I dried it off, oiled the chain, and tightened the brakes. Left a note saying a friend had tuned it up. This morning I saw him ride past, grinning, and yelling to his mom that his bike got faster overnight.",
-    reason: "You saved this"
-  },
-  // Moving
-  {
-    section: "Moving",
-    source: "Saved from a reading circle",
-    author: "Tomoko Hale",
-    handle: "@tomoko_writes",
-    text: "Found my grandmother's recipe card in a box from the attic. Her handwriting at the bottom: 'Add a little extra butter when someone is sad.' I have made it three times this week.",
-    reason: "You liked this"
-  },
-  {
-    section: "Moving",
-    source: "Saved from a community board",
-    author: "Priya Sondhi",
-    handle: "@priya_noticed",
-    text: "Someone left a bouquet of wildflowers on the bench by the bus stop with a card that just said 'for whoever needs a good day.' I almost cried. I think the person next to me almost did too.",
-    reason: "You liked this"
-  },
-  {
-    section: "Moving",
-    source: "Saved from a local group",
-    author: "Dexter Walsh",
-    handle: "@dext_returns",
-    text: "Found a wallet on the trail with sixty dollars and a library card inside. Tracked down the owner through the library and met her at the coffee shop. She offered me half the cash. I told her the look on her face was already more than enough.",
-    reason: "You saved this"
-  },
-  // Funny
-  {
-    section: "Funny",
-    source: "Saved from a family chat",
-    author: "Wren Acosta",
-    handle: "@wren_says",
-    text: "My four-year-old asked why the moon doesn't fall down. I said gravity holds it gently. She said the moon is like a cat being held by a giant. Now every night she says goodnight to the giant.",
-    reason: "You liked this"
-  },
-  {
-    section: "Funny",
-    source: "Saved from a dog forum",
-    author: "Marcus Bell",
-    handle: "@marcus_bell",
-    text: "My dog stole one sock from the laundry and carried it around the house like a trophy for an hour. When I tried to take it back, he ran in a victory lap around the couch. I have never felt more defeated or more delighted.",
-    reason: "You liked this"
-  },
-  {
-    section: "Funny",
-    source: "Saved from a community thread",
-    author: "Sage Okoro",
-    handle: "@sage_texted",
-    text: "I texted the wrong number asking if they wanted lasagna for dinner. A stranger said yes. They showed up, we ate, and now every Thursday we cook together. I still do not know their actual name. We call each other Lasagna.",
-    reason: "You saved this"
-  },
-  // Curious
-  {
-    section: "Curious",
-    source: "Saved from a learning thread",
-    author: "Niko Vasquez",
-    handle: "@niko_learns",
-    text: "A child at the park asked me why puddles reflect the sky. I said the water acts like a mirror. She said the puddle is showing the sky its own face. I have not stopped thinking about that since.",
-    reason: "You liked this"
-  },
-  {
-    section: "Curious",
-    source: "Saved from a nature group",
-    author: "Ruth Calderon",
-    handle: "@ruth_ponders",
-    text: "I looked closely at a puddle today and found a whole world in it. Tadpoles, a water strider, reflected clouds. It is the smallest ecosystem I have ever seen and it made me feel very large and very small at the same time.",
-    reason: "You liked this"
-  },
-  {
-    section: "Curious",
-    source: "Saved from a history thread",
-    author: "Eli Brennan",
-    handle: "@eli_walks",
-    text: "Looked up the history of my street name. It turns out it is named after a woman who ran a bakery here in the 1890s and gave bread to kids on their way to school. I walk past her bakery's old foundation every day and never knew.",
-    reason: "You saved this"
-  },
-  // Humane
-  {
-    section: "Humane",
-    source: "Saved from a mutual aid group",
-    author: "Ada Franklin",
-    handle: "@ada_helps",
-    text: "Our block rallied around the family whose apartment flooded. In two days we had clothes, meals for a week, and a plumber volunteering his Saturday. The mom said she did not know people still did this. We said we learned it from her.",
-    reason: "You saved this"
-  },
-  {
-    section: "Humane",
-    source: "Saved from a care circle",
-    author: "Jules Park",
-    handle: "@jules_sits",
-    text: "I sat with a patient in the hospital who had no visitors. We talked about his garden for an hour. Before I left he said, 'Thank you for treating me like a person and not a chart.' I will carry that with me for a long time.",
-    reason: "You liked this"
-  },
-  {
-    section: "Humane",
-    source: "Saved from a community board",
-    author: "Mira Stone",
-    handle: "@mira_reads",
-    text: "Put up a little free library on our corner. It has been one week. A teenager left a note inside that said, 'I took a book and I will bring one back and I think this is the nicest thing on our street.' It absolutely is.",
-    reason: "You saved this"
-  }
-];
+const SAMPLE_CONTENT = {
+  stories: [
+    {
+      source: "Today’s story · told by a neighbor",
+      author: "Lena Marquez",
+      handle: "@lena_mends",
+      text: "The kid on the corner keeps leaving his bike out in the rain. I have watched it happen three times this month from my kitchen window. The chain goes orange, the seat soaks through, and in the morning he rides off anyway, standing up on the pedals because sitting down is a cold surprise.\n\nOn Tuesday I brought the bike inside. I dried the frame with an old towel, oiled the chain, tightened the brakes, and left a note saying a friend had tuned it up. It took me forty minutes and I am not handy.\n\nThis morning he went past the window standing tall on the seat, both hands off the bars, yelling to his mother that his bike got faster overnight. She said that is not possible. He said it is, I checked."
+    },
+    {
+      source: "Today’s story · told by a neighbor",
+      author: "Tomoko Hale",
+      handle: "@tomoko_writes",
+      text: "The box from the attic sat on the landing for two weeks before I opened it. At the bottom, under a stack of photographs, was my grandmother’s recipe card for the soup she made every Sunday of my childhood.\n\nHer handwriting is small and upright. At the end, after the salt, she had written: “Add a little extra butter when someone is sad.”\n\nI have made it three times this week. Once for my neighbor, whose dog died. Once for no reason at all, on a wet Tuesday, because the rain would not stop. And once for myself, standing at the stove at ten at night with the radio low.\n\nThe card lives on the counter now, not in the drawer. It turns out the soup was not the thing I was missing."
+    },
+    {
+      source: "Today’s story · told by a neighbor",
+      author: "Ada Franklin",
+      handle: "@ada_helps",
+      text: "Our neighbors on the ground floor woke up to two inches of water and a landlord who did not answer his phone. By the afternoon the building group chat had done the thing group chats sometimes do, which is become useful.\n\nSomeone started a list. By Thursday there were clothes in three sizes stacked in the hallway, a week of meals signed up for, and a plumber from the next street who gave up his Saturday and would not take money for it.\n\nThe mother of that family stood in her doorway and said she did not know people still did this. My neighbor Ruth said, gently, that we learned it from her, because she had carried soup to half the building when the flu went around in March.\n\nI have lived here eleven years. I have never known my neighbors’ names as well as I know them now."
+    }
+  ],
+
+  delights: [
+    {
+      source: "You liked this · from a dog forum",
+      author: "Marcus Bell",
+      handle: "@marcus_bell",
+      text: "My dog carried one stolen sock around the house for an hour like a trophy. When I reached for it, he did a victory lap around the couch."
+    },
+    {
+      source: "You liked this · from a family chat",
+      author: "Wren Acosta",
+      handle: "@wren_says",
+      text: "My four-year-old asked why the moon does not fall down. I said gravity holds it gently, and she decided the moon is a cat being held by a giant."
+    },
+    {
+      source: "You saved this · from a community thread",
+      author: "Sage Okoro",
+      handle: "@sage_texted",
+      text: "I texted a wrong number to ask if they wanted lasagna. A stranger said yes, and now we cook together every Thursday. We still call each other Lasagna."
+    },
+    {
+      source: "You liked this · from a bus stop",
+      author: "Priya Sondhi",
+      handle: "@priya_noticed",
+      text: "Someone left a bunch of wildflowers on the bench with a card that said, “for whoever needs a good day.” I stood there a while and felt better."
+    }
+  ],
+
+  saved: [
+    {
+      source: "You saved this · from a local history thread",
+      author: "Eli Brennan",
+      handle: "@eli_walks",
+      text: "I looked up the history of my street. It is named for a woman who ran a bakery here in the 1890s and gave bread to children on their way to school. I walk past her old foundation every day."
+    },
+    {
+      source: "You saved this · from a community board",
+      author: "Mira Stone",
+      handle: "@mira_reads",
+      text: "Our little free library has been up one week. A teenager left a note inside: “I took a book, I will bring one back, and I think this is the nicest thing on our street.” It is."
+    },
+    {
+      source: "You liked this · from a care circle",
+      author: "Jules Park",
+      handle: "@jules_sits",
+      text: "I sat with a patient who had no visitors and we talked about his garden for an hour. Before I left he said, “Thank you for treating me like a person and not a chart.”"
+    },
+    {
+      source: "You saved this · from a hiking group",
+      author: "Dexter Walsh",
+      handle: "@dext_returns",
+      text: "I found a wallet on the trail with sixty dollars and a library card inside. The library tracked down the owner, and she offered me half the cash. The look on her face was worth more."
+    },
+    {
+      source: "You saved this · from a learning thread",
+      author: "Niko Vasquez",
+      handle: "@niko_learns",
+      text: "A child at the park asked me why puddles reflect the sky. I said the water acts like a mirror. She said the puddle is showing the sky its own face."
+    },
+    {
+      source: "You saved this · from a neighborhood forum",
+      author: "Rosa Kealoha",
+      handle: "@rosa_rides",
+      text: "Our bus driver waited two extra minutes every morning for a woman with a walker and never once explained why. When he retired, forty of us turned up at the depot with a card."
+    }
+  ]
+};

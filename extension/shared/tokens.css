@@ -1,28 +1,99 @@
-@font-face { font-family: "Newsreader"; src: url("../fonts/Newsreader.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
-@font-face { font-family: "Nunito"; src: url("../fonts/Nunito.woff2") format("woff2"); font-weight: 200 1000; font-display: swap; }
+/* Tolstoy design tokens.
+   Source of truth: docs/design-system.md (v1.0), plus the night palette that
+   Task 2 Part B defines. Fonts are the bundled .woff2 files: the extension
+   never loads a font, or anything else, from the internet. */
 
-:root {
-  --paper: #F6F1E7;
-  --paper-raised: #FBF8F2;
-  --ink: #2A2724;
-  --ink-soft: #6B645C;
-  --glow: #9DBCE0;
-  --sage: #8FA88B;
-  --line: rgba(42, 39, 36, 0.12);
-  --font-story: "Newsreader", Georgia, serif;
-  --font-ui: "Nunito", system-ui, sans-serif;
-  --breath: 5s;
-  --radius: 14px;
+@font-face {
+  font-family: "Newsreader";
+  src: url("../fonts/Newsreader.woff2") format("woff2");
+  font-weight: 200 800;
+  font-style: normal;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: "Nunito";
+  src: url("../fonts/Nunito.woff2") format("woff2");
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Paper first: warm parchment by day, lamplight at night. */
+  --ground: #F3EBDD;
+  --paper: #FAF5EA;
+  --paper-sunk: #EFE4D2;
+  --placeholder: #E6D6BF;
+  --line: #E3D6C0;
+  --line-strong: #E0D1B9;
+  --ink: #2B2117;
+  --ink-2: #5A4A38;
+  --ink-3: #6E5D49;
+  --accent: #9C4F24;
+  --accent-hover: #5E2D14;
+  --calm: #7F8F6E;
+  --warm: #D9A65B;
+  --heated: #B4643A;
+  --toggle-off: #D8CBB5;
+
+  /* The hat, day: ink with a rust band. */
+  --hat-body: #2B2117;
+  --hat-band: #9C4F24;
+
+  /* Hero ombre. Day: the design system's hero ombre, which ends in ground. */
+  --ombre-1: #F6E6D2;
+  --ombre-2: #F1DCCB;
+  --hero-sun: rgba(232, 168, 108, 0.32);
+  --hero-sun-clear: rgba(232, 168, 108, 0);
+
+  /* Glass, used only over the ombre or the glow. */
+  --glass-bg: rgba(255, 250, 240, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.7);
+  --glass-shadow: 0 8px 24px rgba(90, 60, 30, 0.08);
+  --dim-backdrop: rgba(43, 33, 23, 0.32);
+
+  /* Shape, motion, type. */
+  --radius-large: 24px;
+  --radius-card: 16px;
+  --radius-pill: 999px;
+  --breath: 5s;
+
+  --font-reading: "Newsreader", Georgia, serif;
+  --font-interface: "Nunito", system-ui, sans-serif;
+}
+
+/* Night. Every token gets a value. Same warm family, lower light. */
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #101A2C;
-    --paper-raised: #16233A;
-    --ink: #ECE6DA;
-    --ink-soft: #A9A196;
-    --glow: #7FA3D1;
-    --sage: #9DB89A;
-    --line: rgba(236, 230, 218, 0.14);
+    --ground: #241C17;
+    --paper: #2E241D;
+    --paper-sunk: #2B1F21;
+    --placeholder: #43362B;
+    --line: #43362B;
+    --line-strong: #4C3D30;
+    --ink: #F3EBDD;
+    --ink-2: #D8C8B2;
+    --ink-3: #B9A68E;
+    --accent: #D07A45;
+    --accent-hover: #E39A6B;
+    --calm: #9AA888;
+    --warm: #D9A65B;
+    --heated: #C97A50;
+    --toggle-off: #4C3D30;
+
+    --hat-body: #F3EBDD;
+    --hat-band: #D07A45;
+
+    /* The ombre runs from #2B1F21 into ground, so it has no seam. */
+    --ombre-1: #2B1F21;
+    --ombre-2: #2B1F21;
+    --hero-sun: rgba(208, 122, 69, 0.18);
+    --hero-sun-clear: rgba(208, 122, 69, 0);
+
+    --glass-bg: rgba(46, 36, 29, 0.55);
+    --glass-border: rgba(243, 235, 221, 0.16);
+    --glass-shadow: 0 8px 24px rgba(24, 18, 14, 0.45);
+    --dim-backdrop: rgba(36, 28, 23, 0.55);
   }
 }

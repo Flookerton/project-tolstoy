@@ -1,10 +1,23 @@
 {
   "manifest_version": 3,
   "name": "Project Tolstoy",
-  "version": "0.1.0",
-  "description": "Feel better after you scroll. A calmer new tab that runs entirely on your computer.",
+  "version": "0.2.0",
+  "description": "Feel better after you scroll. A calmer new tab and a calmer feed that run entirely on your computer.",
   "chrome_url_overrides": { "newtab": "newtab/newtab.html" },
   "permissions": ["search"],
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*"],
+      "js": ["scoring/rules.js", "scoring/score.js", "adapters/x/rerank.js", "adapters/x/intercept.js"],
+      "world": "MAIN",
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://x.com/*"],
+      "js": ["adapters/x/banner.js"],
+      "run_at": "document_idle"
+    }
+  ],
   "icons": {
     "16": "icons/icon16.png",
     "32": "icons/icon32.png",

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tolstoy X adapter test page</title>
+</head>
+<body>
+  <h1>Tolstoy X adapter test page</h1>
+  <p>This page stands in for x.com so the adapter can be tested without a real
+    account. It calls the same path shape X uses and shows what came back.</p>
+
+  <p id="status">waiting for the timeline…</p>
+  <p id="count">banner: waiting…</p>
+
+  <h2>Entry order the page received</h2>
+  <pre id="order"></pre>
+
+  <h2>Pass-through check</h2>
+  <pre id="passthrough"></pre>
+
+  <p style="max-width: 640px">Scroll area below, so the page has some height:
+    <span style="display:block;height:1400px"></span>
+  </p>
+
+  <script src="banner-test.js"></script>
+</body>
+</html>

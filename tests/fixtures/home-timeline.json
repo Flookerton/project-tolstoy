@@ -1,0 +1,648 @@
+{
+  "data": {
+    "home": {
+      "home_timeline_urt": {
+        "instructions": [
+          {
+            "type": "TimelineTerminateTimeline",
+            "direction": "Bottom"
+          },
+          {
+            "type": "TimelineAddEntries",
+            "entries": [
+              {
+                "entryId": "cursor-top-999900",
+                "sortIndex": "1700000000000000100",
+                "content": {
+                  "entryType": "TimelineTimelineCursor",
+                  "__typename": "TimelineTimelineCursor",
+                  "cursorType": "Top",
+                  "value": "TOKEN-TOP"
+                }
+              },
+              {
+                "entryId": "tweet-1001",
+                "sortIndex": "1700000000000000099",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1001",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7001",
+                              "core": { "screen_name": "calm_ann" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1001",
+                          "full_text": "Took the long way home past the community garden. Someone has planted sunflowers all along the fence."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "promoted-tweet-5555-abcd",
+                "sortIndex": "1700000000000000098",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "promotedMetadata": {
+                      "advertiser_results": {
+                        "result": { "core": { "name": "Sample Advertiser" } }
+                      }
+                    },
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "5555",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7555",
+                              "core": { "screen_name": "sample_advertiser" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "5555",
+                          "full_text": "A calmer way to plan your week. Try our paper planner."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1002",
+                "sortIndex": "1700000000000000097",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1002",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7002",
+                              "core": { "screen_name": "loud_harold" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1002",
+                          "full_text": "WAKE UP!!! THIS IS DISGUSTING AND NOBODY IS TALKING ABOUT IT, YOU WON'T BELIEVE WHAT THEY ARE DOING, SHARE BEFORE IT'S DELETED!!!"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1003",
+                "sortIndex": "1700000000000000096",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1003",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7003",
+                              "core": { "screen_name": "ferry_watch" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1003",
+                          "full_text": "The ferry was late again this morning and the harbor was so quiet that I did not mind at all."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "conversationthread-9000",
+                "sortIndex": "1700000000000000095",
+                "content": {
+                  "entryType": "TimelineTimelineModule",
+                  "__typename": "TimelineTimelineModule",
+                  "displayType": "VerticalConversation",
+                  "items": [
+                    {
+                      "entryId": "conversationthread-9000-tweet-9001",
+                      "item": {
+                        "itemContent": {
+                          "itemType": "TimelineTweet",
+                          "__typename": "TimelineTweet",
+                          "tweet_results": {
+                            "result": {
+                              "__typename": "Tweet",
+                              "rest_id": "9001",
+                              "core": {
+                                "user_results": {
+                                  "result": {
+                                    "rest_id": "7900",
+                                    "core": { "screen_name": "stairwell_green" }
+                                  }
+                                }
+                              },
+                              "legacy": {
+                                "id_str": "9001",
+                                "full_text": "Our building is repainting the stairwell, and everyone picked the color by voting on the back of an envelope."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "entryId": "conversationthread-9000-tweet-9002",
+                      "item": {
+                        "itemContent": {
+                          "itemType": "TimelineTweet",
+                          "__typename": "TimelineTweet",
+                          "tweet_results": {
+                            "result": {
+                              "__typename": "Tweet",
+                              "rest_id": "9002",
+                              "core": {
+                                "user_results": {
+                                  "result": {
+                                    "rest_id": "7901",
+                                    "core": { "screen_name": "mops_the_stairs" }
+                                  }
+                                }
+                              },
+                              "legacy": {
+                                "id_str": "9002",
+                                "full_text": "The winner was a soft green, which is what the person who cleans the stairs had wanted all along."
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ],
+                  "metadata": {
+                    "conversationMetadata": {
+                      "allTweetIds": ["9001", "9002"],
+                      "enableDeduplication": true
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1004",
+                "sortIndex": "1700000000000000094",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1004",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7004",
+                              "core": { "screen_name": "loaf_and_hinge" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1004",
+                          "full_text": "My neighbor fixed the hinge on my gate without being asked, so I baked him a loaf of bread."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1005",
+                "sortIndex": "1700000000000000093",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1005",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7005",
+                              "core": { "screen_name": "rude_ron" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1005",
+                          "full_text": "Every single one of these clowns is an idiot, and the people defending them are pathetic."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1006",
+                "sortIndex": "1700000000000000092",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "TweetWithVisibilityResults",
+                        "tweet": {
+                          "rest_id": "1006",
+                          "core": {
+                            "user_results": {
+                              "result": {
+                                "rest_id": "7006",
+                                "core": { "screen_name": "porch_rain" }
+                              }
+                            }
+                          },
+                          "legacy": {
+                            "id_str": "1006",
+                            "full_text": "Reading on the porch while the rain came down. The cat approved of the plan."
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1007",
+                "sortIndex": "1700000000000000091",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1007",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7007",
+                              "core": { "screen_name": "jam_for_library" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1007",
+                          "full_text": "Sold three jars of jam at the school fair and gave the money to the library fund."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1008",
+                "sortIndex": "1700000000000000090",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1008",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7008",
+                              "core": { "screen_name": "furious_frank" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1008",
+                          "full_text": "They should be hanged for this. Honestly, someone should get rid of them."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1009",
+                "sortIndex": "1700000000000000089",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1009",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7009",
+                              "core": { "screen_name": "basil_window" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1009",
+                          "full_text": "Spent the morning repotting the basil. The whole kitchen smells like summer now."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1010",
+                "sortIndex": "1700000000000000088",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "TweetTombstone",
+                        "tombstone": {
+                          "text": { "text": "This post is unavailable." }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1011",
+                "sortIndex": "1700000000000000087",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1011",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7011",
+                              "core": { "screen_name": "same_song_again" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1011",
+                          "full_text": "Fourth week learning the same song on the piano. It is almost recognizable now."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1012",
+                "sortIndex": "1700000000000000086",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1012",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7012",
+                              "core": { "screen_name": "ran_for_the_bus" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1012",
+                          "full_text": "The bus driver waited for me while I ran for it. I am still grateful two hours later."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1013",
+                "sortIndex": "1700000000000000085",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1013",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7013",
+                              "core": { "screen_name": "knee_high_tree" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1013",
+                          "full_text": "We planted a tree for my grandmother's birthday. It is barely knee high and I already love it."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1014",
+                "sortIndex": "1700000000000000084",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1014",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7014",
+                              "core": { "screen_name": "margins_of_2019" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1014",
+                          "full_text": "Found a book I lost in 2019 tucked inside another book. All of that year is in the margins."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1015",
+                "sortIndex": "1700000000000000083",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1015",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7015",
+                              "core": { "screen_name": "bread_basket" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1015",
+                          "full_text": "The bakery on the corner leaves day-old bread in a basket by the door with a note: help yourself."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1016",
+                "sortIndex": "1700000000000000082",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1016",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7016",
+                              "core": { "screen_name": "vermin_talk" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1016",
+                          "full_text": "These parasites and vermin are spreading like a disease through our town."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "tweet-1017",
+                "sortIndex": "1700000000000000081",
+                "content": {
+                  "entryType": "TimelineTimelineItem",
+                  "__typename": "TimelineTimelineItem",
+                  "itemContent": {
+                    "itemType": "TimelineTweet",
+                    "__typename": "TimelineTweet",
+                    "tweet_results": {
+                      "result": {
+                        "__typename": "Tweet",
+                        "rest_id": "1017",
+                        "core": {
+                          "user_results": {
+                            "result": {
+                              "rest_id": "7017",
+                              "core": { "screen_name": "long_way_home" }
+                            }
+                          }
+                        },
+                        "legacy": {
+                          "id_str": "1017",
+                          "full_text": "Walked the long way to the post box just to see the leaves change. Worth it."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "entryId": "cursor-bottom-999901",
+                "sortIndex": "1700000000000000080",
+                "content": {
+                  "entryType": "TimelineTimelineCursor",
+                  "__typename": "TimelineTimelineCursor",
+                  "cursorType": "Bottom",
+                  "value": "TOKEN-BOTTOM"
+                }
+              }
+            ]
+          }
+        ],
+        "responseObjects": { "feedbackActions": [] }
+      }
+    }
+  }
+}

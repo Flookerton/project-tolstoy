@@ -14,7 +14,20 @@ Tolstoy is a free, open-source browser extension that uses an AI running locally
 
 ## Status
 
-Status: early mockup. The current build shows a static Tolstoy Home page with sample content. No content scripts, AI model, or live data are included yet.
+Status: early build, version 0.2.0. Two things work today.
+
+**Tolstoy Home** replaces the new tab page with a calm page of sample content: a story for the day, four small delights, and six saved posts. The content is still fictional sample text, not real saved posts.
+
+**The calm feed** works on x.com. Tolstoy reads each timeline batch before X draws it, scores each post with a short list of published rules, moves the heated ones to the end of their batch, and says so in a small banner near the bottom left. Nothing is deleted. "Show them" lists every post that moved, with the reason, and a link back to the post.
+
+Still to come: the local AI model, the temperature control, the blur mode, settings, the welcome page, storing anything, and Tolstoy Home using real posts.
+
+## What it asks for
+
+- `search`, so the search bar on the new tab page can hand your words to your own default search engine, the same way the address bar does.
+- Access to `https://x.com/*`, so the calm feed can read the timeline.
+
+Nothing else. Tolstoy makes no network request of its own, keeps no user id, and stores nothing. Moved posts live in the page's memory and are forgotten when you close the tab.
 
 ## How to load the extension
 
@@ -24,6 +37,18 @@ Status: early mockup. The current build shows a static Tolstoy Home page with sa
 4. Turn on **Developer mode** (top right).
 5. Click **Load unpacked**, open the extracted folder, select the **extension** folder inside it, and click **Select Folder**.
 6. Open a new tab. If Chrome asks whether to keep the change, choose **Keep it**.
+
+To try the calm feed, open **x.com/home** and scroll slowly for a minute. The banner appears near the bottom left. If you already had Tolstoy loaded, click the circular **reload** arrow on its card in `chrome://extensions` first. Chrome may now say the extension can "read and change your data on x.com": that is how Tolstoy reads the timeline, and it is the only site it touches.
+
+## The rules are public
+
+Every rule Tolstoy uses to score a post is in [`extension/scoring/rules.js`](extension/scoring/rules.js), and [`docs/scoring-rules.md`](docs/scoring-rules.md) explains all of them in plain words, including what they get wrong. No rule mentions a party, a politician, an ideology, a country, a religion, or a political question.
+
+## Other documents
+
+- [`docs/design-system.md`](docs/design-system.md): how Tolstoy looks and sounds.
+- [`docs/research-notes.md`](docs/research-notes.md): how the research tools read a feed, and what Tolstoy does differently.
+- [`tests/`](tests): the scorer and the reranker, with `node --test tests`.
 
 ## License
 

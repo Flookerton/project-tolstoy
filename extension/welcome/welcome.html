@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/components.css">
+  <link rel="stylesheet" href="welcome.css">
+  <title>Welcome to Tolstoy</title>
+</head>
+<body>
+  <div class="ombre" aria-hidden="true"></div>
+
+  <main class="wrap welcome">
+    <header class="welcome-header">
+      <p class="wordmark wordmark-xl"><span class="wordmark-t">T<svg class="wordmark-hat" viewBox="14 20 92 72" aria-hidden="true" focusable="false"><path class="hat-crown" d="M38 76 L40 34 C40 24 80 24 80 34 L82 76 Z"></path><path class="hat-band" d="M38.6 64 L81.4 64 L82 76 L38 76 Z"></path><path class="hat-brim" d="M18 78 C18 72 34 74 60 74 C86 74 102 72 102 78 C102 86 86 88 60 88 C34 88 18 86 18 78 Z"></path></svg></span>olstoy</p>
+      <h1 class="display-xl welcome-headline">Feel better after you scroll.</h1>
+      <p class="lead">Tolstoy quietly lowers the anger in your feeds and gathers the best of what you love into one calm page. It all happens on this computer.</p>
+    </header>
+
+    <section class="promises" aria-label="Our promises">
+      <article class="glass-panel card-body promise">
+        <h2 class="panel-heading">Nothing leaves</h2>
+        <p class="promise-text">Your feed is read and sorted on this computer. We never see it.</p>
+      </article>
+      <article class="glass-panel card-body promise">
+        <h2 class="panel-heading">Nothing deleted</h2>
+        <p class="promise-text">Heated posts move down or soften. You can always see them.</p>
+      </article>
+      <article class="glass-panel card-body promise">
+        <h2 class="panel-heading">Tone, not opinion</h2>
+        <p class="promise-text">Tolstoy judges how things are said, never which side they’re on.</p>
+      </article>
+    </section>
+
+    <section class="warning large-container" aria-labelledby="warning-heading">
+      <div class="warning-text">
+        <h2 class="panel-heading" id="warning-heading">About that warning</h2>
+        <p>When you installed Tolstoy, your browser said it can “read and change your data” on sites like x.com. That sounds alarming, so here is what it means.</p>
+      </div>
+      <ol class="numbered-list warning-list">
+        <li>Read lets Tolstoy see the posts already on your screen, so it can tell which ones are heated.</li>
+        <li>Change lets it move those posts down or soften them. It never posts, likes, or sends anything for you.</li>
+        <li>Your browser may also ask if you want to keep Tolstoy’s new tab page. Choose <strong>Keep it</strong> to see Tolstoy Home.</li>
+      </ol>
+    </section>
+
+    <div class="welcome-actions">
+      <button class="btn btn-primary" id="open-home" type="button">Open my calm page</button>
+      <button class="btn btn-secondary" id="open-settings" type="button">Choose my settings</button>
+    </div>
+
+    <footer class="welcome-footer">
+      <p>Free and open source. <a href="https://github.com/Flookerton/project-tolstoy">Read every line of our code</a>, and our <a href="../privacy/privacy.html">plain-language privacy policy</a>.</p>
+    </footer>
+  </main>
+
+  <script src="../shared/icons.js"></script>
+  <script src="welcome.js"></script>
+</body>
+</html>

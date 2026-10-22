@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/components.css">
+  <link rel="stylesheet" href="privacy.css">
+  <title>Privacy, in plain words · Tolstoy</title>
+</head>
+<body>
+  <div class="ombre" aria-hidden="true"></div>
+
+  <main class="wrap privacy">
+    <h1 class="display-xl">Privacy, in plain words.</h1>
+    <p class="lead">Tolstoy is built so that there is nothing to leak. This page is short on purpose, and it says the same thing as the code.</p>
+
+    <section class="privacy-section">
+      <h2 class="panel-heading">What Tolstoy reads</h2>
+      <p class="reading">The posts already loaded on x.com while you are looking at the page. That is all. It does not read your other tabs, your history, your messages, or anything you type.</p>
+    </section>
+
+    <section class="privacy-section">
+      <h2 class="panel-heading">What it stores</h2>
+      <p class="reading">Only your settings, and only in this browser: the temperature, and whether heated posts are blurred instead of moved. Nothing about your feed is stored, not the posts, not the handles, not the counts. Removing Tolstoy removes the settings.</p>
+    </section>
+
+    <section class="privacy-section">
+      <h2 class="panel-heading">What it sends</h2>
+      <p class="reading">Nothing. There is no Tolstoy server, no account, no analytics, and no user id. The extension makes no network request of its own. Scoring happens in the page, on this computer, and the list of posts that moved is forgotten when you close the tab.</p>
+    </section>
+
+    <section class="privacy-section">
+      <h2 class="panel-heading">Search</h2>
+      <p class="reading">The search bar on Tolstoy Home hands your words to your own default search engine, exactly the way the address bar does. That request goes to your engine, not to us.</p>
+    </section>
+
+    <section class="privacy-section">
+      <h2 class="panel-heading">What each permission is for</h2>
+      <ul class="dot-list privacy-list">
+        <li><strong>storage</strong> remembers your settings between visits. Settings only.</li>
+        <li><strong>search</strong> lets the search bar use your own search engine.</li>
+        <li><strong>Access to x.com</strong> lets the calm feed read the timeline you are already looking at, and move posts down. It is the only site Tolstoy touches.</li>
+      </ul>
+    </section>
+
+    <section class="privacy-section">
+      <h2 class="panel-heading">Nothing is deleted</h2>
+      <p class="reading">Heated posts are moved down or softened, never removed. Every one of them is listed under “Show them”, with the reason it moved, and a link back to the post itself.</p>
+    </section>
+
+    <section class="privacy-section">
+      <h2 class="panel-heading">You can check all of this</h2>
+      <p class="reading">The rules Tolstoy scores with are in one short file, and this page says the same thing as the code. <a href="https://github.com/Flookerton/project-tolstoy">Read every line of it on GitHub</a>.</p>
+    </section>
+
+    <footer class="privacy-footer">
+      <p class="trust-line">
+        <span class="icon" data-icon="lock" aria-hidden="true"></span>
+        Built on this computer. Nothing left it.
+      </p>
+      <p class="meta"><a href="../welcome/welcome.html">Back to the welcome page</a></p>
+    </footer>
+  </main>
+
+  <script src="../shared/icons.js"></script>
+  <script src="privacy.js"></script>
+</body>
+</html>

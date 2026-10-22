@@ -1,0 +1,74 @@
+/* The privacy page: the same calm page as the welcome page, with a short
+   reading column. */
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-interface);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.ombre {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(640px 420px at 88% -10%, var(--hero-sun), var(--hero-sun-clear) 70%),
+    linear-gradient(180deg, var(--ombre-1) 0%, var(--ombre-2) 48%, var(--ground) 100%);
+}
+
+.privacy {
+  max-width: 720px;
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+
+.lead {
+  margin: 16px 0 0;
+  color: var(--ink-2);
+}
+
+.privacy-section {
+  margin-top: 48px;
+}
+
+.privacy-section h2 {
+  margin: 0 0 8px;
+}
+
+.privacy-section .reading {
+  margin: 0;
+}
+
+.privacy-section .reading a,
+.privacy-footer a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.privacy-section .reading a:hover,
+.privacy-footer a:hover {
+  color: var(--accent-hover);
+}
+
+.privacy-list {
+  margin: 8px 0 0;
+}
+
+.privacy-list li {
+  color: var(--ink);
+}
+
+.privacy-footer {
+  margin-top: 64px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.privacy-footer .meta {
+  margin: 8px 0 0;
+}

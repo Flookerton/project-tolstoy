@@ -4,7 +4,8 @@
   "version": "0.2.0",
   "description": "Feel better after you scroll. A calmer new tab and a calmer feed that run entirely on your computer.",
   "chrome_url_overrides": { "newtab": "newtab/newtab.html" },
-  "permissions": ["search"],
+  "permissions": ["storage", "search"],
+  "background": { "service_worker": "background.js" },
   "content_scripts": [
     {
       "matches": ["https://x.com/*"],

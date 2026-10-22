@@ -1,0 +1,28 @@
+@font-face { font-family: "Newsreader"; src: url("../fonts/Newsreader.woff2") format("woff2"); font-weight: 200 800; font-display: swap; }
+@font-face { font-family: "Nunito"; src: url("../fonts/Nunito.woff2") format("woff2"); font-weight: 200 1000; font-display: swap; }
+
+:root {
+  --paper: #F6F1E7;
+  --paper-raised: #FBF8F2;
+  --ink: #2A2724;
+  --ink-soft: #6B645C;
+  --glow: #9DBCE0;
+  --sage: #8FA88B;
+  --line: rgba(42, 39, 36, 0.12);
+  --font-story: "Newsreader", Georgia, serif;
+  --font-ui: "Nunito", system-ui, sans-serif;
+  --breath: 5s;
+  --radius: 14px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #101A2C;
+    --paper-raised: #16233A;
+    --ink: #ECE6DA;
+    --ink-soft: #A9A196;
+    --glow: #7FA3D1;
+    --sage: #9DB89A;
+    --line: rgba(236, 230, 218, 0.14);
+  }
+}

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="newtab.css">
+  <title>Tolstoy</title>
+</head>
+<body>
+  <div class="glow-bg" aria-hidden="true">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+  </div>
+
+  <div class="promises-overlay" id="promises-overlay" role="dialog" aria-modal="true" aria-labelledby="promises-title" hidden>
+    <div class="promises-backdrop" id="promises-backdrop"></div>
+    <div class="promises-panel">
+      <h2 id="promises-title">Our promises</h2>
+      <ol class="principles-list">
+        <li>Feed content and history never leave your computer.</li>
+        <li>No ads, ever, inside your feed.</li>
+        <li>All code is public so anyone can verify these promises.</li>
+        <li>We lower, never delete. You can always see what was moved and why.</li>
+        <li>We score how something is said, never which view it holds.</li>
+        <li>You choose your settings and can turn any feature off.</li>
+        <li>No engagement mechanics that reward screen time.</li>
+      </ol>
+      <button class="close-promises" id="close-promises" type="button">Close</button>
+    </div>
+  </div>
+
+  <header class="masthead">
+    <h1 class="masthead-title">Tolstoy</h1>
+    <div class="masthead-meta">
+      <time class="today-date" id="today-date"></time>
+      <span class="greeting" id="greeting"></span>
+    </div>
+  </header>
+
+  <div class="promise-line">
+    <span class="promise-text">Nothing here left your computer.</span>
+    <button class="promises-link" id="promises-link" type="button" aria-haspopup="dialog">Our promises</button>
+  </div>
+
+  <main>
+    <article class="lead-card" id="lead-card"></article>
+    <div class="sections-grid" id="sections-grid"></div>
+  </main>
+
+  <div class="preview-controls">
+    <span class="preview-label">Preview</span>
+    <span class="preview-chip" aria-disabled="true" tabindex="-1">More art</span>
+    <span class="preview-chip" aria-disabled="true" tabindex="-1">Less politics</span>
+    <span class="preview-chip" aria-disabled="true" tabindex="-1">More local</span>
+  </div>
+
+  <footer class="page-footer">
+    <p class="caught-up">You're caught up.</p>
+    <p class="come-back">Come back tomorrow for more.</p>
+  </footer>
+
+  <script src="sample-content.js"></script>
+  <script src="newtab.js"></script>
+</body>
+</html>

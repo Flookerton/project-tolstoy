@@ -1,0 +1,196 @@
+{
+  "note": "The evaluation set for Tolstoy's rules-based scorer. Every post here is fictional. It lives in tests/ and never ships. Calm items must not move at Balanced, and only a couple may move at Calm. Heated items must move at Balanced, or, for the stacked-tone ones, at Calm.",
+  "thresholds": { "calm": 0.45, "balanced": 0.5, "unfiltered": 1.01 },
+
+  "items": [
+    { "text": "I love these people so much, best team ever", "label": "calm", "note": "Task 3 review list" },
+    { "text": "News of the bake sale is spreading like wildfire", "label": "calm", "note": "Task 3 review list" },
+    { "text": "Got new frames for the photos, going to hang them this weekend", "label": "calm", "note": "Task 3 review list" },
+    { "text": "Ants in the kitchen again, how do I get rid of them?", "label": "calm", "note": "Task 3 review list" },
+    { "text": "Shoot them a message if you want to join the hike", "label": "calm", "note": "Task 3 review list" },
+    { "text": "Took the kids to see the clowns at the circus", "label": "calm", "note": "Task 3 review list" },
+    { "text": "My stupid printer jammed again", "label": "calm", "note": "Task 3 review list" },
+    { "text": "I felt so stupid forgetting my own birthday", "label": "calm", "note": "Task 3 review list" },
+    { "text": "Rescued animals who need homes: meet Biscuit", "label": "calm", "note": "Task 3 review list" },
+    { "text": "The way this factory treats its workers is appalling", "label": "calm", "note": "Task 3 review list: sharp, about conduct" },
+    { "text": "Animal cruelty is disgusting. Please adopt, do not shop.", "label": "calm", "note": "Task 3 review list" },
+    { "text": "Locusts are fascinating insects, here is a thread", "label": "calm", "note": "Task 3 review list" },
+    { "text": "HAPPY BIRTHDAY GRANDMA, WE LOVE YOU", "label": "calm", "note": "Task 3 review list: shouty joy" },
+    { "text": "We won the championship!!!", "label": "calm", "note": "Task 3 review list: shouty joy" },
+    { "text": "The virus is infecting cells faster than expected, new study", "label": "calm", "note": "Task 3 review list" },
+
+    { "text": "I am going to kill this boss fight tonight if it takes all evening", "label": "calm", "note": "gaming" },
+    { "text": "Finally beat the last boss after forty tries, hands still shaking", "label": "calm", "note": "gaming" },
+    { "text": "Two hours of chess puzzles and I am still losing to the computer", "label": "calm", "note": "gaming" },
+    { "text": "Rebuilt the model railway bridge for the fourth time this month", "label": "calm", "note": "hobby" },
+    { "text": "This sauce is killer, I will be making it every week now", "label": "calm", "note": "cooking" },
+    { "text": "First sourdough loaf came out looking like a brick, tastes fine though", "label": "calm", "note": "cooking" },
+    { "text": "The chilli has been on since noon and the whole street smells wonderful", "label": "calm", "note": "cooking" },
+    { "text": "The cat has taken the entire sofa and will not be moving", "label": "calm", "note": "pets" },
+    { "text": "Took the dog to the lake and she swam until she could not stand up", "label": "calm", "note": "pets" },
+    { "text": "The stray cat by the shop let me pet her today for the first time", "label": "calm", "note": "pets" },
+    { "text": "Lost the final by two points and I am still proud of this team", "label": "calm", "note": "sport" },
+    { "text": "Marathon training week six, my legs are jelly and the mornings are beautiful", "label": "calm", "note": "sport" },
+    { "text": "Five a side tonight, we were terrible and laughed the whole way through", "label": "calm", "note": "sport" },
+    { "text": "Set a humane trap for the mouse in the shed, no luck yet", "label": "calm", "note": "pest control" },
+    { "text": "The moths have found my flour again, everything goes in jars now", "label": "calm", "note": "pest control" },
+    { "text": "Slugs have eaten the lettuce, the snails are innocent for once", "label": "calm", "note": "garden" },
+    { "text": "Repotted the whole windowsill of herbs and now the kitchen smells like summer", "label": "calm", "note": "garden" },
+    { "text": "New study on soil microbes, the findings are stranger than I expected", "label": "calm", "note": "science" },
+    { "text": "Astronomers found water vapour in a cloud far from any star", "label": "calm", "note": "science" },
+    { "text": "Fossil hunters found a fish with legs, again", "label": "calm", "note": "science" },
+    { "text": "We shoot portraits on Sunday, come by the studio if you are free", "label": "calm", "note": "photography" },
+    { "text": "Edited wedding photos all evening, three hundred still to go", "label": "calm", "note": "photography" },
+    { "text": "Shot a roll of film at the market, waiting on the lab now", "label": "calm", "note": "photography" },
+    { "text": "Repainted the hallway a warm cream and it feels twice as big", "label": "calm", "note": "decorating" },
+    { "text": "Hung the new shelves, only one hole in the wrong place", "label": "calm", "note": "decorating" },
+    { "text": "Found a lamp at the market for almost nothing and it fits the corner perfectly", "label": "calm", "note": "decorating" },
+    { "text": "I am such an idiot, I locked my keys in the car", "label": "calm", "note": "self-deprecation" },
+    { "text": "Called my teacher mum in year four and I still think about it at night", "label": "calm", "note": "self-deprecation" },
+    { "text": "I am a fool for thinking the printer would work on the first try", "label": "calm", "note": "self-deprecation" },
+    { "text": "Left the house in slippers, said nothing all day, nobody noticed", "label": "calm", "note": "self-deprecation" },
+    { "text": "WE DID IT!!! FIRST PLACE!!!", "label": "calm", "note": "shouty joy, two tone markers only" },
+    { "text": "SHE SAID YES!!! I AM SO HAPPY!!!", "label": "calm", "note": "shouty joy, two tone markers only" },
+    { "text": "THE BUS WAS EARLY TODAY!!! A MIRACLE!!!", "label": "calm", "note": "shouty joy, two tone markers only" },
+    { "text": "The landlord has left the heating off for three weeks and that is not right", "label": "calm", "note": "conduct, not people" },
+    { "text": "The council cut the bus route without asking anyone", "label": "calm", "note": "conduct, not people" },
+    { "text": "Fining people for sleeping outside is cruel and it solves nothing", "label": "calm", "note": "conduct, not people" },
+    { "text": "The company's pay gap is disgraceful and they know it", "label": "calm", "note": "conduct, not people" },
+    { "text": "The ferry was late and the harbour was so quiet I did not mind at all", "label": "calm", "note": "everyday" },
+    { "text": "Wrote three letters by hand this week and posted every one of them", "label": "calm", "note": "everyday" },
+    { "text": "Someone planted sunflowers all along the community garden fence", "label": "calm", "note": "everyday" },
+    { "text": "It rained all weekend so we baked and listened to the radio", "label": "calm", "note": "everyday" },
+    { "text": "Volunteered at the repair cafe on Saturday and fixed two radios", "label": "calm", "note": "everyday" },
+    { "text": "The neighbours brought over soup when we were ill, twice", "label": "calm", "note": "everyday" },
+    { "text": "My grandmother taught me to knit over a video call, badly", "label": "calm", "note": "everyday" },
+    { "text": "The library extended its hours and the reading room is full again", "label": "calm", "note": "everyday" },
+    { "text": "Fog on the way in this morning, the whole valley disappeared", "label": "calm", "note": "everyday" },
+    { "text": "The allotment is producing more courgettes than we can possibly eat", "label": "calm", "note": "everyday" },
+    { "text": "Cycled to work in the rain and arrived laughing", "label": "calm", "note": "everyday" },
+    { "text": "The bus driver waited while I ran for it, twice this month", "label": "calm", "note": "everyday" },
+    { "text": "Spent the evening sorting old photographs with my sister", "label": "calm", "note": "everyday" },
+
+    { "text": "You are such an idiot", "label": "heated", "note": "name-calling: you are" },
+    { "text": "What a moron", "label": "heated", "note": "name-calling: what a" },
+    { "text": "He is an idiot and she is a clown", "label": "heated", "note": "name-calling: he and she" },
+    { "text": "They are a bunch of morons", "label": "heated", "note": "name-calling: they are" },
+    { "text": "@rude_ron is a clown", "label": "heated", "note": "name-calling: handle" },
+    { "text": "Idiots like you ruined this place", "label": "heated", "note": "name-calling: idiots like you" },
+    { "text": "All of these clowns should be quiet", "label": "heated", "note": "name-calling: these clowns" },
+    { "text": "You're such a loser for saying that", "label": "heated", "note": "name-calling: curly apostrophe" },
+    { "text": "What an imbecile", "label": "heated", "note": "name-calling: what an" },
+    { "text": "She is a scumbag and everyone knows it", "label": "heated", "note": "name-calling: she is" },
+    { "text": "They're all a pack of fools", "label": "heated", "note": "name-calling: pack of" },
+    { "text": "Those jackasses in the comments are at it again", "label": "heated", "note": "name-calling: those" },
+    { "text": "You're an idiot for believing that", "label": "heated", "note": "name-calling: you're" },
+
+    { "text": "These people are vermin", "label": "heated", "note": "dehumanizing: these people are" },
+    { "text": "You people are parasites", "label": "heated", "note": "dehumanizing: you people are" },
+    { "text": "People like them are a plague", "label": "heated", "note": "dehumanizing: people like them" },
+    { "text": "Subhuman behaviour, honestly", "label": "heated", "note": "dehumanizing: subhuman alone" },
+    { "text": "They are animals and should not live near us", "label": "heated", "note": "dehumanizing: they are animals" },
+    { "text": "These cockroaches need to be exterminated", "label": "heated", "note": "dehumanizing: these cockroaches" },
+    { "text": "Those leeches deserve nothing", "label": "heated", "note": "dehumanizing: those leeches" },
+    { "text": "They are rats, every single one of them", "label": "heated", "note": "dehumanizing: they are rats" },
+    { "text": "Cull them all before this gets worse", "label": "heated", "note": "dehumanizing: cull them" },
+    { "text": "They are a disease on this town", "label": "heated", "note": "dehumanizing: they are a disease" },
+    { "text": "These people are cockroaches", "label": "heated", "note": "dehumanizing: these people are" },
+
+    { "text": "They should be hanged for this", "label": "heated", "note": "violence: should be hanged" },
+    { "text": "Kill them all", "label": "heated", "note": "violence: kill them all" },
+    { "text": "Death to these people", "label": "heated", "note": "violence: death to" },
+    { "text": "I hope you get hurt", "label": "heated", "note": "violence: hope you get hurt" },
+    { "text": "Someone should hurt him", "label": "heated", "note": "violence: someone should" },
+    { "text": "They should all be shot", "label": "heated", "note": "violence: should all be" },
+    { "text": "He deserves to be beaten", "label": "heated", "note": "violence: deserves to be" },
+    { "text": "Go die", "label": "heated", "note": "violence: go die" },
+    { "text": "Someone needs to smash his face in", "label": "heated", "note": "violence: smash his face in" },
+    { "text": "Hang them all", "label": "heated", "note": "violence: hang them all" },
+
+    { "text": "WAKE UP!!! THIS IS DISGUSTING AND NOBODY IS TALKING ABOUT IT, YOU WON'T BELIEVE WHAT THEY ARE DOING, SHARE BEFORE IT'S DELETED!!!", "label": "heated", "note": "stacked tone: four markers, also the fixture's first heated post" },
+    { "text": "DISGUSTING!!! NOBODY IS TALKING ABOUT THIS!!!", "label": "heated", "note": "stacked tone: four markers, shouting, exclamations, a shock word and a hook phrase" },
+    { "text": "YOU WON'T BELIEVE WHAT HAPPENED!!! SHARE BEFORE IT'S DELETED!!!", "label": "heated", "note": "stacked tone: three markers, moves at Calm only" },
+    { "text": "OUTRAGEOUS!!! THIS IS APPALLING AND EVERYONE NEEDS TO SEE IT!!!", "label": "heated", "note": "stacked tone: four markers" },
+    { "text": "NOBODY IS TALKING ABOUT THIS AND EVERYONE NEEDS TO SEE IT!!! IT IS DISGUSTING!!!", "label": "heated", "note": "stacked tone: four markers" },
+    { "text": "THEY DESTROYED EVERYTHING!!! THIS IS OUTRAGEOUS!!! SHARE BEFORE IT'S DELETED!!!", "label": "heated", "note": "stacked tone: four markers" },
+    { "text": "honestly disgusting!!! share before it's deleted!!!", "label": "heated", "note": "stacked tone: three markers, moves at Calm only" },
+    { "text": "THIS IS VILE!!! LOOK WHAT THEY DID!!! DISGUSTING!!!", "label": "heated", "note": "stacked tone: four markers" },
+    { "text": "Every single one of these clowns is an idiot, and the people defending them are pathetic.", "label": "heated", "note": "fixture heated post" },
+    { "text": "These parasites and vermin are spreading like a disease through our town.", "label": "heated", "note": "fixture heated post" }
+  ],
+
+  "pairs": [
+    {
+      "id": "coffee",
+      "issue": "the best way to make coffee by hand",
+      "calm": [
+        "Pour over is worth the extra five minutes, the cup is simply better.",
+        "Espresso is quicker and just as good, I do not need a ceremony in the morning."
+      ],
+      "heated": [
+        "Anyone with a machine is an idiot, and you are a clown for defending it.",
+        "You people are morons for wasting twenty minutes on a single cup."
+      ]
+    },
+    {
+      "id": "cats-dogs",
+      "issue": "cats or dogs as company",
+      "calm": [
+        "Cats are better company, they ask for nothing and sit with you anyway.",
+        "Dogs are better company, they want to be with you the whole day."
+      ],
+      "heated": [
+        "Cat people are losers who cannot handle real affection.",
+        "Dog owners are a bunch of morons who cannot be alone with themselves."
+      ]
+    },
+    {
+      "id": "paper-screens",
+      "issue": "paper books or an e-reader",
+      "calm": [
+        "Paper books are worth the shelf space, I remember more of what I read.",
+        "An e-reader holds a hundred books and my shoulders thank me for it."
+      ],
+      "heated": [
+        "Screen readers are idiots, every one of you.",
+        "You are a moron if you paid for a shelf full of paper you never open."
+      ]
+    },
+    {
+      "id": "morning-evening",
+      "issue": "when to run",
+      "calm": [
+        "Running before work sets up my whole day.",
+        "Evening runs are better, my body is awake and the streets are quiet."
+      ],
+      "heated": [
+        "Evening runners are clowns who simply cannot get out of bed.",
+        "Morning runners are idiots and nobody cares about your sunrise."
+      ]
+    },
+    {
+      "id": "greetings",
+      "issue": "saying hello to strangers",
+      "calm": [
+        "Saying hello to strangers is what makes a street feel like a place.",
+        "I would rather nod and keep walking, not every stranger wants a chat."
+      ],
+      "heated": [
+        "Idiots like you never say hello and then complain the street feels dead.",
+        "You people are clowns for greeting every single person you pass."
+      ]
+    },
+    {
+      "id": "made-bed",
+      "issue": "making the bed every morning",
+      "calm": [
+        "Making the bed every morning is a small kindness to your evening self.",
+        "I never make the bed, it is five good minutes I would rather spend elsewhere."
+      ],
+      "heated": [
+        "You are a lazy idiot if you never make your bed.",
+        "You're a moron for tidying a bed you are going to get straight back into."
+      ]
+    }
+  ]
+}

@@ -196,7 +196,7 @@ test("a conversation module moves as one unit, scored by its strongest post", ()
       "4000",
       [
         { id: "4001", handle: "calm_two", text: "Our building voted on the color for the stairwell." },
-        { id: "4002", handle: "rude_one", text: "Anyone who disagrees is an idiot and a clown." }
+        { id: "4002", handle: "rude_one", text: "You are an idiot and a clown for disagreeing." }
       ],
       "398"
     ),

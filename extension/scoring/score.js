@@ -65,17 +65,25 @@
     return false;
   }
 
+  // Real posts use both straight and curly apostrophes. Matching happens on a
+  // normalized copy: the text the person wrote is never changed, and the rules
+  // only ever have to spell one form.
+  function normalize(text) {
+    return text.replace(/[\u2018\u2019\u02bc]/g, "'").replace(/[\u201c\u201d]/g, '"');
+  }
+
   function scorePost(text) {
     if (typeof text !== "string" || !text.trim()) {
       return { score: 0, reasons: [] };
     }
 
+    var normalized = normalize(text);
     var remaining = 1;
     var seen = {};
     var reasons = [];
 
     RULES.forEach(function (rule) {
-      if (!matches(rule, text)) {
+      if (!matches(rule, normalized)) {
         return;
       }
       remaining *= 1 - rule.weight;
@@ -93,8 +101,9 @@
     if (typeof text !== "string" || !text.trim()) {
       return [];
     }
+    var normalized = normalize(text);
     return RULES.filter(function (rule) {
-      return matches(rule, text);
+      return matches(rule, normalized);
     }).map(function (rule) {
       return rule.id;
     });
@@ -103,7 +112,8 @@
   var api = {
     scorePost: scorePost,
     matchedRules: matchedRules,
-    threshold: (rules && rules.THRESHOLD) || 0.5
+    threshold: (rules && rules.THRESHOLD) || 0.5,
+    thresholds: (rules && rules.THRESHOLDS) || { calm: 0.45, balanced: 0.5, unfiltered: 1.01 }
   };
 
   root.TolstoyScore = api;

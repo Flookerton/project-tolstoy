@@ -4,6 +4,14 @@
   "version": "0.2.0",
   "description": "Feel better after you scroll. A calmer new tab and a calmer feed that run entirely on your computer.",
   "chrome_url_overrides": { "newtab": "newtab/newtab.html" },
+  "action": {
+    "default_popup": "panel/panel.html",
+    "default_title": "Tolstoy"
+  },
+  "options_ui": {
+    "page": "panel/panel.html",
+    "open_in_tab": true
+  },
   "permissions": ["storage", "search"],
   "background": { "service_worker": "background.js" },
   "content_scripts": [

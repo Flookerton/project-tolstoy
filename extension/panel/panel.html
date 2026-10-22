@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../shared/tokens.css">
+  <link rel="stylesheet" href="../shared/components.css">
+  <link rel="stylesheet" href="panel.css">
+  <title>Tolstoy settings</title>
+</head>
+<body>
+  <div class="ombre" aria-hidden="true"></div>
+
+  <div class="panel">
+    <header class="panel-header">
+      <h1 class="wordmark wordmark-panel"><span class="wordmark-t">T<svg class="wordmark-hat" viewBox="14 20 92 72" aria-hidden="true" focusable="false"><path class="hat-crown" d="M38 76 L40 34 C40 24 80 24 80 34 L82 76 Z"></path><path class="hat-band" d="M38.6 64 L81.4 64 L82 76 L38 76 Z"></path><path class="hat-brim" d="M18 78 C18 72 34 74 60 74 C86 74 102 72 102 78 C102 86 86 88 60 88 C34 88 18 86 18 78 Z"></path></svg></span>olstoy</h1>
+      <p class="meta" id="on-for">On for x.com</p>
+    </header>
+
+    <section class="glass-panel card-body control-card" aria-labelledby="temperature-heading">
+      <h2 class="panel-heading" id="temperature-heading">Temperature</h2>
+      <div class="segmented" role="radiogroup" aria-labelledby="temperature-heading" id="temperature">
+        <button class="segmented-option" type="button" role="radio" aria-checked="false" data-temperature="calm" tabindex="-1">Calm</button>
+        <button class="segmented-option" type="button" role="radio" aria-checked="true" data-temperature="balanced" tabindex="0">Balanced</button>
+        <button class="segmented-option" type="button" role="radio" aria-checked="false" data-temperature="unfiltered" tabindex="-1">Unfiltered</button>
+      </div>
+      <p class="meta control-help" id="temperature-help" aria-live="polite"></p>
+    </section>
+
+    <section class="glass-panel card-body weather-card" aria-labelledby="weather-heading">
+      <div class="card-head">
+        <h2 class="panel-heading" id="weather-heading">Today’s feed weather</h2>
+        <span class="tag">Sample</span>
+      </div>
+      <div class="weather-bar" role="img" aria-label="Today’s feed weather sample: heated 35 percent, humor 20 percent, connection 10 percent, everything else 35 percent.">
+        <span class="weather-seg weather-heated"></span>
+        <span class="weather-seg weather-warm"></span>
+        <span class="weather-seg weather-calm"></span>
+        <span class="weather-seg weather-rest"></span>
+      </div>
+      <ul class="weather-legend">
+        <li><span class="legend-dot legend-heated" aria-hidden="true"></span>Heated 35%</li>
+        <li><span class="legend-dot legend-warm" aria-hidden="true"></span>Humor 20%</li>
+        <li><span class="legend-dot legend-calm" aria-hidden="true"></span>Connection 10%</li>
+        <li><span class="legend-dot legend-rest" aria-hidden="true"></span>Everything else</li>
+      </ul>
+    </section>
+
+    <section class="glass-panel toggles-card" aria-labelledby="toggles-heading">
+      <h2 class="visually-hidden" id="toggles-heading">Feed controls</h2>
+
+      <div class="toggle-row">
+        <span class="toggle-label" id="blur-label">Blur heated posts instead of moving them</span>
+        <button class="toggle" id="blur-toggle" type="button" role="switch" aria-checked="false" aria-labelledby="blur-label">
+          <span class="toggle-knob" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label" id="pause-label">Pause before angry replies <span class="coming-soon">Coming soon</span></span>
+        <button class="toggle" id="pause-toggle" type="button" role="switch" aria-checked="false" aria-labelledby="pause-label" disabled>
+          <span class="toggle-knob" aria-hidden="true"></span>
+        </button>
+      </div>
+
+      <div class="toggle-row">
+        <span class="toggle-label" id="limit-label">End my feed after 20 minutes <span class="coming-soon">Coming soon</span></span>
+        <button class="toggle" id="limit-toggle" type="button" role="switch" aria-checked="false" aria-labelledby="limit-label" disabled>
+          <span class="toggle-knob" aria-hidden="true"></span>
+        </button>
+      </div>
+    </section>
+
+    <footer class="panel-footer">
+      <p class="trust-line">
+        <span class="icon" data-icon="lock" aria-hidden="true"></span>
+        Your feed never leaves this computer.
+      </p>
+    </footer>
+  </div>
+
+  <script src="../shared/icons.js"></script>
+  <script src="panel.js"></script>
+</body>
+</html>

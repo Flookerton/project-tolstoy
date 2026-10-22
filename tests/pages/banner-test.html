@@ -1,28 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tolstoy X adapter test page</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tolstoy X adapter fixture</title>
+  <style>
+    /* A neutral stand-in for the host site, so the Tolstoy elements can be seen
+       against a real looking feed. None of this ships: it is test scaffolding. */
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f7f9f9; color: #0f1419; font-family: system-ui, sans-serif; }
+    .app { display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 24px; max-width: 1400px; }
+    .rail { padding: 24px 16px; border-right: 1px solid #e1e8ed; min-height: 100vh; }
+    .rail h2 { margin: 0 0 16px; font-size: 15px; font-weight: 700; }
+    .rail nav { display: flex; flex-direction: column; gap: 14px; font-size: 15px; color: #536471; }
+    .column { padding: 16px 24px 96px; max-width: 720px; border-right: 1px solid #e1e8ed; }
+    .column > p:first-of-type { margin-top: 0; font-size: 14px; color: #536471; }
+    #feed { background: #fff; border: 1px solid #e1e8ed; border-radius: 12px; overflow: hidden; }
+    article { padding: 14px 16px; border-bottom: 1px solid #eef3f4; }
+    article:last-child { border-bottom: 0; }
+    .post-handle { margin: 0 0 4px; font-weight: 600; font-size: 14px; }
+    .post-text { margin: 0 0 8px; font-size: 16px; line-height: 1.5; }
+    .post-time { font-size: 13px; color: #666; text-decoration: none; }
+    details { margin: 24px; font-size: 13px; color: #536471; }
+    details pre { overflow-x: auto; background: #fff; border: 1px solid #e1e8ed; padding: 8px; }
+    @media (prefers-color-scheme: dark) {
+      body { background: #0b0b0b; color: #e7e9ea; }
+      .rail, .column { border-color: #2f3336; }
+      .rail nav, .column > p:first-of-type, .post-time, details { color: #9aa5ab; }
+      #feed { background: #16181c; border-color: #2f3336; }
+      article { border-color: #22262a; }
+      details pre { background: #16181c; border-color: #2f3336; }
+    }
+  </style>
 </head>
 <body>
-  <h1>Tolstoy X adapter test page</h1>
-  <p>This page stands in for x.com so the adapter can be tested without a real
-    account. It calls the same path shape X uses and shows what came back.</p>
+  <div class="app">
+    <aside class="rail">
+      <h2>A neutral stand-in for x.com</h2>
+      <nav>
+        <span>Home</span>
+        <span>Explore</span>
+        <span>Notifications</span>
+        <span>Messages</span>
+        <span>Profile</span>
+      </nav>
+    </aside>
+    <main class="column">
+      <p>This page stands in for x.com so the adapter can be tested without a real
+        account. It calls the same path shapes X uses, draws the posts X would draw,
+        and shows what came back. Nothing here is Tolstoy: only the strip and the
+        veils are.</p>
+      <p id="status">waiting for the timeline…</p>
+      <div id="feed"></div>
+    </main>
+  </div>
 
-  <p id="status">waiting for the timeline…</p>
-  <p id="count">banner: waiting…</p>
+  <details>
+    <summary>Adapter diagnostics (not part of the screen)</summary>
+    <p id="count">banner: waiting…</p>
+    <h2>Entry order the page received</h2>
+    <pre id="order"></pre>
+    <h2>Pass-through check</h2>
+    <pre id="passthrough"></pre>
+    <h2>XHR cases</h2>
+    <pre id="xhr"></pre>
+  </details>
 
-  <h2>Entry order the page received</h2>
-  <pre id="order"></pre>
-
-  <h2>Pass-through check</h2>
-  <pre id="passthrough"></pre>
-
-  <p style="max-width: 640px">Scroll area below, so the page has some height:
-    <span style="display:block;height:1400px"></span>
-  </p>
-
-  <script src="banner-test.js"></script>
+  <script src="./banner-test.js"></script>
 </body>
 </html>

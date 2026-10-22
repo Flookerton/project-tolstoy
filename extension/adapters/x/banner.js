@@ -1,49 +1,44 @@
-// Tolstoy banner on x.com, ISOLATED world, document_idle.
+// Tolstoy banner on x.com, ISOLATED world, document_idle, matching
+// docs/mockups/mockup-4-calm-feed.png.
 //
-// A glass strip near the bottom left that says what happened, and a paper panel
-// that lists every post that was moved down and why. Everything lives inside a
-// Shadow DOM, so X's styles and Tolstoy's cannot clash.
+// A single opaque strip in the small ombre tile colours, near the bottom left:
+// the hat tile, "Tolstoy is on", the temperature name (which opens the settings
+// page), the count, and a "Show them" pill. "Show them" opens a paper panel
+// listing every post that was moved down or softened, with the reason and a link
+// back to the post.
+//
+// Everything lives in a Shadow DOM so X's styles and Tolstoy's cannot clash, and
+// the only motion is a gentle fade, which stops under reduced motion.
 //
 // Message contract, from adapters/x/intercept.js:
-//   { source: "tolstoy", type: "counts", checked: n, moved: [{ id, handle, text, reasons }] }
-// Messages without that tag, or from another origin, are ignored.
-//
-// This file makes no network call. The only link it builds is
-// https://x.com/<handle>/status/<id>, back to the post itself.
+//   { source: "tolstoy", type: "counts", checked, moved, mode, temperature }
 
 (function () {
   "use strict";
 
   var SOURCE = "tolstoy";
-  var PANEL_TITLE = "Moved down for tone.";
+  var PANEL_TITLES = { move: "Moved down for tone.", blur: "Softened for tone." };
   var FLAG_LINE = "Flagged for hostile tone, not for its opinion.";
 
-  // The design system's palette, written out because a stylesheet link would
-  // expose the extension's id to the page. Glass alpha is 0.6: at 0.55 the text
-  // in the strip drops to 4.57:1 over X's dark theme, at 0.6 it is 5.34:1.
   var DAY = {
-    glass: "rgba(255, 250, 240, 0.6)",
-    glassBorder: "rgba(255, 255, 255, 0.7)",
-    glassShadow: "0 8px 24px rgba(90, 60, 30, 0.12)",
-    paper: "#FAF5EA",
-    line: "#E3D6C0",
+    tile: "linear-gradient(160deg, #F8EBD8, #E9CFCB)",
     ink: "#2B2117",
     ink2: "#5A4A38",
     ink3: "#6E5D49",
+    paper: "#FAF5EA",
+    line: "#E3D6C0",
     accent: "#9C4F24",
     dim: "rgba(43, 33, 23, 0.32)",
     hatBody: "#2B2117",
     hatBand: "#9C4F24"
   };
   var NIGHT = {
-    glass: "rgba(46, 36, 29, 0.6)",
-    glassBorder: "rgba(243, 235, 221, 0.16)",
-    glassShadow: "0 8px 24px rgba(24, 18, 14, 0.45)",
-    paper: "#2E241D",
-    line: "#43362B",
+    tile: "linear-gradient(160deg, #2B1F21, #241C17)",
     ink: "#F3EBDD",
     ink2: "#D8C8B2",
     ink3: "#B9A68E",
+    paper: "#2E241D",
+    line: "#43362B",
     accent: "#D07A45",
     dim: "rgba(36, 28, 23, 0.55)",
     hatBody: "#F3EBDD",
@@ -59,45 +54,46 @@
 
   var checked = 0;
   var moved = [];
+  var mode = "move";
+  var temperature = "balanced";
   var host = null;
   var shadow = null;
   var countEl = null;
+  var tempButton = null;
   var showButton = null;
   var panelWrap = null;
   var panelRows = null;
-  var closeButton = null;
   var panelTitle = null;
-  var lastFocused = null;
+  var closeButton = null;
 
   function styles(t) {
     return [
       ":host { all: initial; position: fixed; left: 16px; bottom: 16px; z-index: 2147483000; }",
       "* { box-sizing: border-box; }",
       ".strip {",
-      "  display: flex; flex-wrap: wrap; align-items: center; gap: 12px;",
+      "  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;",
       "  max-width: 560px; min-height: 60px; padding: 12px 16px;",
-      "  border: 1px solid " + t.glassBorder + "; border-radius: 16px;",
-      "  background: " + t.glass + ";",
-      "  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);",
-      "  box-shadow: " + t.glassShadow + ";",
+      "  border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 24px;",
+      "  background: " + t.tile + ";",
       "  font-family: system-ui, sans-serif; font-size: 14px; line-height: 1.5;",
       "  color: " + t.ink + ";",
       "  animation: tolstoy-fade 600ms ease-out;",
       "}",
-      ".tile { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex: 0 0 auto; border-radius: 8px; background: linear-gradient(160deg, #F8EBD8, #E9CFCB); }",
-      ".tile svg { width: 24px; height: 24px; }",
+      ".tile { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; flex: 0 0 auto; }",
+      ".tile svg { width: 26px; height: 26px; }",
       ".hat-crown, .hat-brim { fill: " + t.hatBody + "; }",
       ".hat-band { fill: " + t.hatBand + "; }",
       ".on { font-weight: 700; }",
-      ".temp { padding: 4px 12px; border: 1px solid " + t.line + "; border-radius: 999px; background: " + t.paper + "; color: " + t.ink2 + "; font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }",
+      ".temp { padding: 0; border: 0; background: none; color: " + t.ink2 + "; font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }",
+      ".temp:hover { color: " + t.ink + "; }",
       ".count { color: " + t.ink + "; }",
-      ".show, .close {",
+      ".show {",
       "  min-height: 44px; margin-left: auto; padding: 0 20px;",
       "  border: 1px solid " + t.line + "; border-radius: 999px;",
       "  background: " + t.paper + "; color: " + t.ink + ";",
-      "  font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;",
+      "  font: inherit; font-weight: 600; cursor: pointer;",
       "}",
-      ".show:hover, .close:hover { border-color: " + t.accent + "; }",
+      ".show:hover { border-color: " + t.accent + "; }",
       ".strip button:focus-visible, .panel button:focus-visible, .panel a:focus-visible {",
       "  outline: 2px solid " + t.accent + "; outline-offset: 3px;",
       "}",
@@ -122,11 +118,9 @@
       ".flag, .reasons, .empty { margin: 0; color: " + t.ink3 + "; }",
       ".open { align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; color: " + t.accent + "; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }",
       ".open:hover { color: " + t.ink + "; }",
-      ".panel .close { margin: 16px 0 0; display: block; }",
+      ".panel .close { display: block; margin: 16px 0 0; min-height: 44px; padding: 0 20px; border: 1px solid " + t.line + "; border-radius: 999px; background: " + t.paper + "; color: " + t.ink + "; font: inherit; font-weight: 600; cursor: pointer; }",
       "@keyframes tolstoy-fade { from { opacity: 0; } to { opacity: 1; } }",
-      "@media (prefers-reduced-motion: reduce) { .strip, .panel { animation: none; } }",
-      "@media (prefers-color-scheme: light) { :root { color-scheme: light; } }",
-      "@media (prefers-color-scheme: dark) { :root { color-scheme: dark; } }"
+      "@media (prefers-reduced-motion: reduce) { .strip, .panel { animation: none; } }"
     ].join("\n");
   }
 
@@ -146,21 +140,31 @@
     host.setAttribute("data-tolstoy", "banner");
     shadow = host.attachShadow({ mode: "open" });
 
-    var theme = currentTheme();
     var style = document.createElement("style");
-    style.textContent = styles(theme);
+    style.textContent = styles(currentTheme());
     shadow.appendChild(style);
 
     var strip = document.createElement("div");
     strip.className = "strip";
     strip.setAttribute("role", "status");
-    strip.innerHTML =
-      '<span class="tile" aria-hidden="true">' + HAT + "</span>" +
-      '<span class="on">Tolstoy is on</span>' +
-      '<span class="temp">Balanced</span>' +
-      '<span class="count"></span>';
+    strip.innerHTML = '<span class="tile" aria-hidden="true">' + HAT + '</span><span class="on">Tolstoy is on</span>';
 
-    countEl = strip.querySelector(".count");
+    tempButton = document.createElement("button");
+    tempButton.type = "button";
+    tempButton.className = "temp";
+    tempButton.title = "Open settings";
+    tempButton.addEventListener("click", function () {
+      try {
+        chrome.runtime.openOptionsPage();
+      } catch (error) {
+        // Without the panel, the strip still tells the truth.
+      }
+    });
+    strip.appendChild(tempButton);
+
+    countEl = document.createElement("span");
+    countEl.className = "count";
+    strip.appendChild(countEl);
 
     showButton = document.createElement("button");
     showButton.type = "button";
@@ -189,7 +193,7 @@
     panelTitle = document.createElement("h2");
     panelTitle.id = "tolstoy-panel-title";
     panelTitle.tabIndex = -1;
-    panelTitle.textContent = PANEL_TITLE;
+    panelTitle.textContent = PANEL_TITLES.move;
 
     panelRows = document.createElement("div");
     panelRows.className = "rows";
@@ -215,7 +219,7 @@
         window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", restyle);
       }
     } catch (error) {
-      // Older APIs simply keep the theme the banner was built with.
+      // Keep the theme the banner was built with.
     }
   }
 
@@ -229,6 +233,16 @@
     }
   }
 
+  function temperatureName() {
+    if (temperature === "calm") {
+      return "Calm";
+    }
+    if (temperature === "unfiltered") {
+      return "Unfiltered";
+    }
+    return "Balanced";
+  }
+
   function handleText(handle) {
     if (!handle) {
       return "a post";
@@ -237,22 +251,29 @@
   }
 
   function renderCount() {
-    if (!countEl) {
+    if (!countEl || !tempButton) {
+      return;
+    }
+    tempButton.textContent = temperatureName();
+
+    if (mode === "off") {
+      countEl.textContent = "Unfiltered. Checked " + checked + (checked === 1 ? " post." : " posts.");
       return;
     }
     if (moved.length) {
-      countEl.textContent = moved.length === 1
-        ? "1 heated post moved down."
-        : moved.length + " heated posts moved down.";
+      var one = moved.length === 1;
+      var what = mode === "blur" ? " softened." : " moved down.";
+      countEl.textContent = moved.length + (one ? " heated post" : " heated posts") + what;
       return;
     }
     countEl.textContent = "Checked " + checked + (checked === 1 ? " post. " : " posts. ") + "Nothing moved.";
   }
 
   function renderRows() {
-    if (!panelRows) {
+    if (!panelRows || !panelTitle) {
       return;
     }
+    panelTitle.textContent = PANEL_TITLES[mode] || PANEL_TITLES.move;
     panelRows.textContent = "";
     if (!moved.length) {
       var empty = document.createElement("p");
@@ -319,8 +340,6 @@
     );
   }
 
-  // Inside a shadow root, document.activeElement is the host, so ask the shadow
-  // root first.
   function activeElement() {
     if (shadow && shadow.activeElement) {
       return shadow.activeElement;
@@ -359,11 +378,8 @@
   function openPanel() {
     build();
     renderRows();
-    lastFocused = showButton;
     panelWrap.hidden = false;
-    if (panelTitle) {
-      panelTitle.focus();
-    }
+    panelTitle.focus();
     document.addEventListener("keydown", onKeydown, true);
   }
 
@@ -373,9 +389,8 @@
     }
     panelWrap.hidden = true;
     document.removeEventListener("keydown", onKeydown, true);
-    var target = lastFocused || showButton;
-    if (target && typeof target.focus === "function") {
-      target.focus();
+    if (showButton) {
+      showButton.focus();
     }
   }
 
@@ -384,25 +399,69 @@
       return;
     }
     var data = event.data;
-    if (!data || data.source !== SOURCE || data.type !== "counts") {
+    if (!data || data.source !== SOURCE) {
       return;
     }
-    if (typeof data.checked === "number") {
-      checked += data.checked;
+
+    // A settings change changes the wording straight away, so the strip never
+    // describes a mode Tolstoy is no longer in.
+    if (data.type === "settings" && data.settings) {
+      temperature = typeof data.settings.temperature === "string" ? data.settings.temperature : temperature;
+      mode = temperature === "unfiltered" ? "off" : (data.settings.blur ? "blur" : "move");
+      build();
+      renderCount();
+      if (showButton) {
+        showButton.hidden = mode === "off" || !moved.length;
+      }
+      if (panelWrap && !panelWrap.hidden) {
+        renderRows();
+      }
+      return;
     }
-    if (Array.isArray(data.moved) && data.moved.length) {
-      Array.prototype.push.apply(moved, data.moved);
+
+    if (data.type !== "counts") {
+      return;
+    }
+
+    // A totals answer replaces the counters rather than adding to them, so a
+    // banner that loaded after the first batch shows the whole visit exactly once.
+    if (data.totals) {
+      checked = typeof data.checked === "number" ? data.checked : checked;
+      moved = Array.isArray(data.moved) ? data.moved.slice() : moved;
+    } else {
+      if (typeof data.checked === "number") {
+        checked += data.checked;
+      }
+      if (Array.isArray(data.moved) && data.moved.length) {
+        Array.prototype.push.apply(moved, data.moved);
+      }
+    }
+    if (typeof data.mode === "string") {
+      mode = data.mode;
+    }
+    if (typeof data.temperature === "string") {
+      temperature = data.temperature;
     }
 
     build();
     renderCount();
     if (showButton) {
-      showButton.hidden = !moved.length;
+      showButton.hidden = mode === "off" || !moved.length;
     }
-    if (!panelWrap.hidden) {
+    if (panelWrap && !panelWrap.hidden) {
       renderRows();
     }
   }
 
   window.addEventListener("message", onMessage);
+
+  // Built at once, so the strip is there even if the first timeline batch beat
+  // this script, and then caught up with the totals Tolstoy has already counted.
+  build();
+  renderCount();
+  try {
+    window.postMessage({ source: SOURCE, type: "requestCounts" }, window.location.origin);
+  } catch (error) {
+    // The next batch will bring the numbers anyway.
+  }
 })();

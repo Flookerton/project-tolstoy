@@ -17,13 +17,18 @@
   "content_scripts": [
     {
       "matches": ["https://x.com/*"],
+      "js": ["adapters/x/settings.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["https://x.com/*"],
       "js": ["scoring/rules.js", "scoring/score.js", "adapters/x/rerank.js", "adapters/x/intercept.js"],
       "world": "MAIN",
       "run_at": "document_start"
     },
     {
       "matches": ["https://x.com/*"],
-      "js": ["adapters/x/banner.js"],
+      "js": ["adapters/x/banner.js", "adapters/x/veil.js"],
       "run_at": "document_idle"
     }
   ],

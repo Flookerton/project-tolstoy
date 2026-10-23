@@ -58,7 +58,10 @@
   // post the rules alone miss (the "toothless crackhead" one from the live check)
   // and it costs one calm post (a gaming "I am going to kill this boss" idiom).
   // See docs/scoring-rules.md.
-  var MODEL_CALIBRATION = 1;
+  // The bundled model's calibration. The worker reports the figure for whichever
+  // model is in use and this is replaced with it, but the page can score before
+  // that answer arrives, and the model that is always there is the small one.
+  var MODEL_CALIBRATION = 0.8;
 
   // The model's labels, said in plain words. Whichever label produced the score is
   // the reason shown first, and no post is ever left without a reason at all: a
@@ -317,6 +320,16 @@
   var SCORE_CACHE_MAX = 2000;
   var batchCount = 0;
   var modelBatchCount = 0;
+  // Not every batch needs the model, and not every batch that asks gets an answer in
+  // time. Counting those as one thing made the fallback figure look like 50 batches
+  // of failure when the truth was 50 batches whose posts the page already knew.
+  var askedBatchCount = 0;
+  var deadlineFallbacks = 0;
+  // Whether the model has had a hand in this visit at all. Once it has, the footer
+  // says so for the rest of the visit: a later batch whose texts are already scored
+  // is answered from the cache, and a footer that flipped back to "Scored by: rules"
+  // would be telling the person something untrue about the page in front of them.
+  var modelEverUsed = false;
 
   function cacheGet(id) {
     return id && scoreCache.has(id) ? scoreCache.get(id) : undefined;
@@ -401,8 +414,16 @@
 
     return askModel(asked, onLateScores).then(function (answer) {
       batchCount += 1;
+      var got = answer && answer.scores ? Object.keys(answer.scores).length : 0;
       coverage[whichBatch].asked += asked.length;
-      coverage[whichBatch].scored += answer && answer.scores ? Object.keys(answer.scores).length : 0;
+      coverage[whichBatch].scored += got;
+      if (asked.length) {
+        askedBatchCount += 1;
+        if (!got) {
+          // The model was asked and the deadline arrived first. This is the fallback.
+          deadlineFallbacks += 1;
+        }
+      }
       if (answer && answer.scores && Object.keys(answer.scores).length) {
         by = "rules+model";
         modelBatchCount += 1;
@@ -654,7 +675,10 @@
 
           var moved = currentMode === "off" ? [] : result.moved || [];
           if (result.checked > 0) {
-            report({ checked: result.checked, moved: moved, mode: currentMode, by: scored.by });
+            if (scored.by === "rules+model") {
+              modelEverUsed = true;
+            }
+            report({ checked: result.checked, moved: moved, mode: currentMode, by: modelEverUsed ? "rules+model" : "rules" });
           }
           return currentMode === "move" ? JSON.stringify(result.json) : null;
         })
@@ -902,6 +926,10 @@
         modelReadyAt = Math.round(window.performance.now());
       }
       model.ready = !!data.ready;
+      if (typeof data.calibration === "number" && data.calibration > 0) {
+        // Each model has its own scale, and each was calibrated on its own scores.
+        MODEL_CALIBRATION = data.calibration;
+      }
       model.reason = data.reason || (data.ready ? "ready" : "absent");
       return;
     }
@@ -947,6 +975,9 @@
       blur: settings.blur,
       batches: batchCount,
       modelBatches: modelBatchCount,
+      askedBatches: askedBatchCount,
+      deadlineFallbacks: deadlineFallbacks,
+      knownBatches: batchCount - askedBatchCount,
       fallbacks: batchCount - modelBatchCount,
       lateCaught: lateCaught,
       holdFirstMs: HOLD_FIRST_MS,

@@ -43,6 +43,56 @@
   };
   window.tolstoyTest = test;
 
+  // A stand-in for the model, for the timing checks and nothing else.
+  //
+  // ?fakeModel=50 answers every score request after 50ms, ?fakeModel=never never
+  // answers at all. The reply carries made-up scores so that a post which the rules
+  // leave alone is moved by the "model", which is what makes it possible to watch the
+  // deadline behaviour without waiting on a real model. The interceptor drops a reply
+  // that arrives for a request it has already finished, so the real bridge answering
+  // later cannot disturb either case. Without the query string this does nothing.
+  var fakeModel = null;
+  try {
+    fakeModel = new URLSearchParams(window.location.search).get("fakeModel");
+  } catch (error) {
+    fakeModel = null;
+  }
+  if (fakeModel) {
+    window.addEventListener("message", function (event) {
+      var data = event.data;
+      if (!data || data.source !== "tolstoy" || data.type !== "scoreRequest") {
+        return;
+      }
+      if (fakeModel === "never") {
+        return;
+      }
+      var delay = Number(fakeModel);
+      if (!isFinite(delay) || delay < 0) {
+        delay = 50;
+      }
+      var texts = Array.isArray(data.texts) ? data.texts : [];
+      window.setTimeout(function () {
+        var scores = {};
+        var labels = {};
+        for (var i = 0; i < texts.length; i += 1) {
+          // Anything that reads like a personal insult is called hostile here, so a
+          // check can watch one post move and the rest stay where they are.
+          var hot = /pathetic|worthless|burns down|waste of oxygen/i.test(texts[i]);
+          scores[texts[i]] = hot ? 0.93 : 0.02;
+          labels[texts[i]] = "insult";
+        }
+        window.postMessage({
+          source: "tolstoy",
+          type: "scoreResult",
+          id: data.id,
+          scores: scores,
+          labels: labels,
+          done: true
+        }, window.location.origin);
+      }, delay);
+    });
+  }
+
   // Every message Tolstoy posts, in order, with the time it arrived. This is how
   // the checks answer "did the settings beat the first batch".
   window.addEventListener("message", function (event) {

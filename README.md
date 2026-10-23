@@ -4,7 +4,7 @@ Tolstoy is a free, open-source browser extension that uses an AI running locally
 
 ## Seven principles
 
-1. **Local only.** Feed content and history never leave your computer. The only network use is downloading the extension and the AI model.
+1. **Local only.** Feed content and history never leave your computer. The model that reads tone comes inside the extension, so scoring makes no network request at all. The only optional network use is the stronger model, which you download yourself from the panel if you want it.
 2. **No ads, ever, inside anyone's feed.** No advertising is injected into your social feeds, ever.
 3. **Open source.** All code is public so anyone can verify these promises.
 4. **Lower, never delete.** Tolstoy only reorders or softly blurs. You can always see what was moved and why.
@@ -18,16 +18,20 @@ Status: early build, version 0.2.0. Two things work today.
 
 **Tolstoy Home** replaces the new tab page with a calm page of sample content: a story for the day, four small delights, and six saved posts. The content is still fictional sample text, not real saved posts.
 
-**The calm feed** works on x.com. Tolstoy reads each timeline batch before X draws it, scores each post with a short list of published rules, moves the heated ones to the end of their batch, and says so in a small banner near the bottom left. Nothing is deleted. "Show them" lists every post that moved, with the reason, and a link back to the post.
+**The calm feed** works on x.com. Tolstoy reads each timeline batch before X draws it, scores each post with a short list of published rules and a small on-device model that comes with it, moves the heated ones to the end of their batch, and says so in a small banner near the bottom left. Nothing is deleted. "Show them" lists every post that moved, with the reason, and a link back to the post.
 
-Still to come: the local AI model, the temperature control, the blur mode, settings, the welcome page, storing anything, and Tolstoy Home using real posts.
+The small model needs no download and no network, and it is the one in use unless you ask for the stronger one in the panel. The rules still decide most of the work, and the panel and the footer always say which of the two scored the page in front of you. `docs/model-notes.md` records where each model came from, its licence, and the exact commands that built the bundled one.
+
+Still to come: the temperature control in the panel for anything other than the two published presets, and Tolstoy Home using real posts.
 
 ## What it asks for
 
 - `search`, so the search bar on the new tab page can hand your words to your own default search engine, the same way the address bar does.
+- `storage`, so your settings survive a visit. Settings only, never feed content.
+- `offscreen`, so the model can run in a hidden extension page and keep working while you scroll.
 - Access to `https://x.com/*`, so the calm feed can read the timeline.
 
-Nothing else. Tolstoy makes no network request of its own, keeps no user id, and stores nothing. Moved posts live in the page's memory and are forgotten when you close the tab.
+Nothing else. Tolstoy makes no network request of its own unless you press Download for the stronger model, keeps no user id, and stores nothing about your feed. Moved posts live in the page's memory and are forgotten when you close the tab.
 
 ## How to load the extension
 

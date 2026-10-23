@@ -60,9 +60,32 @@
   // See docs/scoring-rules.md.
   var MODEL_CALIBRATION = 1;
 
-  // Shown when the model is what moved a post and the rules found no reason of
-  // their own to explain it.
-  var MODEL_REASON = "Read as hostile by the on-device model";
+  // The model's labels, said in plain words. Whichever label produced the score is
+  // the reason shown first, and no post is ever left without a reason at all: a
+  // missing or unrecognised label falls back to "Hostile tone." rather than the
+  // word "undefined".
+  var MODEL_REASONS = {
+    insult: "Insults someone",
+    threat: "Threatens harm",
+    identity_hate: "Attacks people for who they are",
+    severe_toxic: "Severely hostile"
+  };
+  var HOSTILE_TONE = "Hostile tone.";
+
+  function modelReason(label) {
+    return (typeof label === "string" && MODEL_REASONS[label]) ? MODEL_REASONS[label] : HOSTILE_TONE;
+  }
+
+  // One plain sentence per reason, no repeats, and nothing that is not a string.
+  function cleanReasons(list) {
+    var out = [];
+    (Array.isArray(list) ? list : []).forEach(function (item) {
+      if (typeof item === "string" && item && out.indexOf(item) === -1) {
+        out.push(item);
+      }
+    });
+    return out;
+  }
 
   var settings = { temperature: "balanced", blur: false };
   var model = { ready: false, reason: "absent" };
@@ -211,6 +234,7 @@
 
     var record = {
       scores: {},
+      labels: {},
       texts: texts,
       onLate: onLate || null,
       released: false,
@@ -225,7 +249,7 @@
           return;
         }
         record.released = true;
-        resolve(record.scores);
+        resolve({ scores: record.scores, labels: record.labels });
       }
 
       record.finish = finish;
@@ -300,13 +324,16 @@
     });
 
     var modelScores = {};
+    var modelLabels = {};
     var by = "rules";
     var movedIds = {};
 
     // Scores that arrive after the batch has already been handed to X. A post
     // that only now crosses the line is softened where it stands; it is never
     // moved, because it has been on screen all along.
-    function onLateScores(lateScores) {
+    function onLateScores(latePayload) {
+      var lateScores = (latePayload && latePayload.scores) || {};
+      var lateLabels = (latePayload && latePayload.labels) || {};
       if (mode() === "off") {
         return;
       }
@@ -323,7 +350,7 @@
         var base = typeof rules[entry.text] === "number" ? rules[entry.text] : rulesScoreOf(entry.text, scoreFn);
         if (fromModel * MODEL_CALIBRATION >= limit && base < limit) {
           movedIds[entry.id] = true;
-          caught.push({ id: entry.id, reasons: [MODEL_REASON] });
+          caught.push({ id: entry.id, reasons: [modelReason(lateLabels[entry.text])] });
         }
       });
       if (!caught.length) {
@@ -339,12 +366,13 @@
     return askModel(asked, onLateScores).then(function (answer) {
       batchCount += 1;
       coverage[whichBatch].asked += asked.length;
-      coverage[whichBatch].scored += answer ? Object.keys(answer).length : 0;
-      if (answer && Object.keys(answer).length) {
+      coverage[whichBatch].scored += answer && answer.scores ? Object.keys(answer.scores).length : 0;
+      if (answer && answer.scores && Object.keys(answer.scores).length) {
         by = "rules+model";
         modelBatchCount += 1;
         asked.forEach(function (text) {
-          modelScores[text] = typeof answer[text] === "number" ? answer[text] : 0;
+          modelScores[text] = typeof answer.scores[text] === "number" ? answer.scores[text] : 0;
+          modelLabels[text] = (answer.labels && answer.labels[text]) || "";
         });
       }
 
@@ -355,9 +383,15 @@
         var base = typeof rules[entry.text] === "number" ? rules[entry.text] : rulesScoreOf(entry.text, scoreFn);
         var fromModel = modelScores[entry.text] || 0;
         var blended = Math.max(base, fromModel * MODEL_CALIBRATION);
-        var reason = scoreFn(entry.text).reasons;
-        if (fromModel * MODEL_CALIBRATION > base && !reason.length) {
-          reason = [MODEL_REASON];
+        var ruleReasons = cleanReasons(scoreFn(entry.text).reasons);
+        var reason = ruleReasons;
+        if (blended > base) {
+          // The model is what crossed the line, so its reason leads and the rules'
+          // reasons follow it.
+          reason = cleanReasons([modelReason(modelLabels[entry.text])].concat(ruleReasons));
+        }
+        if (!reason.length) {
+          reason = [HOSTILE_TONE];
         }
         cachePut(entry.id, { score: blended, reasons: reason });
       });
@@ -379,8 +413,34 @@
         return Math.max(base, (modelScores[text] || 0) * MODEL_CALIBRATION);
       }
 
+      // The reasons that belong with that score. The reranker used to be handed the
+      // blended score and the rules' reasons, so a post the model moved could be
+      // listed with the rules' reason alone, or with none.
+      function reasonFor(text) {
+        var value = null;
+        entries.forEach(function (entry) {
+          if (entry.text === text) {
+            var cached = cacheGet(entry.id);
+            if (cached && Array.isArray(cached.reasons) && cached.reasons.length) {
+              value = cached.reasons;
+            }
+          }
+        });
+        if (Array.isArray(value) && value.length) {
+          return value;
+        }
+        var ruleReasons = cleanReasons(scoreFn(text).reasons);
+        var fromModel = (modelScores[text] || 0) * MODEL_CALIBRATION;
+        var rulesOnly = typeof rules[text] === "number" ? rules[text] : rulesScoreOf(text, scoreFn);
+        if (fromModel > rulesOnly) {
+          return cleanReasons([modelReason(modelLabels[text])].concat(ruleReasons));
+        }
+        return ruleReasons.length ? ruleReasons : [HOSTILE_TONE];
+      }
+
       return {
         scoreFor: scoreFor,
+        reasonFor: reasonFor,
         by: by,
         texts: asked,
         // The batch's own moves are not late catches. rerankBody hands them back
@@ -541,9 +601,10 @@
       promise: scorePayload(json, score)
         .then(function (scored) {
           var result = rerank.rerankTimeline(json, function (text) {
-            var value = scored.scoreFor(text);
-            var reasons = score(text).reasons;
-            return { score: value, reasons: reasons };
+            return {
+              score: scored.scoreFor(text),
+              reasons: typeof scored.reasonFor === "function" ? scored.reasonFor(text) : cleanReasons(score(text).reasons)
+            };
           }, threshold());
 
           if (!result || typeof result.checked !== "number") {
@@ -762,15 +823,19 @@
     if (data.type === "scoreResult" && data.id && pending[data.id]) {
       var record = pending[data.id];
       var incoming = data.scores || {};
+      var incomingLabels = data.labels || {};
       Object.keys(incoming).forEach(function (text) {
         record.scores[text] = incoming[text];
+      });
+      Object.keys(incomingLabels).forEach(function (text) {
+        record.labels[text] = incomingLabels[text];
       });
 
       if (record.released) {
         // This batch is already on screen. A score that arrives now can soften a
         // post in place, but it can never move one.
         if (record.onLate) {
-          record.onLate(incoming);
+          record.onLate({ scores: incoming, labels: incomingLabels });
         }
         if (data.done) {
           delete pending[data.id];

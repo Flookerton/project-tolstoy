@@ -197,3 +197,25 @@ used as a slur against a group, the on-device model does.
 This does not weaken the hard rule against political words. A slur says something about how
 something is said, not about which side anyone is on, and this list names no party, politician,
 ideology, country, religion, or political question.
+
+## What the on-device model says, and why
+
+The model does not decide on its own. It is a second opinion: a post moves when the rules move
+it, or when the model's own score crosses the line on its own. When the model is what crossed the
+line, its reason is shown first, and the rules' reasons follow it if there are any. No post is
+ever shown without a reason.
+
+The model has six labels. Two of them, `toxic` and `obscene`, are deliberately ignored, so that
+swearing alone never moves a post. The other four become plain sentences:
+
+| Label | The reason a person sees |
+| --- | --- |
+| `insult` | Insults someone |
+| `threat` | Threatens harm |
+| `identity_hate` | Attacks people for who they are |
+| `severe_toxic` | Severely hostile |
+
+The score used is the highest of those four, and the label that produced it is the reason shown.
+If the label is missing or is one this list does not know, the reason is **Hostile tone.**, which
+is also what a post falls back to if it somehow arrives with no reason at all. The word
+"undefined" is never shown to anyone.

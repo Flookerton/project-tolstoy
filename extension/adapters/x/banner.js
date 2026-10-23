@@ -341,12 +341,18 @@
       body.appendChild(text);
       body.appendChild(flag);
 
-      if (post.reasons && post.reasons.length) {
-        var reasons = document.createElement("p");
-        reasons.className = "reasons";
-        reasons.textContent = post.reasons.join(" · ");
-        body.appendChild(reasons);
+      // Never the word "undefined": if a post arrives with no usable reason, it
+      // still gets one.
+      var reasonLines = (Array.isArray(post.reasons) ? post.reasons : []).filter(function (line) {
+        return typeof line === "string" && line;
+      });
+      if (!reasonLines.length) {
+        reasonLines = ["Hostile tone."];
       }
+      var reasons = document.createElement("p");
+      reasons.className = "reasons";
+      reasons.textContent = reasonLines.join(" · ");
+      body.appendChild(reasons);
 
       if (post.handle && post.id) {
         var link = document.createElement("a");

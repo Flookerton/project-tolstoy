@@ -84,6 +84,13 @@
     ].join("\n");
   }
 
+  // Only strings, so a reason can never render as "undefined".
+  function keepReasons(list) {
+    return (Array.isArray(list) ? list : []).filter(function (line) {
+      return typeof line === "string" && line;
+    });
+  }
+
   function makeVeil(id, reasons) {
     var host = document.createElement("div");
     host.setAttribute("data-tolstoy-veil", id);
@@ -99,7 +106,8 @@
 
     var reason = document.createElement("p");
     reason.className = "reason";
-    reason.textContent = (reasons && reasons.length ? reasons.join(" · ") + ". " : "") + FLAG_LINE;
+    var lines = keepReasons(reasons);
+    reason.textContent = (lines.length ? lines.join(" · ") + ". " : "") + FLAG_LINE;
 
     var show = document.createElement("button");
     show.type = "button";
@@ -230,7 +238,7 @@
       if (Array.isArray(data.caught)) {
         data.caught.forEach(function (post) {
           if (post && post.id) {
-            reasonsById[post.id] = post.reasons || [];
+            reasonsById[post.id] = keepReasons(post.reasons);
             lateIds[post.id] = true;
           }
         });
@@ -249,7 +257,7 @@
     if (Array.isArray(data.moved)) {
       data.moved.forEach(function (post) {
         if (post && post.id) {
-          reasonsById[post.id] = post.reasons || [];
+          reasonsById[post.id] = keepReasons(post.reasons);
         }
       });
     }

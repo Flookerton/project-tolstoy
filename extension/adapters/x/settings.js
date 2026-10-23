@@ -94,8 +94,9 @@
             return;
           }
           var scores = (reply && reply.scores) || {};
+          var labels = (reply && reply.labels) || {};
           var answered = Object.keys(scores).length > 0;
-          post({ type: "scoreResult", id: id, scores: scores, done: !queue.length });
+          post({ type: "scoreResult", id: id, scores: scores, labels: labels, done: !queue.length });
           if (!answered && reply && reply.ok === false) {
             // The model is not available, so there is nothing to wait for. The
             // page falls back to the rules on its own timer either way.

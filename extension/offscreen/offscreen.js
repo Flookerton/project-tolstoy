@@ -100,6 +100,9 @@ const GROUP = 8;
 async function scoreTexts(texts) {
   const model = await load();
   const scores = {};
+  // The label that produced the score, so the page can say why the model moved a
+  // post instead of showing a bare number or, worse, the word "undefined".
+  const labels = {};
   const clean = texts.map(function (text) {
     return typeof text === "string" && text.trim() ? text : " ";
   });
@@ -118,20 +121,25 @@ async function scoreTexts(texts) {
     const per = part.length ? Math.max(1, Math.round(flat.length / part.length)) : 1;
     part.forEach(function (text, index) {
       let best = 0;
+      let bestLabel = "";
       for (let k = index * per; k < (index + 1) * per; k += 1) {
         const row = flat[k];
-        if (row && WANTED_LABELS.indexOf(row.label) !== -1 && typeof row.score === "number") {
-          best = Math.max(best, row.score);
+        if (row && WANTED_LABELS.indexOf(row.label) !== -1 && typeof row.score === "number" && row.score > best) {
+          best = row.score;
+          bestLabel = row.label;
         }
       }
       scores[text] = best;
+      labels[text] = bestLabel;
     });
   }
 
   // Answered under the text the caller sent, not under a padded copy of it.
-  const answer = {};
+  const answer = { scores: {}, labels: {} };
   texts.forEach(function (text, index) {
-    answer[text] = typeof text === "string" && text ? scores[clean[index]] || 0 : 0;
+    const usable = typeof text === "string" && text;
+    answer.scores[text] = usable ? scores[clean[index]] || 0 : 0;
+    answer.labels[text] = usable ? labels[clean[index]] || "" : "";
   });
   return answer;
 }
@@ -155,7 +163,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   if (message.type === "modelScore") {
     scoreTexts(Array.isArray(message.texts) ? message.texts : [])
-      .then((scores) => sendResponse({ ok: true, scores, device }))
+      .then((result) => sendResponse({ ok: true, scores: result.scores, labels: result.labels, device }))
       .catch((error) => sendResponse({ ok: false, message: String((error && error.message) || error) }));
     return true;
   }

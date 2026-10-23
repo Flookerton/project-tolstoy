@@ -238,8 +238,8 @@ var TEXT_CACHE_MAX = 2000;
 var SCORE_GROUP = 4;
 var SCORE_BUDGET_MS = 370;
 
-function remember(text, value) {
-  textCache.set(text, value);
+function remember(text, score, label) {
+  textCache.set(text, { score: score, label: label || "" });
   while (textCache.size > TEXT_CACHE_MAX) {
     const oldest = textCache.keys().next();
     if (oldest.done) {
@@ -251,12 +251,15 @@ function remember(text, value) {
 
 function collect(texts) {
   const scores = {};
+  const labels = {};
   for (const text of texts) {
     if (textCache.has(text)) {
-      scores[text] = textCache.get(text);
+      const held = textCache.get(text);
+      scores[text] = held.score;
+      labels[text] = held.label || "";
     }
   }
-  return scores;
+  return { scores: scores, labels: labels };
 }
 
 function sleepUntil(deadline) {
@@ -293,12 +296,14 @@ async function scoreTexts(texts, budgetMs) {
     return !textCache.has(text);
   });
   if (!missing.length) {
-    return { ok: true, scores: collect(wanted), modelled: 0, asked: wanted.length };
+    const held = collect(wanted);
+    return { ok: true, scores: held.scores, labels: held.labels, modelled: 0, asked: wanted.length };
   }
 
   const ready = await ensureOffscreen();
   if (!ready) {
-    return { ok: false, message: "no offscreen document", scores: collect(wanted) };
+    const held = collect(wanted);
+    return { ok: false, message: "no offscreen document", scores: held.scores, labels: held.labels };
   }
 
   warmChannel();
@@ -313,7 +318,11 @@ async function scoreTexts(texts, budgetMs) {
       return false;
     }
     for (const text of group) {
-      remember(text, typeof answer.scores[text] === "number" ? answer.scores[text] : 0);
+      remember(
+        text,
+        typeof answer.scores[text] === "number" ? answer.scores[text] : 0,
+        (answer.labels && answer.labels[text]) || ""
+      );
     }
     modelled += group.length;
     return true;
@@ -333,12 +342,14 @@ async function scoreTexts(texts, budgetMs) {
 
   await Promise.race([first, guard]);
 
+  const held = collect(wanted);
   const reply = {
     ok: true,
-    scores: collect(wanted),
+    scores: held.scores,
+    labels: held.labels,
     modelled: modelled,
     asked: wanted.length,
-    partial: Object.keys(collect(wanted)).length < wanted.length
+    partial: Object.keys(held.scores).length < wanted.length
   };
 
   // The rest, after the page has its answer. Nothing waits on this.

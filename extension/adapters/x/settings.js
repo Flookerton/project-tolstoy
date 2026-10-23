@@ -43,7 +43,10 @@
       return;
     }
     try {
-      chrome.runtime.sendMessage({ type: "modelStatus" }, function (reply) {
+      // Every message to the worker carries the source tag. The worker ignores
+      // anything untagged, which is how this bridge spent a while asking the
+      // worker questions it never answered.
+      chrome.runtime.sendMessage({ source: SOURCE, type: "modelStatus" }, function (reply) {
         if (chrome.runtime.lastError || !reply) {
           post({ type: "modelStatus", ready: false, reason: "absent" });
           return;
@@ -55,20 +58,64 @@
     }
   }
 
+  // Scores come back a group at a time, and the group size is deliberately small:
+  // the page holds a timeline for a fixed budget and reranks with whatever has
+  // arrived by then, so many small answers are worth more than one big one.
+  var GROUP = 4;
+  var asking = {};
+
   function askForScores(id, texts) {
     if (!hasRuntime() || !Array.isArray(texts) || !texts.length) {
       return;
     }
-    try {
-      chrome.runtime.sendMessage({ type: "score", texts: texts }, function (reply) {
-        if (chrome.runtime.lastError || !reply || !reply.scores) {
-          return;
-        }
-        post({ type: "scoreResult", id: id, scores: reply.scores });
-      });
-    } catch (error) {
-      // The page falls back to the rules score after its own timeout.
+    if (asking[id]) {
+      return;
     }
+    asking[id] = true;
+
+    var queue = texts.slice();
+
+    function stop() {
+      delete asking[id];
+    }
+
+    function next() {
+      var part = queue.splice(0, GROUP);
+      if (!part.length) {
+        post({ type: "scoreResult", id: id, scores: {}, done: true });
+        stop();
+        return;
+      }
+      try {
+        chrome.runtime.sendMessage({ source: SOURCE, type: "score", texts: part }, function (reply) {
+          if (chrome.runtime.lastError) {
+            post({ type: "scoreResult", id: id, scores: {}, done: true });
+            stop();
+            return;
+          }
+          var scores = (reply && reply.scores) || {};
+          var answered = Object.keys(scores).length > 0;
+          post({ type: "scoreResult", id: id, scores: scores, done: !queue.length });
+          if (!answered && reply && reply.ok === false) {
+            // The model is not available, so there is nothing to wait for. The
+            // page falls back to the rules on its own timer either way.
+            post({ type: "scoreResult", id: id, scores: {}, done: true });
+            stop();
+            return;
+          }
+          if (queue.length) {
+            next();
+            return;
+          }
+          stop();
+        });
+      } catch (error) {
+        post({ type: "scoreResult", id: id, scores: {}, done: true });
+        stop();
+      }
+    }
+
+    next();
   }
 
   function hasStorage() {

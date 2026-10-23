@@ -65,6 +65,10 @@
   var panelRows = null;
   var panelTitle = null;
   var closeButton = null;
+  var scoredBy = null;
+  var lateEl = null;
+  var lateCaught = 0;
+  var by = "rules";
 
   function styles(t) {
     return [
@@ -87,6 +91,7 @@
       ".temp { padding: 0; border: 0; background: none; color: " + t.ink2 + "; font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }",
       ".temp:hover { color: " + t.ink + "; }",
       ".count { color: " + t.ink + "; }",
+      ".late { color: " + t.ink3 + "; font-size: 13px; }",
       ".show {",
       "  min-height: 44px; margin-left: auto; padding: 0 20px;",
       "  border: 1px solid " + t.line + "; border-radius: 999px;",
@@ -119,6 +124,7 @@
       ".open { align-self: flex-start; min-height: 44px; display: inline-flex; align-items: center; color: " + t.accent + "; font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }",
       ".open:hover { color: " + t.ink + "; }",
       ".panel .close { display: block; margin: 16px 0 0; min-height: 44px; padding: 0 20px; border: 1px solid " + t.line + "; border-radius: 999px; background: " + t.paper + "; color: " + t.ink + "; font: inherit; font-weight: 600; cursor: pointer; }",
+      ".scored-by { margin: 12px 0 0; color: " + t.ink3 + "; font-size: 14px; }",
       "@keyframes tolstoy-fade { from { opacity: 0; } to { opacity: 1; } }",
       "@media (prefers-reduced-motion: reduce) { .strip, .panel { animation: none; } }"
     ].join("\n");
@@ -166,6 +172,12 @@
     countEl.className = "count";
     strip.appendChild(countEl);
 
+    // The line the model adds when it flags a post after its batch was shown.
+    lateEl = document.createElement("span");
+    lateEl.className = "late";
+    lateEl.hidden = true;
+    strip.appendChild(lateEl);
+
     showButton = document.createElement("button");
     showButton.type = "button";
     showButton.className = "show";
@@ -204,8 +216,12 @@
     closeButton.textContent = "Close";
     closeButton.addEventListener("click", closePanel);
 
+    scoredBy = document.createElement("p");
+    scoredBy.className = "scored-by";
+
     panel.appendChild(panelTitle);
     panel.appendChild(panelRows);
+    panel.appendChild(scoredBy);
     panel.appendChild(closeButton);
 
     panelWrap.appendChild(backdrop);
@@ -256,6 +272,16 @@
     }
     tempButton.textContent = temperatureName();
 
+    if (lateEl) {
+      if (lateCaught > 0) {
+        lateEl.hidden = false;
+        lateEl.textContent = lateCaught + " softened after a closer look.";
+      } else {
+        lateEl.hidden = true;
+        lateEl.textContent = "";
+      }
+    }
+
     if (mode === "off") {
       countEl.textContent = "Unfiltered. Checked " + checked + (checked === 1 ? " post." : " posts.");
       return;
@@ -274,6 +300,11 @@
       return;
     }
     panelTitle.textContent = PANEL_TITLES[mode] || PANEL_TITLES.move;
+    if (scoredBy) {
+      scoredBy.textContent = by === "rules+model"
+        ? "Scored by: rules and the on-device model"
+        : "Scored by: rules";
+    }
     panelRows.textContent = "";
     if (!moved.length) {
       var empty = document.createElement("p");
@@ -419,6 +450,16 @@
       return;
     }
 
+    // The model flagged a post after its batch had already been shown. It was
+    // softened where it stood, never moved, so this only adds a line.
+    if (data.type === "lateCaught") {
+      if (Array.isArray(data.caught) && data.caught.length) {
+        lateCaught += data.caught.length;
+        renderCount();
+      }
+      return;
+    }
+
     if (data.type !== "counts") {
       return;
     }
@@ -441,6 +482,9 @@
     }
     if (typeof data.temperature === "string") {
       temperature = data.temperature;
+    }
+    if (typeof data.by === "string") {
+      by = data.by;
     }
 
     build();

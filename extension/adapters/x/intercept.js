@@ -32,16 +32,33 @@
   var OPERATIONS = ["HomeTimeline", "HomeLatestTimeline", "TweetDetail"];
   var URL_KEY = "__tolstoyRequestUrl";
   var HOLD_KEY = "__tolstoyHold";
-  var HOLD_MS = 400;
+  // The page owns the clock. There are two budgets: the first timeline batch of a
+  // page load waits at most 400ms, because the person is looking straight at it,
+  // and later batches, the ones scrolling asks for, wait up to 1500ms, because X
+  // requests those before the person reaches the bottom. Page timers are precise;
+  // a service worker's timers are clamped by the browser, which is why the clock
+  // lives here and not in the worker.
+  // The budget is the model's, and the page still has to parse and rerank after
+  // it, so the first budget is set a little under the 400ms the person is
+  // promised: measured end to end, a batch with a 320ms model budget came back in
+  // about 400ms including the rerank.
+  var HOLD_FIRST_MS = 320;
+  var HOLD_SCROLL_MS = 1400;
 
   // Calm, Balanced and Unfiltered, from the orchestration's decision table.
   var THRESHOLDS = { calm: 0.45, balanced: 0.5, unfiltered: 1.01 };
 
   // The model's own scores are multiplied by this before they are compared with
-  // the rules. It was tuned on tests/fixtures/eval-set.json only: at 0.6 no calm
-  // post moves at Balanced or at Calm, and the heated catch rate stays at 95%
-  // and 100%. See docs/scoring-rules.md.
-  var MODEL_CALIBRATION = 0.6;
+  // the rules. It was chosen from tests/fixtures/model-scores-main.json, which
+  // holds the raw label scores of every post in the main eval set as measured by
+  // this model in this browser, with the model id and the file's sha256 recorded
+  // alongside. On that file, 1.0 is the largest value that still meets both bars:
+  // at Balanced one calm post moves and 95 percent of heated posts are caught, and
+  // at Calm two calm posts move and 98 percent are caught. It rescues one hostile
+  // post the rules alone miss (the "toothless crackhead" one from the live check)
+  // and it costs one calm post (a gaming "I am going to kill this boss" idiom).
+  // See docs/scoring-rules.md.
+  var MODEL_CALIBRATION = 1;
 
   // Shown when the model is what moved a post and the rules found no reason of
   // their own to explain it.
@@ -49,6 +66,8 @@
 
   var settings = { temperature: "balanced", blur: false };
   var model = { ready: false, reason: "absent" };
+  var modelStatusSeen = false;
+  var modelAsks = 0;
   var totals = { checked: 0, moved: [] };
   var lastBy = "rules";
 
@@ -64,6 +83,22 @@
     }
     var last = pathname.split("/").filter(Boolean).pop() || "";
     return OPERATIONS.indexOf(last) !== -1;
+  }
+
+  // The service worker may still be waking when the page first asks whether the
+  // model is there, and a single answer of "no" would otherwise be believed for
+  // the whole visit. Ask again a few times, and on earlier batches. This costs one
+  // message per attempt and nothing else.
+  function askModelStatusAgain() {
+    if (modelStatusSeen || modelAsks >= 5) {
+      return;
+    }
+    modelAsks += 1;
+    try {
+      window.postMessage({ source: SOURCE, type: "requestModelStatus" }, window.location.origin);
+    } catch (error) {
+      // The next attempt will try again.
+    }
   }
 
   function threshold() {
@@ -107,6 +142,26 @@
     }
   }
 
+  // A post the model flagged after its batch was already shown. It is softened in
+  // place, never moved, so nothing that is already on screen ever jumps position.
+  // "Show anyway" still works, and Unfiltered never softens anything.
+  function reportLate(caught) {
+    try {
+      window.postMessage(
+        {
+          source: SOURCE,
+          type: "lateCaught",
+          caught: caught,
+          mode: mode(),
+          temperature: settings.temperature
+        },
+        window.location.origin
+      );
+    } catch (error) {
+      // The veil is a courtesy, never a requirement.
+    }
+  }
+
   function reportTotals() {
     try {
       window.postMessage(
@@ -131,41 +186,69 @@
 
   var pending = {};
   var pendingCount = 0;
+  var firstBatchDone = false;
+  var lateCaught = 0;
+  // Coverage, for the report only: how many posts of each batch had a model
+  // score before the batch was handed to X, counted for the first batch of the
+  // page load and for the batches scrolling asks for, separately.
+  var coverage = { first: { asked: 0, scored: 0 }, scroll: { asked: 0, scored: 0 } };
 
   // Ask the on-device model about a batch of texts. Only text is sent, and it
-  // never leaves the page, the extension and this computer. Resolves with a map
-  // from text to score, or null if the model was not ready or did not answer in
-  // time.
-  function askModel(texts) {
+  // never leaves the page, the extension and this computer.
+  //
+  // The answer arrives a group at a time. Whatever has arrived when the budget
+  // runs out is what the caller gets; the rest keeps coming, and any later score
+  // that pushes a post over the line is handed to onLate, which softens it in
+  // place instead of moving it, so nothing that has already been shown ever jumps
+  // position.
+  function askModel(texts, onLate) {
     if (!model.ready || !texts.length) {
       return Promise.resolve(null);
     }
-    return new Promise(function (resolve) {
-      var id = "score-" + (pendingCount += 1);
-      var settled = false;
+    var id = "score-" + (pendingCount += 1);
+    var budget = firstBatchDone ? HOLD_SCROLL_MS : HOLD_FIRST_MS;
+    firstBatchDone = true;
 
-      function finish(value) {
-        if (settled) {
+    var record = {
+      scores: {},
+      texts: texts,
+      onLate: onLate || null,
+      released: false,
+      done: false,
+      finish: null
+    };
+    pending[id] = record;
+
+    return new Promise(function (resolve) {
+      function finish() {
+        if (record.released) {
           return;
         }
-        settled = true;
-        delete pending[id];
-        resolve(value);
+        record.released = true;
+        resolve(record.scores);
       }
 
-      pending[id] = finish;
+      record.finish = finish;
 
       try {
-        window.postMessage({ source: SOURCE, type: "scoreRequest", id: id, texts: texts, budgetMs: HOLD_MS - 60 }, window.location.origin);
+        window.postMessage({ source: SOURCE, type: "scoreRequest", id: id, texts: texts }, window.location.origin);
       } catch (error) {
-        finish(null);
+        finish();
         return;
       }
 
-      window.setTimeout(function () {
-        finish(null);
-      }, HOLD_MS);
+      window.setTimeout(finish, budget);
     });
+  }
+
+  // Every text in the batch has an answer, so there is nothing left to wait for.
+  function allScored(record) {
+    for (var i = 0; i < record.texts.length; i += 1) {
+      if (typeof record.scores[record.texts[i]] !== "number") {
+        return false;
+      }
+    }
+    return true;
   }
 
   function rulesScoreOf(text, scoreFn) {
@@ -218,14 +301,50 @@
 
     var modelScores = {};
     var by = "rules";
+    var movedIds = {};
 
-    return askModel(asked).then(function (answer) {
+    // Scores that arrive after the batch has already been handed to X. A post
+    // that only now crosses the line is softened where it stands; it is never
+    // moved, because it has been on screen all along.
+    function onLateScores(lateScores) {
+      if (mode() === "off") {
+        return;
+      }
+      var limit = threshold();
+      var caught = [];
+      entries.forEach(function (entry) {
+        if (movedIds[entry.id]) {
+          return;
+        }
+        var fromModel = typeof lateScores[entry.text] === "number" ? lateScores[entry.text] : 0;
+        if (!fromModel) {
+          return;
+        }
+        var base = typeof rules[entry.text] === "number" ? rules[entry.text] : rulesScoreOf(entry.text, scoreFn);
+        if (fromModel * MODEL_CALIBRATION >= limit && base < limit) {
+          movedIds[entry.id] = true;
+          caught.push({ id: entry.id, reasons: [MODEL_REASON] });
+        }
+      });
+      if (!caught.length) {
+        return;
+      }
+      lateCaught += caught.length;
+      reportLate(caught);
+    }
+
+    var whichBatch = firstBatchDone ? "scroll" : "first";
+    askModelStatusAgain();
+
+    return askModel(asked, onLateScores).then(function (answer) {
       batchCount += 1;
-      if (answer && answer.scores && Object.keys(answer.scores).length) {
+      coverage[whichBatch].asked += asked.length;
+      coverage[whichBatch].scored += answer ? Object.keys(answer).length : 0;
+      if (answer && Object.keys(answer).length) {
         by = "rules+model";
         modelBatchCount += 1;
         asked.forEach(function (text) {
-          modelScores[text] = typeof answer.scores[text] === "number" ? answer.scores[text] : 0;
+          modelScores[text] = typeof answer[text] === "number" ? answer[text] : 0;
         });
       }
 
@@ -260,7 +379,23 @@
         return Math.max(base, (modelScores[text] || 0) * MODEL_CALIBRATION);
       }
 
-      return { scoreFor: scoreFor, by: by, texts: asked };
+      return {
+        scoreFor: scoreFor,
+        by: by,
+        texts: asked,
+        // The batch's own moves are not late catches. rerankBody hands them back
+        // here, inside this closure, because this is where the list lives.
+        markMoved: function (list) {
+          if (!Array.isArray(list)) {
+            return;
+          }
+          list.forEach(function (post) {
+            if (post && post.id !== undefined) {
+              movedIds[String(post.id)] = true;
+            }
+          });
+        }
+      };
     });
   }
 
@@ -413,6 +548,11 @@
 
           if (!result || typeof result.checked !== "number") {
             return null;
+          }
+
+          // Anything this batch already moved is not a late catch.
+          if (typeof scored.markMoved === "function") {
+            scored.markMoved(result.moved);
           }
 
           var moved = currentMode === "off" ? [] : result.moved || [];
@@ -620,11 +760,36 @@
     }
 
     if (data.type === "scoreResult" && data.id && pending[data.id]) {
-      pending[data.id]({ scores: data.scores || {} });
+      var record = pending[data.id];
+      var incoming = data.scores || {};
+      Object.keys(incoming).forEach(function (text) {
+        record.scores[text] = incoming[text];
+      });
+
+      if (record.released) {
+        // This batch is already on screen. A score that arrives now can soften a
+        // post in place, but it can never move one.
+        if (record.onLate) {
+          record.onLate(incoming);
+        }
+        if (data.done) {
+          delete pending[data.id];
+        }
+        return;
+      }
+
+      if (data.done || allScored(record)) {
+        var finish = record.finish;
+        delete pending[data.id];
+        if (typeof finish === "function") {
+          finish();
+        }
+      }
       return;
     }
 
     if (data.type === "modelStatus") {
+      modelStatusSeen = true;
       model.ready = !!data.ready;
       model.reason = data.reason || (data.ready ? "ready" : "absent");
       return;
@@ -649,6 +814,17 @@
     // Balanced is a safe default, and the rules always work.
   }
 
+  // Ask again while there is no answer, at a human pace, for the first few tries.
+  (function keepAsking(tries) {
+    if (modelStatusSeen || tries >= 5) {
+      return;
+    }
+    window.setTimeout(function () {
+      askModelStatusAgain();
+      keepAsking(tries + 1);
+    }, 900);
+  })(0);
+
   // For the browser checks only: how the last batch was scored, and whether the
   // settings beat the first batch.
   window.__tolstoyState = function () {
@@ -660,7 +836,13 @@
       blur: settings.blur,
       batches: batchCount,
       modelBatches: modelBatchCount,
-      fallbacks: batchCount - modelBatchCount
+      fallbacks: batchCount - modelBatchCount,
+      lateCaught: lateCaught,
+      holdFirstMs: HOLD_FIRST_MS,
+      holdScrollMs: HOLD_SCROLL_MS,
+      coverage: coverage,
+      modelStatusSeen: modelStatusSeen,
+      modelAsks: modelAsks
     };
   };
 })();

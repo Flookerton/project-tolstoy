@@ -39,6 +39,7 @@
 
   var mode = "move";
   var reasonsById = {};
+  var lateIds = {};
   var revealed = {};
   var observer = null;
   var pending = false;
@@ -133,10 +134,12 @@
   function pass() {
     pending = false;
     try {
-      if (mode !== "blur" || !Object.keys(reasonsById).length) {
-        if (mode !== "blur") {
-          clearAll();
-        }
+      // In blur mode every flagged post is softened. In move mode the veils are
+      // only for posts the model flagged late: those were already on screen, so
+      // they are softened where they stand rather than moved.
+      var lateCount = Object.keys(lateIds).length;
+      if (mode !== "blur" && !lateCount) {
+        clearAll();
         return;
       }
 
@@ -162,6 +165,9 @@
       Array.prototype.forEach.call(posts, function (element) {
         var id = statusIdOf(element);
         if (!id || !reasonsById[id] || revealed[id]) {
+          return;
+        }
+        if (mode !== "blur" && !lateIds[id]) {
           return;
         }
         if (element.querySelector('[data-tolstoy-veil="' + id + '"]')) {
@@ -215,6 +221,25 @@
       return;
     }
 
+    // A post the model flagged after its batch was already shown. It is softened
+    // where it stands, in move mode as well as blur mode, and never moved.
+    if (data.type === "lateCaught") {
+      if (data.mode === "off") {
+        return;
+      }
+      if (Array.isArray(data.caught)) {
+        data.caught.forEach(function (post) {
+          if (post && post.id) {
+            reasonsById[post.id] = post.reasons || [];
+            lateIds[post.id] = true;
+          }
+        });
+      }
+      startWatching();
+      schedulePass();
+      return;
+    }
+
     if (data.type !== "counts") {
       return;
     }
@@ -255,5 +280,5 @@
   }
 
   // Exposed for the browser check only.
-  window.__tolstoyVeil = { pass: pass, revealed: revealed, reasonsById: reasonsById };
+  window.__tolstoyVeil = { pass: pass, revealed: revealed, reasonsById: reasonsById, lateIds: lateIds };
 })();

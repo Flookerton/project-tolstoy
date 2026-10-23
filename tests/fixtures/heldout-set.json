@@ -1,0 +1,46 @@
+{
+  "note": "Held-out set, written by the orchestrator on Oct 23, 2026, after the live check on real X. It is written down exactly as it was given, with one exception: H10 is the one-word homophobic slur from the live check, as instructed. DO NOT TUNE ON THIS FILE AND DO NOT EDIT IT. It is the honest measure of recall on language the rules were not written against. Every post here is fictional or copied from the live check with no names. Content note: it contains slurs, because a filter has to be measured against them. It lives in tests/ and never ships.",
+  "source": "Task 4, orchestrator, from the owner's live check on real X",
+  "rules": "Report the numbers whatever they are, at both temperatures, rules alone and rules plus the model.",
+
+  "items": [
+    { "id": "H1", "label": "heated", "text": "I hope your house burns down" },
+    { "id": "H2", "label": "heated", "text": "Someone needs to put him in the ground" },
+    { "id": "H3", "label": "heated", "text": "Shut up you worthless troll" },
+    { "id": "H4", "label": "heated", "text": "They are not even human, they are trash" },
+    { "id": "H5", "label": "heated", "text": "You are a pathetic excuse for a human being" },
+    { "id": "H6", "label": "heated", "text": "Anyone who disagrees with me is a brain-dead sheep" },
+    { "id": "H7", "label": "heated", "text": "these freaks should be locked up and the key thrown away" },
+    { "id": "H8", "label": "heated", "text": "People who vote like that are vermin and should be treated like it" },
+    { "id": "H9", "label": "heated", "text": "So funny this toothless crackhead keeps reaching out to people in my circle. This loser has a wife and kid but still embarrasses their existence. Never change bozo" },
+    { "id": "H10", "label": "heated", "text": "faggot", "note": "the one-word homophobic slur reply from the live check" },
+    { "id": "H11", "label": "heated", "text": "Go back to whatever hole you crawled out of" },
+    { "id": "H12", "label": "heated", "text": "Nobody would miss you if you disappeared" },
+    { "id": "H13", "label": "heated", "text": "Imagine being this ugly and this stupid at the same time" },
+    { "id": "H14", "label": "heated", "text": "You people make me sick, every last one of you" },
+    { "id": "H15", "label": "heated", "text": "I'd love to see someone knock his teeth out" },
+    { "id": "H16", "label": "heated", "text": "Delete your account, you absolute waste of oxygen" },
+
+    { "id": "C1", "label": "calm", "text": "What an idiot I was to skip sunscreen today" },
+    { "id": "C2", "label": "calm", "text": "This sauce is fucking incredible, I'm making it every week" },
+    { "id": "C3", "label": "calm", "text": "The referee was terrible tonight, worst call of the season" },
+    { "id": "C4", "label": "calm", "text": "My cat should be arrested for crimes against my houseplants" },
+    { "id": "C5", "label": "calm", "text": "That comedian absolutely killed it last night" },
+    { "id": "C6", "label": "calm", "text": "This tax plan will hurt working families and I will vote against it" },
+    { "id": "C7", "label": "calm", "text": "This tax plan finally rewards working families and I will vote for it" },
+    { "id": "C8", "label": "calm", "text": "He is a monster on the basketball court, 40 points tonight" },
+    { "id": "C9", "label": "calm", "text": "Our dog is such a clown, he wore the laundry basket as a hat" },
+    { "id": "C10", "label": "calm", "text": "I could murder a pizza right now" },
+    { "id": "C11", "label": "calm", "text": "Damn, this hike nearly killed me but the view was worth it" },
+    { "id": "C12", "label": "calm", "text": "The governor's plan is a disaster for renters, here's the data" },
+    { "id": "C13", "label": "calm", "text": "I strongly disagree with this ruling, and here is why" },
+    { "id": "C14", "label": "calm", "text": "Honestly the new update is garbage, the old menu was so much better" },
+    { "id": "C15", "label": "calm", "text": "We lost 4 to 1, brutal night, proud of the kids anyway" },
+    { "id": "C16", "label": "calm", "text": "These pests ate every tomato in my garden" }
+  ],
+
+  "targets": {
+    "balanced": { "calmFlaggedAtMost": 1, "heatedCaughtAtLeast": 12, "heatedTotal": 16, "calmTotal": 16 },
+    "note": "Report both temperatures, the rules-only result and the rules-plus-model result side by side."
+  }
+}

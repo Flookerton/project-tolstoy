@@ -461,7 +461,19 @@
     if (data.type === "lateCaught") {
       if (Array.isArray(data.caught) && data.caught.length) {
         lateCaught += data.caught.length;
+        // Listed like anything else that was softened, so the panel says why.
+        var known = {};
+        moved.forEach(function (post) {
+          known[post.id] = true;
+        });
+        data.caught.forEach(function (post) {
+          if (post && post.id && !known[post.id]) {
+            known[post.id] = true;
+            moved.push(post);
+          }
+        });
         renderCount();
+        renderRows();
       }
       return;
     }

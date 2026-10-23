@@ -220,6 +220,25 @@
   // page load and for the batches scrolling asks for, separately.
   var coverage = { first: { asked: 0, scored: 0 }, scroll: { asked: 0, scored: 0 } };
 
+  // The only test seam in this file. The browser checks set
+  // sessionStorage.tolstoyTestHoldMs to pin the model deadline, so a late catch can
+  // be shown on purpose instead of waited for: with the deadline at 0 the page has
+  // handed the batch back before any score can arrive, and everything after that is
+  // a late catch by definition. Nothing on x.com sets this key, and a value that is
+  // not a number, or is negative, is ignored.
+  function testHoldMs() {
+    try {
+      var raw = window.sessionStorage.getItem("tolstoyTestHoldMs");
+      if (raw === null || raw === "") {
+        return null;
+      }
+      var value = Number(raw);
+      return isFinite(value) && value >= 0 ? value : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
   // Ask the on-device model about a batch of texts. Only text is sent, and it
   // never leaves the page, the extension and this computer.
   //
@@ -238,7 +257,8 @@
       return Promise.resolve(null);
     }
     var id = "score-" + (pendingCount += 1);
-    var budget = firstBatchDone ? HOLD_SCROLL_MS : HOLD_FIRST_MS;
+    var pinned = testHoldMs();
+    var budget = pinned === null ? (firstBatchDone ? HOLD_SCROLL_MS : HOLD_FIRST_MS) : pinned;
     firstBatchDone = true;
 
     var record = {
@@ -359,7 +379,14 @@
         var base = typeof rules[entry.text] === "number" ? rules[entry.text] : rulesScoreOf(entry.text, scoreFn);
         if (fromModel * MODEL_CALIBRATION >= limit && base < limit) {
           movedIds[entry.id] = true;
-          caught.push({ id: entry.id, reasons: [modelReason(lateLabels[entry.text])] });
+          var body = typeof entry.text === "string" ? entry.text : "";
+          caught.push({
+            id: entry.id,
+            handle: entry.handle || "",
+            text: body.length > 140 ? body.slice(0, 140) : body,
+            reasons: [modelReason(lateLabels[entry.text])],
+            late: true
+          });
         }
       });
       if (!caught.length) {

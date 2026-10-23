@@ -558,7 +558,7 @@
                 var item = content.items[i];
                 var text = textOf(itemTweet(item));
                 if (text) {
-                  texts.push({ id: idOf(itemTweet(item), item.entryId), text: text });
+                  texts.push({ id: idOf(itemTweet(item), item.entryId), handle: handleOf(itemTweet(item)), text: text });
                 }
               }
               return;
@@ -589,7 +589,7 @@
             var only = resultOf(content.itemContent);
             var body = textOf(only);
             if (body) {
-              texts.push({ id: idOf(only, entry.entryId), text: body });
+              texts.push({ id: idOf(only, entry.entryId), handle: handleOf(only), text: body });
             }
           });
         });

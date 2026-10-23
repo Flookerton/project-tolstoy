@@ -161,6 +161,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       .catch((error) => sendResponse({ ok: false, message: String((error && error.message) || error) }));
     return true;
   }
+  // One tiny inference, asked for while X is still building its first request.
+  // Loading the model and running one post it can throw away takes the kernels and
+  // the WASM session from cold, so the first real batch answers in the ordinary
+  // time instead of paying for both.
+  if (message.type === "modelWarm") {
+    (async () => {
+      try {
+        const model = await load();
+        await model("warm", { top_k: null });
+        sendResponse({ ok: true, device: device });
+      } catch (error) {
+        sendResponse({ ok: false, message: String((error && error.message) || error) });
+      }
+    })();
+    return true;
+  }
   if (message.type === "modelScore") {
     scoreTexts(Array.isArray(message.texts) ? message.texts : [])
       .then((result) => sendResponse({ ok: true, scores: result.scores, labels: result.labels, device }))

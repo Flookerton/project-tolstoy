@@ -61,7 +61,14 @@
   // Scores come back a group at a time, and the group size is deliberately small:
   // the page holds a timeline for a fixed budget and reranks with whatever has
   // arrived by then, so many small answers are worth more than one big one.
-  var GROUP = 4;
+  //
+  // Two, not four. Measured through this bridge, a group of four lands at about
+  // 250ms on a warm model, which is too close to the page's 320ms first budget once
+  // the hops are counted: on a browser that has just started, the first timeline was
+  // coming back before any score did and the whole first screen was judged by the
+  // rules. Two posts land in about 135ms of model time, which leaves the rest of the
+  // budget for the trip.
+  var GROUP = 2;
   var asking = {};
 
   function askForScores(id, texts) {
@@ -117,6 +124,35 @@
     }
 
     next();
+  }
+
+  // Warm the model now, while X is still building its first request. This runs at
+  // document_start, so on a page load the model is usually ready before the first
+  // timeline comes back, which is what makes the first screen count.
+  function warmModel() {
+    if (!hasRuntime()) {
+      return;
+    }
+    try {
+      chrome.runtime.sendMessage({ source: SOURCE, type: "warm" }, function (reply) {
+        if (chrome.runtime.lastError || !reply) {
+          return;
+        }
+        if (reply.ready) {
+          post({ type: "modelStatus", ready: true, reason: "ready" });
+        }
+        if (typeof reply.ms === "number") {
+          post({
+            type: "modelWarmed",
+            ms: reply.ms,
+            device: reply.device || "none",
+            created: !!reply.created
+          });
+        }
+      });
+    } catch (error) {
+      // The page asks again on its own if this never lands.
+    }
   }
 
   function hasStorage() {
@@ -199,4 +235,5 @@
 
   read();
   postModelStatus();
+  warmModel();
 })();

@@ -91,6 +91,10 @@
   var model = { ready: false, reason: "absent" };
   var modelStatusSeen = false;
   var modelAsks = 0;
+  // Times from navigation, for the report only: when the page learned the model
+  // exists, and when the model page confirmed it had run something once.
+  var modelReadyAt = null;
+  var modelWarmedAt = null;
   var totals = { checked: 0, moved: [] };
   var lastBy = "rules";
 
@@ -225,7 +229,12 @@
   // place instead of moving it, so nothing that has already been shown ever jumps
   // position.
   function askModel(texts, onLate) {
-    if (!model.ready || !texts.length) {
+    // Only skip when there is definitely no model. If the page has not heard back
+    // yet, ask anyway: the answer comes back inside the budget either way, and the
+    // bridge says so at once when the model is not there. Gating on "we have not
+    // heard yet" meant the first batch of a page load was scored by the rules even
+    // when the model was already warm and waiting.
+    if (!texts.length || (modelStatusSeen && !model.ready)) {
       return Promise.resolve(null);
     }
     var id = "score-" + (pendingCount += 1);
@@ -853,8 +862,18 @@
       return;
     }
 
+    if (data.type === "modelWarmed") {
+      if (modelWarmedAt === null) {
+        modelWarmedAt = Math.round(window.performance.now());
+      }
+      return;
+    }
+
     if (data.type === "modelStatus") {
       modelStatusSeen = true;
+      if (data.ready && modelReadyAt === null) {
+        modelReadyAt = Math.round(window.performance.now());
+      }
       model.ready = !!data.ready;
       model.reason = data.reason || (data.ready ? "ready" : "absent");
       return;
@@ -907,7 +926,9 @@
       holdScrollMs: HOLD_SCROLL_MS,
       coverage: coverage,
       modelStatusSeen: modelStatusSeen,
-      modelAsks: modelAsks
+      modelAsks: modelAsks,
+      modelReadyAt: modelReadyAt,
+      modelWarmedAt: modelWarmedAt
     };
   };
 })();

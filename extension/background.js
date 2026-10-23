@@ -227,6 +227,44 @@ async function removeModel() {
   return state;
 }
 
+// ------------------------------------------------------------------ the warm-up
+
+// Called as soon as an x.com tab starts, which is before X asks for its first
+// timeline. It makes sure the model page exists and has run something once, so the
+// first batch of the visit has a model to ask rather than a cold one.
+var warming = null;
+
+async function warmModel() {
+  const state = await readState();
+  if (state.status !== "ready") {
+    return { ok: false, ready: false, reason: state.status };
+  }
+  if (warming) {
+    return warming;
+  }
+  const started = Date.now();
+  warming = (async function () {
+    const wasOpen = await hasOffscreen();
+    const ready = await ensureOffscreen();
+    if (!ready) {
+      return { ok: false, ready: false, reason: "no offscreen document" };
+    }
+    const answer = await tellOffscreen({ type: "modelWarm" });
+    return {
+      ok: !!(answer && answer.ok),
+      ready: !!(answer && answer.ok),
+      ms: Date.now() - started,
+      created: !wasOpen,
+      device: (answer && answer.device) || state.device || "none"
+    };
+  })();
+  try {
+    return await warming;
+  } finally {
+    warming = null;
+  }
+}
+
 // ------------------------------------------------------------------- the scores
 
 var textCache = new Map();
@@ -430,6 +468,17 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     return true;
   }
 
+  if (message.type === "warm") {
+    warmModel()
+      .then(function (result) {
+        sendResponse(result);
+      })
+      .catch(function (error) {
+        sendResponse({ ok: false, ready: false, message: String((error && error.message) || error) });
+      });
+    return true;
+  }
+
   if (message.type === "score") {
     readState()
       .then(function (state) {
@@ -473,8 +522,18 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 // The model page can be closed by Chrome at any time. There is nothing to clean
 // up: the next score request creates it again.
 chrome.runtime.onInstalled.addListener(function (details) {
-  if (details.reason !== "install") {
-    return;
+  if (details.reason === "install") {
+    chrome.tabs.create({ url: chrome.runtime.getURL("welcome/welcome.html") });
   }
-  chrome.tabs.create({ url: chrome.runtime.getURL("welcome/welcome.html") });
+  // Just installed or just updated: get the model page up, if the model is there.
+  warmModel();
+});
+
+// A browser start is the one moment the model page is definitely gone, because
+// nothing survives a restart. Recreating it here, rather than waiting for the first
+// x.com tab to ask, is what lets the first timeline of the session be scored by the
+// model instead of by the rules alone. The page then stays alive across tabs until
+// the model is removed.
+chrome.runtime.onStartup.addListener(function () {
+  warmModel();
 });

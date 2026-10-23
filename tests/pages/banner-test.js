@@ -28,6 +28,7 @@
   var TIMELINE = "/i/api/graphql/test-query-id/HomeTimeline";
   var LATEST = "/i/api/graphql/test-query-id/HomeLatestTimeline";
   var OTHER = "/i/api/graphql/test-query-id/OtherQuery";
+  var DETAIL = "/i/api/graphql/test-query-id/TweetDetail";
 
   var test = {
     bannerText: "",
@@ -82,6 +83,33 @@
       return instruction.type === "TimelineAddEntries";
     })[0];
     return add.entries;
+  }
+
+  // The TweetDetail response has a different shape from the home timeline. Its
+  // instructions mix TimelineAddEntries (the conversation module and later
+  // replies) with a TimelinePinEntry for the focal post. Draw the focal post
+  // first, then the replies, without drawing anything twice.
+  function entriesOfDetail(json) {
+    var instructions = json.data.threaded_conversation_with_injections_v2.instructions;
+    var entries = [];
+    var seen = {};
+    instructions.forEach(function (instruction) {
+      if (instruction.type === "TimelinePinEntry" && instruction.entry) {
+        var entry = instruction.entry;
+        if (entry && entry.entryId && !seen[entry.entryId]) {
+          entries.push(entry);
+          seen[entry.entryId] = true;
+        }
+      } else if (instruction.type === "TimelineAddEntries") {
+        instruction.entries.forEach(function (entry) {
+          if (entry && entry.entryId && !seen[entry.entryId]) {
+            entries.push(entry);
+            seen[entry.entryId] = true;
+          }
+        });
+      }
+    });
+    return entries;
   }
 
   function handleOf(entry) {
@@ -225,9 +253,11 @@
 
   async function run() {
     try {
-      var body = await fetchTimeline(TIMELINE);
+      var params = new URLSearchParams(window.location.search);
+      var isDetail = params.get("detail") === "1";
+      var body = await fetchTimeline(isDetail ? DETAIL : TIMELINE);
       var json = JSON.parse(body);
-      var entries = entriesOf(json);
+      var entries = isDetail ? entriesOfDetail(json) : entriesOf(json);
       test.entryIds = entries.map(function (entry) {
         return entry.entryId;
       });
@@ -236,7 +266,7 @@
       });
       order.textContent = test.entryIds.join("\n");
       draw(entries);
-      status.textContent = "timeline loaded: " + entries.length + " entries";
+      status.textContent = (isDetail ? "thread loaded: " : "timeline loaded: ") + entries.length + " entries";
       test.ready = true;
     } catch (error) {
       test.parseError = String(error);

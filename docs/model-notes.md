@@ -57,6 +57,17 @@ The last file is 90,884,715 bytes (86.7 MB) in fp32.
 python -m pip install onnxruntime onnx
 ```
 
+On Windows this can fail on the very last step with `WinError 2` while it copies the
+console scripts into `C:\Python311\Scripts`, even though the libraries themselves are
+installed and importable. Adding `--target` avoids it, which is what this build used:
+
+```sh
+python -m pip install --target C:/Users/adama/tolstoy-tools/py-onnx onnxruntime onnx
+```
+
+with that folder put on `sys.path` before the import, as `tolstoy-tools/export-minilm.py`
+does.
+
 ```python
 from onnxruntime.quantization import quantize_dynamic, QuantType
 import onnx

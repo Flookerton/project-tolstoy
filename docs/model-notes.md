@@ -87,6 +87,13 @@ quantize_dynamic("model_optimized.onnx", "onnx/model_quantized.onnx",
                  extra_options={"DefaultTensorType": onnx.TensorProto.FLOAT})
 ```
 
+The run also prints `WARNING:root:Please consider to run pre-processing before
+quantization`. That is advisory: the source file is already the optimised graph
+(`model_optimized.onnx`), and the quantised file was measured afterwards rather than
+assumed good. It loads in the extension's own runtime, scores "shut up retard" at 0.93
+through the four labels that are kept, and meets both bars on the main eval set. The
+measurements are in `tests/fixtures/model-scores-main-minilm.json`.
+
 ```sh
 # 3. the layout the runtime reads
 extension/models/minilm-toxic-jigsaw/

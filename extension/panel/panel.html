@@ -27,10 +27,28 @@
       <p class="meta control-help" id="temperature-help" aria-live="polite"></p>
     </section>
 
+    <section class="glass-panel card-body model-card" aria-labelledby="model-heading">
+      <h2 class="panel-heading" id="model-heading">Smarter detection</h2>
+      <p class="meta model-text" id="model-text">Download a 110 MB model that runs on this computer. It catches hostile posts the simple rules miss. Nothing about your feed is sent anywhere.</p>
+
+      <div class="model-actions" id="model-actions">
+        <button class="btn btn-primary" id="model-download" type="button">Download (110 MB)</button>
+      </div>
+
+      <div class="model-progress" id="model-progress" hidden>
+        <div class="progress-track" role="progressbar" aria-labelledby="model-progress-text" aria-valuemin="0" aria-valuemax="100" id="progress-track">
+          <span class="progress-fill" id="progress-fill"></span>
+        </div>
+        <p class="meta" id="model-progress-text">Starting…</p>
+      </div>
+
+      <p class="model-state" id="model-state" hidden></p>
+    </section>
+
     <section class="glass-panel card-body weather-card" aria-labelledby="weather-heading">
       <div class="card-head">
         <h2 class="panel-heading" id="weather-heading">Today’s feed weather</h2>
-        <span class="tag">Sample</span>
+        <span class="meta" id="weather-sample">Sample</span>
       </div>
       <div class="weather-bar" role="img" aria-label="Today’s feed weather sample: heated 35 percent, humor 20 percent, connection 10 percent, everything else 35 percent.">
         <span class="weather-seg weather-heated"></span>
@@ -46,7 +64,7 @@
       </ul>
     </section>
 
-    <section class="glass-panel toggles-card" aria-labelledby="toggles-heading">
+    <section class="toggles" aria-labelledby="toggles-heading">
       <h2 class="visually-hidden" id="toggles-heading">Feed controls</h2>
 
       <div class="toggle-row">

@@ -81,8 +81,19 @@ body {
   margin: 0;
 }
 
+/* Part D: the card titles in the panel are interface type, not reading type.
+   Nunito 700 at 16px, as mockup 3 shows, while the design system's serif
+   panel-heading is still used on the reading pages. */
+.panel .panel-heading {
+  font-family: var(--font-interface);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
 .control-card h2,
-.weather-card h2 {
+.weather-card h2,
+.model-card h2 {
   margin: 0 0 8px;
 }
 
@@ -104,6 +115,69 @@ body {
 
 .card-head h2 {
   margin: 0;
+}
+
+/* The model card: the offer, the progress, and the two states afterwards. */
+.model-text {
+  margin: 0 0 12px;
+  line-height: 1.5;
+}
+
+.model-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.model-progress {
+  margin-top: 4px;
+}
+
+.progress-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: var(--radius-pill);
+  background: var(--toggle-off);
+}
+
+.progress-fill {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  transition: width 200ms linear;
+}
+
+#model-progress-text {
+  margin: 8px 0 0;
+}
+
+.model-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  font-size: 14px;
+  color: var(--ink-2);
+}
+
+.link-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  min-height: 44px;
+  color: var(--accent);
+  font-family: var(--font-interface);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: var(--accent-hover);
 }
 
 .weather-bar {
@@ -178,8 +252,10 @@ body {
   background: var(--toggle-off);
 }
 
-.toggles-card {
-  padding: 4px 16px 10px;
+/* Part D: the toggles sit directly on the ombre, with no card behind them, as
+   mockup 3 shows. */
+.toggles {
+  padding: 2px 4px 4px;
 }
 
 .toggle-row {

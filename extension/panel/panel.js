@@ -132,10 +132,158 @@
     });
   }
 
+  // ------------------------------------------------------------- the model card
+  //
+  // Three states, and nothing in between: the offer, the download with its
+  // progress, and either "On this computer" with a way to remove it, or "Simple
+  // rules only" when the model could not be loaded. The rules always keep
+  // working, whatever this card says.
+
+  var MODEL_OFFER = "Download a 110 MB model that runs on this computer. It catches hostile posts the simple rules miss. Nothing about your feed is sent anywhere.";
+  var MODEL_READY = "Runs on this computer. It catches hostile posts the simple rules miss. Nothing about your feed is sent anywhere.";
+  var MODEL_SIZE = 110 * 1024 * 1024;
+  var model = { status: "absent", bytes: 0, files: 0 };
+
+  function el(id) {
+    return document.getElementById(id);
+  }
+
+  function humanMb(bytes) {
+    return Math.max(0, Math.round(bytes / (1024 * 1024)));
+  }
+
+  function renderModel() {
+    var text = el("model-text");
+    var actions = el("model-actions");
+    var progress = el("model-progress");
+    var state = el("model-state");
+    var track = el("progress-track");
+    var fill = el("progress-fill");
+    var progressText = el("model-progress-text");
+    if (!text || !actions || !progress || !state) {
+      return;
+    }
+
+    var status = model.status || "absent";
+    var downloading = status === "downloading";
+    var ready = status === "ready";
+    var failed = status === "downloaded" || status === "failed";
+
+    if (downloading) {
+      text.textContent = MODEL_OFFER;
+      text.hidden = false;
+      actions.hidden = true;
+      progress.hidden = false;
+      state.hidden = true;
+      var percent = Math.min(99, Math.round((model.bytes / MODEL_SIZE) * 100));
+      if (fill) {
+        fill.style.width = percent + "%";
+      }
+      if (track) {
+        track.setAttribute("aria-valuenow", String(percent));
+      }
+      if (progressText) {
+        progressText.textContent = "Downloading… " + humanMb(model.bytes) + " of 110 MB";
+      }
+      return;
+    }
+
+    progress.hidden = true;
+
+    if (ready) {
+      text.textContent = MODEL_READY;
+      text.hidden = false;
+      actions.hidden = true;
+      state.hidden = false;
+      state.textContent = "";
+      var onText = document.createElement("span");
+      onText.textContent = "On this computer";
+      var remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "link-button";
+      remove.id = "model-remove";
+      remove.textContent = "Remove";
+      remove.addEventListener("click", function () {
+        model = { status: "downloading", bytes: 0, files: 0 };
+        renderModel();
+        chrome.runtime.sendMessage({ source: "tolstoy", type: "modelRemove" }, function () {
+          loadModelState();
+        });
+      });
+      state.appendChild(onText);
+      state.appendChild(remove);
+      return;
+    }
+
+    // The offer, and the "simple rules only" line when a download did not take.
+    text.textContent = MODEL_OFFER;
+    text.hidden = false;
+    actions.hidden = false;
+    if (failed) {
+      state.hidden = false;
+      state.textContent = "Simple rules only.";
+    } else {
+      state.hidden = true;
+      state.textContent = "";
+    }
+  }
+
+  function loadModelState() {
+    if (typeof chrome === "undefined" || !chrome.runtime || !chrome.runtime.sendMessage) {
+      model = { status: "absent", bytes: 0, files: 0 };
+      renderModel();
+      return;
+    }
+    chrome.runtime.sendMessage({ source: "tolstoy", type: "modelStatus" }, function (reply) {
+      var reason = reply && reply.reason ? reply.reason : "absent";
+      model = {
+        status: reply && reply.ready ? "ready" : reason,
+        bytes: (reply && reply.bytes) || 0,
+        files: (reply && reply.files) || 0
+      };
+      renderModel();
+    });
+  }
+
+  function setupModel() {
+    var download = el("model-download");
+    if (download) {
+      download.addEventListener("click", function () {
+        model = { status: "downloading", bytes: 0, files: 0 };
+        renderModel();
+        chrome.runtime.sendMessage({ source: "tolstoy", type: "modelDownload" }, function (reply) {
+          if (reply && reply.state) {
+            model = reply.state;
+          }
+          loadModelState();
+        });
+      });
+    }
+
+    if (typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.onMessage) {
+      chrome.runtime.onMessage.addListener(function (message) {
+        if (!message || message.source !== "tolstoy") {
+          return;
+        }
+        if (message.type === "modelProgress") {
+          model.status = "downloading";
+          model.bytes = message.bytes || 0;
+          renderModel();
+        }
+        if (message.type === "modelChanged") {
+          loadModelState();
+        }
+      });
+    }
+
+    loadModelState();
+  }
+
   function init() {
     helpEl = document.getElementById("temperature-help");
     setupTemperature();
     setupBlur();
+    setupModel();
     if (window.TolstoyIcons) {
       window.TolstoyIcons.mount();
     }

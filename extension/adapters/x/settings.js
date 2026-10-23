@@ -1,12 +1,16 @@
-// Tolstoy settings bridge on x.com, ISOLATED world, document_start.
+// Tolstoy bridge on x.com, ISOLATED world, document_start.
 //
-// The MAIN world script cannot read chrome.storage, so this file reads the
-// settings and hands them over with window.postMessage, tagged source
-// "tolstoy", same origin. It answers a request as well as pushing, so the page
-// script does not have to wait for anything, and it pushes again whenever the
-// settings change while the page is open.
+// The MAIN world script cannot read chrome.storage or talk to the rest of the
+// extension, so this file carries three things across, all with window.postMessage
+// tagged source "tolstoy" and checked against this origin:
 //
-// It reads settings and nothing else. No feed content is stored or sent.
+//   settings      from chrome.storage, pushed on load, on change, and on request
+//   model status  whether the on-device model is downloaded and loaded
+//   scores        post TEXT only, one batch at a time, out to the model and the
+//                 scores back. Handles and ids never cross here, and the text is
+//                 never written down or sent off this computer.
+//
+// It reads settings and passes messages. It stores nothing and logs nothing.
 
 (function () {
   "use strict";
@@ -17,11 +21,53 @@
 
   var current = { temperature: DEFAULTS.temperature, blur: DEFAULTS.blur };
 
-  function post() {
+  function post(message) {
     try {
-      window.postMessage({ source: SOURCE, type: "settings", settings: current }, window.location.origin);
+      window.postMessage(Object.assign({ source: SOURCE }, message), window.location.origin);
     } catch (error) {
       // If even this fails, the page script keeps its Balanced default.
+    }
+  }
+
+  function postSettings() {
+    post({ type: "settings", settings: current });
+  }
+
+  function hasRuntime() {
+    return typeof chrome !== "undefined" && chrome.runtime && chrome.runtime.sendMessage;
+  }
+
+  function postModelStatus() {
+    if (!hasRuntime()) {
+      post({ type: "modelStatus", ready: false, reason: "absent" });
+      return;
+    }
+    try {
+      chrome.runtime.sendMessage({ type: "modelStatus" }, function (reply) {
+        if (chrome.runtime.lastError || !reply) {
+          post({ type: "modelStatus", ready: false, reason: "absent" });
+          return;
+        }
+        post({ type: "modelStatus", ready: !!reply.ready, reason: reply.reason || (reply.ready ? "ready" : "absent") });
+      });
+    } catch (error) {
+      post({ type: "modelStatus", ready: false, reason: "absent" });
+    }
+  }
+
+  function askForScores(id, texts) {
+    if (!hasRuntime() || !Array.isArray(texts) || !texts.length) {
+      return;
+    }
+    try {
+      chrome.runtime.sendMessage({ type: "score", texts: texts }, function (reply) {
+        if (chrome.runtime.lastError || !reply || !reply.scores) {
+          return;
+        }
+        post({ type: "scoreResult", id: id, scores: reply.scores });
+      });
+    } catch (error) {
+      // The page falls back to the rules score after its own timeout.
     }
   }
 
@@ -29,9 +75,9 @@
     return typeof chrome !== "undefined" && chrome.storage && chrome.storage.local;
   }
 
-  function load() {
+  function read() {
     if (!hasStorage()) {
-      post();
+      postSettings();
       return;
     }
     chrome.storage.local.get(STORAGE_KEY, function (items) {
@@ -42,7 +88,7 @@
         }
         current.blur = !!saved.blur;
       }
-      post();
+      postSettings();
     });
   }
 
@@ -51,10 +97,41 @@
       return;
     }
     var data = event.data;
-    if (data && data.source === SOURCE && data.type === "requestSettings") {
-      post();
+    if (!data || data.source !== SOURCE) {
+      return;
+    }
+    if (data.type === "requestSettings") {
+      read();
+      return;
+    }
+    if (data.type === "requestModelStatus") {
+      postModelStatus();
+      return;
+    }
+    if (data.type === "scoreRequest" && typeof data.id === "string" && Array.isArray(data.texts)) {
+      askForScores(data.id, data.texts);
     }
   });
+
+  // The panel can change the settings, and the download can finish or be removed,
+  // while a tab is open. Both reach the page without a reload.
+  if (hasRuntime() && chrome.runtime.onMessage) {
+    chrome.runtime.onMessage.addListener(function (message) {
+      if (!message || message.source !== SOURCE) {
+        return;
+      }
+      if (message.type === "settingsChanged") {
+        read();
+      }
+      if (message.type === "modelChanged") {
+        post({
+          type: "modelStatus",
+          ready: !!message.ready,
+          reason: message.reason || (message.ready ? "ready" : "absent")
+        });
+      }
+    });
+  }
 
   if (hasStorage() && chrome.storage.onChanged) {
     chrome.storage.onChanged.addListener(function (changes, area) {
@@ -67,10 +144,11 @@
           current.temperature = next.temperature;
         }
         current.blur = !!next.blur;
-        post();
+        postSettings();
       }
     });
   }
 
-  load();
+  read();
+  postModelStatus();
 })();

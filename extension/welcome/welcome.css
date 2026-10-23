@@ -115,6 +115,15 @@ body {
   margin: 0;
 }
 
+/* The one line about the optional model, under the warning, across both columns. */
+.model-offer {
+  grid-column: 1 / -1;
+  margin: 4px 0 0;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .welcome-actions {
   display: flex;
   flex-wrap: wrap;

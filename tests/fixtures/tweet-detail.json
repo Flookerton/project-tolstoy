@@ -1,0 +1,233 @@
+{
+  "note": "Synthetic, fictional TweetDetail (reply page) fixture, modelled on the public descriptions of the payload and on the shape in docs/research-notes.md section 2. It lives in tests/ and never ships. Order, values and handles are invented. The focal post is 2000, the post it replies to is 1990, and everything after the focal post is a reply.",
+  "data": {
+    "threaded_conversation_with_injections_v2": {
+      "instructions": [
+        {
+          "type": "TimelineAddEntries",
+          "entries": [
+            {
+              "entryId": "conversationthread-2000",
+              "sortIndex": "1000",
+              "content": {
+                "entryType": "TimelineTimelineModule",
+                "displayType": "VerticalConversation",
+                "items": [
+                  {
+                    "entryId": "tweet-1990",
+                    "sortIndex": "999",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "1990",
+                            "core": { "user_results": { "result": { "rest_id": "u1990", "core": { "screen_name": "asked_first" }, "legacy": { "screen_name": "asked_first" } } } },
+                            "legacy": { "id_str": "1990", "full_text": "What is the best way to keep basil alive through the winter? Mine always gives up in January." }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "entryId": "tweet-2000",
+                    "sortIndex": "998",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2000",
+                            "core": { "user_results": { "result": { "rest_id": "u2000", "core": { "screen_name": "basil_keeper" }, "legacy": { "screen_name": "basil_keeper" } } } },
+                            "legacy": { "id_str": "2000", "full_text": "Mine lives on the kitchen windowsill and I water it from the bottom. It is four years old now." }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "entryId": "tweet-2001",
+                    "sortIndex": "997",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2001",
+                            "core": { "user_results": { "result": { "rest_id": "u2001", "core": { "screen_name": "kind_gardener" }, "legacy": { "screen_name": "kind_gardener" } } } },
+                            "legacy": { "id_str": "2001", "full_text": "Thank you, that is the first advice on this that has actually worked for me." }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "entryId": "tweet-2002",
+                    "sortIndex": "996",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2002",
+                            "core": { "user_results": { "result": { "rest_id": "u2002", "core": { "screen_name": "rude_rachel" }, "legacy": { "screen_name": "rude_rachel" } } } },
+                            "legacy": { "id_str": "2002", "full_text": "You are such an idiot for keeping a plant indoors, what a clown." }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "entryId": "tweet-2003",
+                    "sortIndex": "995",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2003",
+                            "core": { "user_results": { "result": { "rest_id": "u2003", "core": { "screen_name": "quiet_corner" }, "legacy": { "screen_name": "quiet_corner" } } } },
+                            "legacy": { "id_str": "2003", "full_text": "I have the same problem, so I am following this thread for ideas." }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "entryId": "promoted-tweet-7777-abcd",
+                    "sortIndex": "994",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "promotedMetadata": { "impressionId": "fixture-promoted" },
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "7777",
+                            "core": { "user_results": { "result": { "rest_id": "u7777", "core": { "screen_name": "planner_ads" }, "legacy": { "screen_name": "planner_ads" } } } },
+                            "legacy": { "id_str": "7777", "full_text": "A calmer way to plan your week. Try our paper planner." }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "entryId": "tweet-2004",
+                    "sortIndex": "993",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2004",
+                            "core": { "user_results": { "result": { "rest_id": "u2004", "core": { "screen_name": "furious_felix" }, "legacy": { "screen_name": "furious_felix" } } } },
+                            "legacy": { "id_str": "2004", "full_text": "Shut up you worthless parasite, nobody asked for your advice." }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  {
+                    "entryId": "tweet-2005",
+                    "sortIndex": "992",
+                    "item": {
+                      "itemContent": {
+                        "itemType": "TimelineTweet",
+                        "tweet_results": {
+                          "result": {
+                            "__typename": "Tweet",
+                            "rest_id": "2005",
+                            "core": { "user_results": { "result": { "rest_id": "u2005", "core": { "screen_name": "tea_and_toast" }, "legacy": { "screen_name": "tea_and_toast" } } } },
+                            "legacy": { "id_str": "2005", "full_text": "Mine died too, I think I was overwatering it all along." }
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "entryId": "cursor-bottom-2000",
+              "sortIndex": "991",
+              "content": { "entryType": "TimelineTimelineCursor", "cursorType": "Bottom", "value": "TOKEN-BOTTOM" }
+            }
+          ]
+        },
+        {
+          "type": "TimelinePinEntry",
+          "entry": {
+            "entryId": "tweet-2000",
+            "sortIndex": "1001",
+            "content": {
+              "entryType": "TimelineTimelineItem",
+              "itemContent": {
+                "itemType": "TimelineTweet",
+                "tweet_results": {
+                  "result": {
+                    "__typename": "Tweet",
+                    "rest_id": "2000",
+                    "core": { "user_results": { "result": { "rest_id": "u2000", "core": { "screen_name": "basil_keeper" }, "legacy": { "screen_name": "basil_keeper" } } } },
+                    "legacy": { "id_str": "2000", "full_text": "Mine lives on the kitchen windowsill and I water it from the bottom. It is four years old now." }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "TimelineAddEntries",
+          "entries": [
+            {
+              "entryId": "tweet-3001",
+              "sortIndex": "900",
+              "content": {
+                "entryType": "TimelineTimelineItem",
+                "itemContent": {
+                  "itemType": "TimelineTweet",
+                  "tweet_results": {
+                    "result": {
+                      "__typename": "Tweet",
+                      "rest_id": "3001",
+                      "core": { "user_results": { "result": { "rest_id": "u3001", "core": { "screen_name": "later_reader" }, "legacy": { "screen_name": "later_reader" } } } },
+                      "legacy": { "id_str": "3001", "full_text": "Found this thread a week late and it saved my basil, thank you." }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "entryId": "tweet-3002",
+              "sortIndex": "899",
+              "content": {
+                "entryType": "TimelineTimelineItem",
+                "itemContent": {
+                  "itemType": "TimelineTweet",
+                  "tweet_results": {
+                    "result": {
+                      "__typename": "Tweet",
+                      "rest_id": "3002",
+                      "core": { "user_results": { "result": { "rest_id": "u3002", "core": { "screen_name": "late_rude" }, "legacy": { "screen_name": "late_rude" } } } },
+                      "legacy": { "id_str": "3002", "full_text": "Every single one of these clowns is an idiot, honestly." }
+                    }
+                  }
+                }
+              }
+            },
+            {
+              "entryId": "cursor-bottom-3000",
+              "sortIndex": "898",
+              "content": { "entryType": "TimelineTimelineCursor", "cursorType": "Bottom", "value": "TOKEN-BOTTOM-2" }
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

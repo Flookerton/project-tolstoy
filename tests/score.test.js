@@ -13,6 +13,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 
 const rules = require("../extension/scoring/rules.js");
+const slurRules = require("../extension/scoring/rules-slurs.js");
 const score = require("../extension/scoring/score.js");
 
 const evalSet = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "eval-set.json"), "utf8"));
@@ -42,11 +43,13 @@ test("no calm post moves at Balanced, and the heated posts are caught", () => {
     .filter((text) => scoreOf(text) < THRESHOLDS.balanced)
     .forEach((text) => console.log("    heated missed at Balanced:", scoreOf(text).toFixed(3), text.slice(0, 90)));
 
-  assert.strictEqual(calmFlagged.length, 0, "no calm post may move at Balanced");
-  assert.ok(rate >= 0.85, `heated catch rate at Balanced was ${Math.round(rate * 100)}%, below 85%`);
+  // Task 4 bar: at most one calm post may move at Balanced, and at least 90% of
+  // heated posts must be caught. This set is the one the calibration is tuned on.
+  assert.ok(calmFlagged.length <= 1, `at most one calm post may move at Balanced, ${calmFlagged.length} did`);
+  assert.ok(rate >= 0.9, `heated catch rate at Balanced was ${Math.round(rate * 100)}%, below 90%`);
 });
 
-test("at Calm at most two calm posts move, and nearly every heated post is caught", () => {
+test("at Calm at most three calm posts move, and nearly every heated post is caught", () => {
   const calmFlagged = allCalm.filter((text) => scoreOf(text) >= THRESHOLDS.calm);
   const heatedCaught = allHeated.filter((text) => scoreOf(text) >= THRESHOLDS.calm);
   const rate = heatedCaught.length / allHeated.length;
@@ -55,8 +58,8 @@ test("at Calm at most two calm posts move, and nearly every heated post is caugh
   console.log(`  Calm (${THRESHOLDS.calm}): heated items caught ${heatedCaught.length} of ${allHeated.length} (${Math.round(rate * 100)}%)`);
   calmFlagged.forEach((text) => console.log("    calm flagged:", scoreOf(text).toFixed(3), text.slice(0, 90)));
 
-  assert.ok(calmFlagged.length <= 2, `at most two calm posts may move at Calm, ${calmFlagged.length} did`);
-  assert.ok(rate >= 0.9, `heated catch rate at Calm was ${Math.round(rate * 100)}%, below 90%`);
+  assert.ok(calmFlagged.length <= 3, `at most three calm posts may move at Calm, ${calmFlagged.length} did`);
+  assert.ok(rate >= 0.95, `heated catch rate at Calm was ${Math.round(rate * 100)}%, below 95%`);
 });
 
 test("the evaluation set is big enough to mean something", () => {

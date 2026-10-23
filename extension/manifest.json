@@ -22,7 +22,7 @@
     },
     {
       "matches": ["https://x.com/*"],
-      "js": ["scoring/rules.js", "scoring/score.js", "adapters/x/rerank.js", "adapters/x/intercept.js"],
+      "js": ["scoring/rules.js", "scoring/rules-slurs.js", "scoring/score.js", "adapters/x/rerank.js", "adapters/x/intercept.js"],
       "world": "MAIN",
       "run_at": "document_start"
     },

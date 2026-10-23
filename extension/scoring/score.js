@@ -16,7 +16,10 @@
   "use strict";
 
   var rules = root.TolstoyRules;
-  var RULES = (rules && rules.RULES) || [];
+  var slurRules = root.TolstoySlurRules;
+  // The slur rule travels with the other published rules, so its weight and its
+  // reason are read from the same place; only the vocabulary lives elsewhere.
+  var RULES = ((rules && rules.RULES) || []).concat(slurRules && slurRules.RULE ? [slurRules.RULE] : []);
 
   // A word list matches on whole words only, and allows the plain plural, so
   // "clown" does not fire inside an unrelated longer word but "clowns" does.
@@ -26,6 +29,42 @@
 
   function wordHit(text, word) {
     return new RegExp("\\b" + escapeForRegExp(word.toLowerCase()) + "(?:s|es)?\\b").test(text);
+  }
+
+  // ------------------------------------------------------------------- slurs
+  // Whole words only, with the common letter swaps allowed in place of letters,
+  // so "f@ggot", "f4ggot" and "f*ggot" are found. A space inside a term also
+  // matches a hyphen or an underscore.
+  var slurPatterns = null;
+
+  function escapeInClass(chars) {
+    return chars.replace(/[\]\\^-]/g, "\\$&");
+  }
+
+  function slurRegex(term) {
+    var swaps = (slurRules && slurRules.SWAPS) || {};
+    var parts = [];
+    for (var i = 0; i < term.length; i += 1) {
+      var ch = term.charAt(i);
+      if (ch === " ") {
+        parts.push("[\\s_-]+");
+      } else if (swaps[ch]) {
+        // A star is added everywhere, because people use it to mask a letter.
+        parts.push("[" + escapeInClass(swaps[ch] + "*") + "]");
+      } else {
+        parts.push(escapeForRegExp(ch));
+      }
+    }
+    return new RegExp("\\b" + parts.join("") + "\\b", "i");
+  }
+
+  function slurHit(text) {
+    if (!slurPatterns) {
+      slurPatterns = ((slurRules && slurRules.SLURS) || []).map(slurRegex);
+    }
+    return slurPatterns.some(function (pattern) {
+      return pattern.test(text);
+    });
   }
 
   // Mostly capitals. Handles and links are removed first: a shouty message is
@@ -61,6 +100,9 @@
     }
     if (pattern.type === "exclamationRun") {
       return exclamationRun(text);
+    }
+    if (pattern.type === "slurList") {
+      return slurHit(text);
     }
     return false;
   }

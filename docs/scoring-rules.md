@@ -169,3 +169,31 @@ These rules are readable on purpose, so they miss things and they can be wrong:
 
 If you think a rule is wrong, the file is short and public. Open an issue with
 the text that was scored wrongly, and we will look at it.
+
+## The slur list, and where it came from
+
+Slurs are the one rule that needs no target pattern: a slur is hostile whatever it is aimed
+at. The rule carries weight 0.9 and the reason "Uses a slur", and lives in its own file,
+`extension/scoring/rules-slurs.js`, so it can be read, reviewed and shipped apart from the
+ordinary rules. That file opens with a content note, because it lists the words themselves.
+
+The list is drawn from two places:
+
+- **[LDNOOBW](https://github.com/LDNOOBW/List-of-Dirty-Naughty-Obscene-and-Otherwise-Bad-Words)**,
+  the List of Dirty, Naughty, Obscene and Otherwise Bad Words, licensed **CC BY 4.0**. Only the
+  entries that target a person for who they are were kept: race, ethnicity, nationality,
+  religion, sexual orientation, gender identity, or disability. Every sexual, scatological or
+  generic profanity entry was dropped.
+- **Written for this project**, for the identity slurs LDNOOBW is missing. That set is
+  published under the same licence as the rest of Tolstoy.
+
+Common letter swaps are matched, so `f@ggot`, `f4ggot` and `f*ggot` are caught alongside the
+plain spelling. Ordinary profanity ("fucking", "damn", "shit"), general insults that
+name-calling already covers ("idiot", "moron", "clown"), and gendered insults that are also
+everyday swearing ("bitch", "whore", "cunt", "slut") are deliberately **not** in this list:
+they do not move a post on their own. Aimed at a person, the name-calling rules catch them;
+used as a slur against a group, the on-device model does.
+
+This does not weaken the hard rule against political words. A slur says something about how
+something is said, not about which side anyone is on, and this list names no party, politician,
+ideology, country, religion, or political question.

@@ -107,11 +107,12 @@
         id: "name-calling-what-a",
         category: "name-calling",
         kind: "targeted",
-        // "what an idiot", "what a clown"
+        // "what an idiot", "what a clown". The lookahead keeps self-deprecation
+        // out: "what an idiot I was to skip sunscreen" is not aimed at anyone.
         pattern: {
           type: "regex",
           flags: "i",
-          source: "\\bwhat\\s+(?:an?\\s+" + ADJ + ")?(?:" + INSULTS + ")\\b"
+          source: "\\bwhat\\s+(?:an?\\s+" + ADJ + ")?(?:" + INSULTS + ")\\b(?!\\s+I\\b)"
         },
         weight: 0.6,
         reason: "Name-calling"
@@ -219,13 +220,15 @@
         id: "dehumanizing-they-are",
         category: "dehumanizing",
         kind: "targeted",
-        // "they are vermin", "you are parasites", "he is filth"
+        // "these people are vermin", "they are vermin", "you are a worthless
+        // parasite", "he is filth". One describing word is allowed, the same way
+        // the name-calling patterns allow one.
         pattern: {
           type: "regex",
           flags: "i",
           source:
             "\\b(?:they|you|he|she|it(?:'s| is))\\s*(?:are|'re|is|were|was)\\s+(?:(?:all|just|nothing but)\\s+)?" +
-            "(?:" + ONLY_ABOUT_PEOPLE + "|" + ALSO_ANIMALS + ")\\b"
+            "(?:an?\\s+)?(?:[a-z]{3,}\\s+)?(?:" + ONLY_ABOUT_PEOPLE + "|" + ALSO_ANIMALS + ")\\b"
         },
         weight: 0.8,
         reason: "Talks about people as less than human"
@@ -234,11 +237,12 @@
         id: "dehumanizing-vermin",
         category: "dehumanizing",
         kind: "targeted",
-        // "these vermin", "you parasites", "those cockroaches"
+        // "these vermin", "those cockroaches", "you parasites", "you worthless
+        // parasite". No describing word is required, and only one is allowed.
         pattern: {
           type: "regex",
           flags: "i",
-          source: "\\b(?:these|those|you)\\s+(?:" + ONLY_ABOUT_PEOPLE + ")\\b"
+          source: "\\b(?:these|those|you)(?:\\s+[a-z]{3,})?\\s+(?:" + ONLY_ABOUT_PEOPLE + ")\\b"
         },
         weight: 0.8,
         reason: "Talks about people as less than human"

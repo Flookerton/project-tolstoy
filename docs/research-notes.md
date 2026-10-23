@@ -169,6 +169,35 @@ posts live only in page memory; no server ranking; promoted entries are skipped,
 and not reordered; parse defensively and, on anything unexpected, hand X back exactly what
 it sent.
 
+## 5. The reply page response (TweetDetail)
+
+Written in Task 4, from `tests/fixtures/tweet-detail.json` and the public descriptions of the
+endpoint. Not yet confirmed against a live payload, and labelled as unconfirmed here.
+
+- The request is `POST /i/api/graphql/<query id>/TweetDetail`. Same `/i/api/graphql/` prefix,
+  same one-query-id-per-operation habit as the home timeline, which is why the adapter matches
+  on the trailing operation name and never on a pinned query id.
+- The body is **not** `data.home.home_timeline_urt`. It is
+  `data.threaded_conversation_with_injections_v2`; older builds carry
+  `data.threaded_conversation_with_injections`, without the `_v2`. Both hold the familiar
+  `instructions: [{ type, entries }]` array, so the reranker looks for either.
+- Three instruction types appear, and the shape is what matters:
+  - `TimelineAddEntries` holding a **conversation module**: one entry whose `content.items` is
+    the list of posts in the thread, each item keeping its tweet at
+    `item.itemContent.tweet_results.result`, one level shallower than a top-level entry's
+    `content.itemContent`. The module also carries the post being replied to, the focal post,
+    the replies, and a bottom cursor.
+  - `TimelinePinEntry`, whose `entry` is the focal post, the one whose page is open.
+  - A second `TimelineAddEntries` with the next page of replies and its own bottom cursor.
+- The focal post is named in the module's own entry id: `conversationthread-<focalTweetId>`.
+- The rule the adapter follows, and what the tests assert: the focal post and anything above it
+  (the thread it replies to) keep the position X gave them. Only the replies below the focal
+  post are scored and moved, and only inside their own run, so a reply can never be lifted
+  above the post it answers.
+- Whether X's live payload uses these exact field names and this instruction mix is
+  **unverified**. The adapter treats any unrecognised shape as "leave it alone and hand X back
+  exactly what it sent", so a mismatch degrades rather than breaks.
+
 ## Sources
 
 - [FeedMonitor](https://github.com/StanfordHCI/FeedMonitor) (`BrowserExtension/manifest.json`, `launcher.js`, `injected.js`, `logic.js`, `libs/client.js`, `events.js`, `Backend/main.py`, `Backend/feed_logic.py`)

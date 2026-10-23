@@ -169,32 +169,43 @@
   }
 
   // The timeline root is documented for HomeTimeline as
-  // data.home.home_timeline_urt. The root for HomeLatestTimeline is not
+  // data.home.home_timeline_urt. A reply page carries its conversation under
+  // data.threaded_conversation_with_injections_v2 (v1 on older builds, see
+  // docs/research-notes.md section 2). The root for HomeLatestTimeline is not
   // documented anywhere, so we also accept any object two levels under data that
   // carries an instructions array.
   function timelineRoots(json) {
-    var roots = [];
+    var found = [];
     var data = isObject(json) ? json.data : null;
     if (!isObject(data)) {
-      return roots;
+      return found;
     }
-    var known = data.home && data.home.home_timeline_urt;
-    if (isObject(known)) {
-      roots.push(known);
+    function push(candidate, reply) {
+      if (!isObject(candidate) || !Array.isArray(candidate.instructions)) {
+        return;
+      }
+      for (var i = 0; i < found.length; i += 1) {
+        if (found[i].node === candidate) {
+          return;
+        }
+      }
+      found.push({ node: candidate, reply: reply });
     }
+    if (isObject(data.home) && isObject(data.home.home_timeline_urt)) {
+      push(data.home.home_timeline_urt, false);
+    }
+    push(data.threaded_conversation_with_injections_v2, true);
+    push(data.threaded_conversation_with_injections, true);
     Object.keys(data).forEach(function (outer) {
       var level = data[outer];
       if (!isObject(level)) {
         return;
       }
       Object.keys(level).forEach(function (inner) {
-        var candidate = level[inner];
-        if (isObject(candidate) && Array.isArray(candidate.instructions) && roots.indexOf(candidate) === -1) {
-          roots.push(candidate);
-        }
+        push(level[inner], false);
       });
     });
-    return roots;
+    return found;
   }
 
   // Hand the batch's own sortIndex values out again in the new order, biggest
@@ -309,6 +320,286 @@
     return checked;
   }
 
+  // ---------------------------------------------------------------- reply pages
+  // On a reply page the focal post and the thread above it stay exactly where X
+  // put them. Only the replies below the focal post are scored, and within their
+  // own run they move to the end. See docs/research-notes.md section 2 for the
+  // payload shape this reads.
+
+  function idFromEntryId(entryId) {
+    if (typeof entryId !== "string") {
+      return "";
+    }
+    var match = /^(?:tweet|conversationthread|conversation)-?(\d+)$/.exec(entryId);
+    return match ? match[1] : "";
+  }
+
+  // Which post the page is about. X names the conversation module after it:
+  // conversationthread-<focalTweetId>. It is looked up across every batch in the
+  // payload, because a later page of replies arrives without the focal post.
+  function focalIdOf(root) {
+    var instructionList = root && Array.isArray(root.instructions) ? root.instructions : [];
+    for (var i = 0; i < instructionList.length; i += 1) {
+      var entries = instructionList[i] && instructionList[i].entries;
+      if (!Array.isArray(entries)) {
+        continue;
+      }
+      for (var j = 0; j < entries.length; j += 1) {
+        var entryId = entries[j] && entries[j].entryId;
+        if (typeof entryId === "string" && entryId.indexOf("conversationthread-") === 0) {
+          var id = idFromEntryId(entryId);
+          if (id) {
+            return id;
+          }
+        }
+      }
+    }
+    return "";
+  }
+
+  function itemTweet(item) {
+    var itemContent = isObject(item) && isObject(item.item) ? item.item.itemContent : null;
+    return resultOf(itemContent);
+  }
+
+  function itemTweetId(item) {
+    var tweet = itemTweet(item);
+    if (tweet) {
+      return idOf(tweet, isObject(item) ? item.entryId : "");
+    }
+    return idFromEntryId(isObject(item) ? item.entryId : "");
+  }
+
+  // Score one run of movable entries inside one container and move the heated
+  // ones to the end of that run, keeping their relative order. The container is
+  // renumbered with its own sortIndex values, so X shows the new order.
+  function rerankRun(list, movable, scoreFn, threshold, moved, isModuleItem) {
+    var units = [];
+    movable.forEach(function (index) {
+      var item = list[index];
+      var posts;
+      if (isModuleItem) {
+        var tweet = itemTweet(item);
+        posts = tweet ? [{ tweet: tweet, entryId: isObject(item) ? item.entryId : "" }] : [];
+      } else {
+        var content = contentOf(item);
+        var only = content ? resultOf(content.itemContent) : null;
+        posts = only ? [{ tweet: only, entryId: isObject(item) ? item.entryId : "" }] : [];
+      }
+      units.push({ item: item, posts: posts, checked: 0, score: 0, best: null });
+    });
+
+    units.forEach(function (unit) {
+      scoreUnit(unit, scoreFn);
+    });
+
+    var checked = units.reduce(function (sum, unit) {
+      return sum + unit.checked;
+    }, 0);
+
+    var cool = units.filter(function (unit) {
+      return unit.score < threshold;
+    });
+    var hot = units.filter(function (unit) {
+      return unit.score >= threshold;
+    });
+    var order = cool.concat(hot);
+
+    var sent = movable.map(function (index) {
+      return list[index];
+    });
+    var sentIndexes = movable.map(function (index) {
+      return list[index].sortIndex;
+    });
+
+    order.forEach(function (unit, position) {
+      list[movable[position]] = unit.item;
+    });
+
+    if (!renumber(list)) {
+      movable.forEach(function (index, position) {
+        list[index] = sent[position];
+        list[index].sortIndex = sentIndexes[position];
+      });
+      return 0;
+    }
+
+    hot.forEach(function (unit) {
+      if (unit.best) {
+        moved.push(describe(unit.best.tweet, unit.best.entryId, unit.best.reasons));
+      }
+    });
+
+    return checked;
+  }
+
+  function rerankReplyBatch(entries, scoreFn, threshold, moved, focalId) {
+    var checked = 0;
+
+    // Where the focal post sits in the batch, when it is here at all.
+    var focalEntryIndex = -1;
+    if (focalId) {
+      entries.forEach(function (entry, index) {
+        if (focalEntryIndex === -1 && idFromEntryId(entry.entryId) === focalId) {
+          focalEntryIndex = index;
+        }
+      });
+    }
+
+    var replyIndexes = [];
+    var runs = [];
+
+    entries.forEach(function (entry, index) {
+      var content = contentOf(entry);
+      if (isCursor(content) || isPromoted(entry)) {
+        return;
+      }
+
+      if (isModule(content)) {
+        var items = content.items;
+        // Without a focal post inside the module we cannot tell the thread above
+        // from the replies below, so the module is left exactly as it is.
+        if (!Array.isArray(items) || !items.length || !canRenumber(items)) {
+          return;
+        }
+        var focalHere = -1;
+        if (focalId) {
+          items.forEach(function (item, itemIndex) {
+            if (focalHere === -1 && itemTweetId(item) === focalId) {
+              focalHere = itemIndex;
+            }
+          });
+        }
+        if (focalHere === -1) {
+          return;
+        }
+        var movable = [];
+        for (var itemIndex = focalHere + 1; itemIndex < items.length; itemIndex += 1) {
+          // A promoted item keeps its own slot and is never scored, the same way
+          // a promoted entry does on the home timeline.
+          if (!isPromoted(items[itemIndex])) {
+            movable.push(itemIndex);
+          }
+        }
+        if (movable.length) {
+          runs.push({ list: items, movable: movable, isModuleItem: true });
+        }
+        return;
+      }
+
+      if (!isPostItem(content)) {
+        return;
+      }
+
+      // A plain post entry above the focal post is the thread, not a reply.
+      var isFocal = focalId && idFromEntryId(entry.entryId) === focalId;
+      var aboveFocal = focalId && focalEntryIndex !== -1 && index < focalEntryIndex;
+      if (isFocal || aboveFocal) {
+        return;
+      }
+      // With no focal post anywhere in the batch we cannot tell what this is, so
+      // nothing here is scored. On a later page of replies the focal post is gone
+      // and every post entry is a reply, which is the case focalId covers.
+      if (!focalId) {
+        return;
+      }
+      replyIndexes.push(index);
+    });
+
+    if (replyIndexes.length) {
+      runs.push({ list: entries, movable: replyIndexes, isModuleItem: false });
+    }
+
+    runs.forEach(function (run) {
+      checked += rerankRun(run.list, run.movable, scoreFn, threshold, moved, run.isModuleItem);
+    });
+
+    return checked;
+  }
+
+  // Every post in a payload as { id, text }, in payload order, so a caller can
+  // score a whole batch in one go (the on-device model does that), cache the
+  // answers by post id, and hand the scores back to rerankTimeline through its
+  // score function. Promoted posts, cursors and the thread above a focal post are
+  // left out, exactly as they are when reranking.
+  function collectTexts(json) {
+    var texts = [];
+    try {
+      timelineRoots(json).forEach(function (rootInfo) {
+        var replyFocalId = rootInfo.reply ? focalIdOf(rootInfo.node) : "";
+        rootInfo.node.instructions.forEach(function (instruction) {
+          if (!isObject(instruction) || instruction.type !== "TimelineAddEntries" || !Array.isArray(instruction.entries)) {
+            return;
+          }
+          instruction.entries.forEach(function (entry, index) {
+            var content = contentOf(entry);
+            if (!content || isCursor(content) || isPromoted(entry)) {
+              return;
+            }
+            if (isModule(content) && Array.isArray(content.items)) {
+              var start = 0;
+              if (rootInfo.reply) {
+                start = -1;
+                if (replyFocalId) {
+                  content.items.forEach(function (item, itemIndex) {
+                    if (start === -1 && itemTweetId(item) === replyFocalId) {
+                      start = itemIndex + 1;
+                    }
+                  });
+                }
+                if (start === -1) {
+                  return;
+                }
+              }
+              for (var i = start; i < content.items.length; i += 1) {
+                if (isPromoted(content.items[i])) {
+                  continue;
+                }
+                var item = content.items[i];
+                var text = textOf(itemTweet(item));
+                if (text) {
+                  texts.push({ id: idOf(itemTweet(item), item.entryId), text: text });
+                }
+              }
+              return;
+            }
+            if (!isPostItem(content)) {
+              return;
+            }
+            if (rootInfo.reply) {
+              if (!replyFocalId) {
+                return;
+              }
+              var id = idFromEntryId(entry.entryId);
+              var focalIndex = -1;
+              rootInfo.node.instructions.forEach(function (other) {
+                if (!Array.isArray(other.entries)) {
+                  return;
+                }
+                other.entries.forEach(function (candidate, candidateIndex) {
+                  if (instruction === other && idFromEntryId(candidate.entryId) === replyFocalId && focalIndex === -1) {
+                    focalIndex = candidateIndex;
+                  }
+                });
+              });
+              if (id === replyFocalId || (focalIndex !== -1 && index < focalIndex)) {
+                return;
+              }
+            }
+            var only = resultOf(content.itemContent);
+            var body = textOf(only);
+            if (body) {
+              texts.push({ id: idOf(only, entry.entryId), text: body });
+            }
+          });
+        });
+      });
+    } catch (error) {
+      return [];
+    }
+    return texts;
+  }
+
   function rerankTimeline(json, scoreFn, threshold) {
     var original = { json: json, checked: 0, moved: [] };
     try {
@@ -332,12 +623,15 @@
       var moved = [];
       var checked = 0;
 
-      timelineRoots(working).forEach(function (timelineRoot) {
-        timelineRoot.instructions.forEach(function (instruction) {
+      timelineRoots(working).forEach(function (rootInfo) {
+        var replyFocalId = rootInfo.reply ? focalIdOf(rootInfo.node) : "";
+        rootInfo.node.instructions.forEach(function (instruction) {
           if (!isObject(instruction) || instruction.type !== "TimelineAddEntries" || !Array.isArray(instruction.entries)) {
             return;
           }
-          checked += rerankBatch(instruction.entries, scorer, limit, moved);
+          checked += rootInfo.reply
+            ? rerankReplyBatch(instruction.entries, scorer, limit, moved, replyFocalId)
+            : rerankBatch(instruction.entries, scorer, limit, moved);
         });
       });
 
@@ -347,7 +641,11 @@
     }
   }
 
-  var api = { rerankTimeline: rerankTimeline, threshold: (root.TolstoyRules && root.TolstoyRules.THRESHOLD) || 0.5 };
+  var api = {
+    rerankTimeline: rerankTimeline,
+    collectTexts: collectTexts,
+    threshold: (root.TolstoyRules && root.TolstoyRules.THRESHOLD) || 0.5
+  };
   root.TolstoyRerank = api;
   if (typeof module !== "undefined" && module.exports) {
     module.exports = api;

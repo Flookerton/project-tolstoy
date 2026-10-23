@@ -86,29 +86,53 @@
   }
 
   // The TweetDetail response has a different shape from the home timeline. Its
-  // instructions mix TimelineAddEntries (the conversation module and later
-  // replies) with a TimelinePinEntry for the focal post. Draw the focal post
-  // first, then the replies, without drawing anything twice.
+  // instructions mix a TimelinePinEntry for the focal post with TimelineAddEntries
+  // for the conversation module and later replies. The focal post is drawn first,
+  // then everything else in the order X sent it, with nothing drawn twice.
   function entriesOfDetail(json) {
     var instructions = json.data.threaded_conversation_with_injections_v2.instructions;
     var entries = [];
     var seen = {};
+
+    function add(entry) {
+      if (!entry || !entry.entryId || seen[entry.entryId]) {
+        return;
+      }
+      entries.push(entry);
+      seen[entry.entryId] = true;
+    }
+
+    // The focal post first.
     instructions.forEach(function (instruction) {
       if (instruction.type === "TimelinePinEntry" && instruction.entry) {
-        var entry = instruction.entry;
-        if (entry && entry.entryId && !seen[entry.entryId]) {
-          entries.push(entry);
-          seen[entry.entryId] = true;
-        }
-      } else if (instruction.type === "TimelineAddEntries") {
-        instruction.entries.forEach(function (entry) {
-          if (entry && entry.entryId && !seen[entry.entryId]) {
-            entries.push(entry);
-            seen[entry.entryId] = true;
-          }
-        });
+        add(instruction.entry);
       }
     });
+
+    // Then the replies and everything else, as X ordered them. A conversation
+    // module is a container: X draws each post inside it, so the page does too.
+    instructions.forEach(function (instruction) {
+      if (instruction.type !== "TimelineAddEntries" || !Array.isArray(instruction.entries)) {
+        return;
+      }
+      instruction.entries.forEach(function (entry) {
+        var content = entry && entry.content;
+        if (content && Array.isArray(content.items)) {
+          content.items.forEach(function (item) {
+            // A module item keeps its tweet under item.itemContent, one level
+            // shallower than a top-level entry's content.itemContent.
+            if (item && item.item) {
+              add({ entryId: item.entryId, content: item.item });
+              return;
+            }
+            add(item);
+          });
+          return;
+        }
+        add(entry);
+      });
+    });
+
     return entries;
   }
 

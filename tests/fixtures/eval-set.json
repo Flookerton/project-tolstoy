@@ -70,6 +70,17 @@
     { "text": "The bus driver waited while I ran for it, twice this month", "label": "calm", "note": "everyday" },
     { "text": "Spent the evening sorting old photographs with my sister", "label": "calm", "note": "everyday" },
 
+    { "text": "What an idiot I was to skip sunscreen today", "label": "calm", "note": "self-deprecation, from the orchestrator's Task 4 review" },
+    { "text": "I'm such a moron, I left the keys inside again", "label": "calm", "note": "self-deprecation" },
+    { "text": "what a clown I am for believing the weather app", "label": "calm", "note": "self-deprecation" },
+    { "text": "Such an idiot move, I booked the wrong week entirely", "label": "calm", "note": "self-deprecation" },
+    { "text": "I am such a fool for trusting the printer again", "label": "calm", "note": "self-deprecation" },
+    { "text": "This sauce is fucking incredible, I'm making it every week", "label": "calm", "note": "ordinary profanity is not a slur and moves nothing" },
+    { "text": "Damn, this hike nearly killed me but the view was worth it", "label": "calm", "note": "ordinary profanity" },
+    { "text": "Shit, I forgot the tickets again", "label": "calm", "note": "ordinary profanity" },
+    { "text": "The referee was bloody awful tonight, worst call of the season", "label": "calm", "note": "ordinary profanity, criticism of conduct" },
+    { "text": "That film was a mess, the ending was garbage", "label": "calm", "note": "no target, and about a thing not a person" },
+
     { "text": "You are such an idiot", "label": "heated", "note": "name-calling: you are" },
     { "text": "What a moron", "label": "heated", "note": "name-calling: what a" },
     { "text": "He is an idiot and she is a clown", "label": "heated", "note": "name-calling: he and she" },
@@ -116,7 +127,18 @@
     { "text": "honestly disgusting!!! share before it's deleted!!!", "label": "heated", "note": "stacked tone: three markers, moves at Calm only" },
     { "text": "THIS IS VILE!!! LOOK WHAT THEY DID!!! DISGUSTING!!!", "label": "heated", "note": "stacked tone: four markers" },
     { "text": "Every single one of these clowns is an idiot, and the people defending them are pathetic.", "label": "heated", "note": "fixture heated post" },
-    { "text": "These parasites and vermin are spreading like a disease through our town.", "label": "heated", "note": "fixture heated post" }
+    { "text": "These parasites and vermin are spreading like a disease through our town.", "label": "heated", "note": "fixture heated post" },
+
+    { "text": "You are such a faggot", "label": "heated", "note": "slur, from the live check: a one-word reply was left in place" },
+    { "text": "f4ggot", "label": "heated", "note": "slur with a digit swap" },
+    { "text": "f@ggot", "label": "heated", "note": "slur with an at sign" },
+    { "text": "f*ggot", "label": "heated", "note": "slur with a star mask" },
+    { "text": "That chink should go back where he came from", "label": "heated", "note": "slur" },
+    { "text": "these pakis are everywhere now", "label": "heated", "note": "slur, plural" },
+    { "text": "shut up retard", "label": "heated", "note": "slur" },
+    { "text": "So funny this toothless crackhead consistently reaches out to people in my circle. This loser has a wife and kid but still consistently embarrasses their existence. Never change bozo", "label": "heated", "note": "from the live check, the rules scored it 0" },
+    { "text": "You and your cohorts created this monster.", "label": "heated", "note": "from the live check, the rules scored it 0" },
+    { "text": "You are a worthless parasite, nobody asked for your advice", "label": "heated", "note": "dehumanizing with one describing word" }
   ],
 
   "pairs": [

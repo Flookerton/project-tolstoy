@@ -54,13 +54,21 @@ the model **whenever it starts at all**, not only on install and startup. The wo
 starts when the extension loads, when the browser starts, and on the first message after
 Chrome has put it to sleep, and it starts long before anyone opens a timeline.
 
-Run to run these figures move, because whether a score lands inside the 320ms is a race
-with how long X takes to ask for the timeline. A second run of the same script read the
-warm case at 1052ms, the cold case at 658ms and the restart case at 72ms, and in that
-run the restart case showed the footer as "Scored by: rules" where the run above had it
-crediting the model with 2 of 18 posts scored. What is stable across runs is the
-mechanism, not the millisecond: a batch that arrives before the warm-up finishes goes out
-with the rules alone, and whatever the model finds afterwards is caught in place.
+These figures move from run to run, and the restart row is the least reliable of the
+three, so here are all three runs rather than one. The warm-up itself is fast and
+repeatable in the restart case, 72ms, 76ms and 84ms across the three, because the model
+page is recreated at browser start and the model files are already on disk. Whether that
+first batch is *credited* to the model is a separate race with how long X takes to ask
+for the timeline, and it went both ways: two runs read "Scored by: rules" with 0 of 18
+posts scored, one read "Scored by: rules and the on-device model" with 2 of 18. Across
+the same three runs the warm case warmed in 425ms, 1028ms and 1052ms, and the cold case
+in 658ms, 762ms and 875ms, with the footer following the same race.
+
+What is stable is the mechanism, not the millisecond: a batch that arrives before the
+warm-up finishes goes out with the rules alone, and whatever the model finds afterwards
+is caught in place, in the right position. And the case that matters in ordinary use is
+the one that does not move at all: with the browser having run for a few seconds, the
+first batch is fully model scored, 18 of 18, measured in Part D.
 
 The first two rows are the reason that matters. Loading the model takes about 850ms and
 a first timeline waits 320ms for the model before it goes out, so a model that is still

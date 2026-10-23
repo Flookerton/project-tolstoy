@@ -96,6 +96,13 @@ that is a late catch by definition:
 
 Screenshot: `docs/screenshots/late-catch.png`.
 
+Re-run against the final tree, after Part D made the bundled model the default and after
+Part E changed the counters and the footer line: still 9 of 9, with the model reported as
+`minilm-toxic-jigsaw`, in use, calibration 0.8, warmed in 935ms. The same three posts are
+veiled with the same three reasons. The script used to print `model: undefined on
+undefined` because it read the old download-state shape, which was misleading rather than
+wrong; it now reports which model is in use and at what calibration.
+
 One gap was found and closed while proving it: a late catch was veiled but was not
 listed in Show them, because the late catch carried only an id and a reason while the
 list needs the handle and the text. `collectTexts` now carries the handle, and the

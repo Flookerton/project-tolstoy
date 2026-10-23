@@ -73,9 +73,15 @@ from onnxruntime.quantization import quantize_dynamic, QuantType
 import onnx
 
 # The source graph came out of ONNX Runtime's optimiser, whose shape inference does
-# not give the quantiser a type for every weight. Naming the default type is the
-# documented way through it: without this the run stops with "not implemented" on
-# the first weight it cannot type.
+# not give the quantiser a type for every weight. Without the extra option the run
+# stops on the first such weight with:
+#
+#   RuntimeError: Unable to find data type for weight_name='...MatMul_output_0'.
+#   shape_inference failed to return a type ... You may use extra_options
+#   `DefaultTensorType` to indicate the default weight type, usually
+#   `onnx.TensorProto.FLOAT`.
+#
+# which is exactly the option this passes.
 quantize_dynamic("model_optimized.onnx", "onnx/model_quantized.onnx",
                  weight_type=QuantType.QInt8,
                  extra_options={"DefaultTensorType": onnx.TensorProto.FLOAT})

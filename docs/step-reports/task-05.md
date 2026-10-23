@@ -54,6 +54,14 @@ the model **whenever it starts at all**, not only on install and startup. The wo
 starts when the extension loads, when the browser starts, and on the first message after
 Chrome has put it to sleep, and it starts long before anyone opens a timeline.
 
+Run to run these figures move, because whether a score lands inside the 320ms is a race
+with how long X takes to ask for the timeline. A second run of the same script read the
+warm case at 1052ms, the cold case at 658ms and the restart case at 72ms, and in that
+run the restart case showed the footer as "Scored by: rules" where the run above had it
+crediting the model with 2 of 18 posts scored. What is stable across runs is the
+mechanism, not the millisecond: a batch that arrives before the warm-up finishes goes out
+with the rules alone, and whatever the model finds afterwards is caught in place.
+
 The first two rows are the reason that matters. Loading the model takes about 850ms and
 a first timeline waits 320ms for the model before it goes out, so a model that is still
 loading cannot score that first screen. Warming at worker start means that by the time a

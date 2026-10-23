@@ -17,6 +17,18 @@
 // only after the person agrees to it. It goes to Hugging Face and nowhere else.
 
 var MODEL_ID = "Xenova/toxic-bert";
+
+// Two models. The small one comes inside the extension and is always there, so
+// scoring needs no download and no network at all. The stronger one is a download
+// the person chooses, and while it is on this computer it is the one in use.
+// Calibration travels with the model because the two do not share a scale: the
+// numbers below were each chosen from that model's own scores on the main eval set.
+const BUNDLED_MODEL = { id: "minilm-toxic-jigsaw", label: "MiniLM", bundled: true, calibration: 0.8 };
+const STRONGER_MODEL = { id: "Xenova/toxic-bert", label: "toxic-bert", bundled: false, calibration: 1 };
+
+function modelInUse(state) {
+  return state.active === "stronger" && state.stronger.status === "ready" ? STRONGER_MODEL : BUNDLED_MODEL;
+}
 var MODEL_REVISION = "main";
 var MODEL_FILES = [
   "config.json",
@@ -70,7 +82,28 @@ async function ensureOffscreen() {
       });
   }
   await creating;
-  return hasOffscreen();
+  const present = await hasOffscreen();
+  if (present) {
+    await waitForPage();
+  }
+  return present;
+}
+
+// The offscreen page is an ES module that imports the runtime, so for a moment after
+// the document is created there is nothing listening: a message sent then comes back
+// with no answer, and the model request looks like a failure. A ping is answered
+// synchronously by the page as soon as its listener exists, so this waits for that
+// instead of guessing at a delay. It costs nothing when the page is already up.
+async function waitForPage(tries) {
+  const attempts = typeof tries === "number" ? tries : 20;
+  for (let i = 0; i < attempts; i += 1) {
+    const answer = await tellOffscreen({ type: "modelPing" }, 1);
+    if (answer && answer.ok) {
+      return true;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  return false;
 }
 
 async function closeOffscreen() {
@@ -94,26 +127,61 @@ function warmChannel() {
   tellOffscreen({ type: "modelPing" });
 }
 
-function tellOffscreen(message) {
-  return chrome.runtime.sendMessage(Object.assign({ source: "tolstoy" }, message)).catch(function (error) {
-    return { ok: false, message: String((error && error.message) || error) };
-  });
+function tellOffscreen(message, tries) {
+  const attempts = typeof tries === "number" ? tries : 2;
+  const payload = Object.assign({ source: "tolstoy" }, message);
+  async function attempt(n) {
+    try {
+      const answer = await chrome.runtime.sendMessage(payload);
+      if (answer !== undefined) {
+        return answer;
+      }
+      if (n + 1 < attempts) {
+        await new Promise((resolve) => setTimeout(resolve, 120));
+        return attempt(n + 1);
+      }
+      return { ok: false, message: "no answer from the model page" };
+    } catch (error) {
+      if (n + 1 < attempts) {
+        await new Promise((resolve) => setTimeout(resolve, 120));
+        return attempt(n + 1);
+      }
+      return { ok: false, message: String((error && error.message) || error) };
+    }
+  }
+  return attempt(0);
 }
 
 // ----------------------------------------------------------------- model state
 
-async function readState() {
-  const stored = await chrome.storage.local.get(STATE_KEY);
-  const state = stored && stored[STATE_KEY];
-  if (!state || typeof state !== "object") {
-    return { status: "absent", files: 0, bytes: 0 };
+// The stored shape is { active, stronger }: active names the model in use, and
+// stronger is the state of the optional download. A value written before the small
+// model was bundled is read as the stronger model's own state, so an install that
+// already has the download keeps working.
+function normalise(raw) {
+  if (raw && raw.stronger && typeof raw.stronger === "object") {
+    return { active: raw.active === "stronger" ? "stronger" : "bundled", stronger: raw.stronger };
   }
-  return state;
+  if (raw && typeof raw.status === "string") {
+    return { active: raw.status === "ready" ? "stronger" : "bundled", stronger: raw };
+  }
+  return { active: "bundled", stronger: { status: "absent", files: 0, bytes: 0 } };
 }
 
-async function writeState(next) {
+async function readState() {
+  const stored = await chrome.storage.local.get(STATE_KEY);
+  return normalise(stored && stored[STATE_KEY]);
+}
+
+// Patches the stronger model's state. The model in use follows from it: the
+// stronger model is in use exactly when it is ready here, so removing it puts the
+// bundled one back without anything else having to say so.
+async function writeState(patch) {
+  const current = await readState();
+  const stronger = Object.assign({}, current.stronger, patch);
+  const next = { active: stronger.status === "ready" ? "stronger" : "bundled", stronger: stronger };
   await chrome.storage.local.set({ [STATE_KEY]: next });
-  broadcast({ type: "modelChanged", ready: next.status === "ready", reason: next.status });
+  broadcast({ type: "modelChanged", ready: true, active: next.active, reason: stronger.status });
   return next;
 }
 
@@ -236,9 +304,7 @@ var warming = null;
 
 async function warmModel() {
   const state = await readState();
-  if (state.status !== "ready") {
-    return { ok: false, ready: false, reason: state.status };
-  }
+  const inUse = modelInUse(state);
   if (warming) {
     return warming;
   }
@@ -249,13 +315,13 @@ async function warmModel() {
     if (!ready) {
       return { ok: false, ready: false, reason: "no offscreen document" };
     }
-    const answer = await tellOffscreen({ type: "modelWarm" });
+    const answer = await tellOffscreen({ type: "modelWarm", model: inUse });
     return {
       ok: !!(answer && answer.ok),
       ready: !!(answer && answer.ok),
       ms: Date.now() - started,
       created: !wasOpen,
-      device: (answer && answer.device) || state.device || "none"
+      device: (answer && answer.device) || state.stronger.device || "none"
     };
   })();
   try {
@@ -351,7 +417,8 @@ async function scoreTexts(texts, budgetMs) {
   let modelled = 0;
 
   async function scoreGroup(group) {
-    const answer = await tellOffscreen({ type: "modelScore", texts: group });
+    const state = await readState();
+    const answer = await tellOffscreen({ type: "modelScore", texts: group, model: modelInUse(state) });
     if (!answer || !answer.ok || !answer.scores) {
       return false;
     }
@@ -415,15 +482,22 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
 
   if (message.type === "modelStatus") {
     readState().then(function (state) {
-      if (state.status === "ready") {
+      if (state.stronger.status === "ready") {
         warmChannel();
       }
+      const inUse = modelInUse(state);
       sendResponse({
-        ready: state.status === "ready",
-        reason: state.status,
-        bytes: state.bytes || 0,
-        files: state.files || 0,
-        device: state.device || null
+        // A model is always here now, so this is always true. What varies is which
+        // one, and how its score is read.
+        ready: true,
+        active: inUse.bundled ? "bundled" : "stronger",
+        model: inUse.id,
+        calibration: inUse.calibration,
+        reason: state.stronger.status,
+        stronger: state.stronger,
+        bytes: state.stronger.bytes || 0,
+        files: state.stronger.files || 0,
+        device: state.stronger.device || null
       });
     });
     return true;
@@ -452,12 +526,14 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   if (message.type === "modelLoad") {
-    ensureOffscreen()
-      .then(function (ready) {
-        if (!ready) {
-          throw new Error("no offscreen document");
-        }
-        return tellOffscreen({ type: "modelLoad" });
+    readState()
+      .then(function (state) {
+        return ensureOffscreen().then(function (ready) {
+          if (!ready) {
+            throw new Error("no offscreen document");
+          }
+          return tellOffscreen({ type: "modelLoad", model: modelInUse(state) });
+        });
       })
       .then(function (answer) {
         sendResponse(answer || { ok: false });
@@ -480,12 +556,10 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
   }
 
   if (message.type === "score") {
+    // No readiness check: the bundled model is always here. The offscreen page
+    // reports if it cannot load, and a failed stronger model falls back to it.
     readState()
-      .then(function (state) {
-        if (state.status !== "ready") {
-          sendResponse({ ok: false, reason: state.status, scores: {} });
-          return null;
-        }
+      .then(function () {
         return scoreTexts(Array.isArray(message.texts) ? message.texts : [], message.budgetMs);
       })
       .then(function (result) {
@@ -537,3 +611,13 @@ chrome.runtime.onInstalled.addListener(function (details) {
 chrome.runtime.onStartup.addListener(function () {
   warmModel();
 });
+
+// And warm the model whenever this worker starts at all, which is the case that
+// actually decides it: the worker starts when the extension loads, when the browser
+// starts, and when the first message wakes it after Chrome has put it to sleep. It
+// starts well before anyone opens a timeline. Loading the model from the extension's
+// own files takes about 850ms, which is longer than the 400ms a first timeline waits,
+// so the only way the first screen of a visit can be model-scored is for the model to
+// be loaded before that visit begins. Nothing here waits for the result, and if it
+// fails the rules carry the page exactly as they always have.
+warmModel();

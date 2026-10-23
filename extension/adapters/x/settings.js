@@ -51,7 +51,16 @@
           post({ type: "modelStatus", ready: false, reason: "absent" });
           return;
         }
-        post({ type: "modelStatus", ready: !!reply.ready, reason: reply.reason || (reply.ready ? "ready" : "absent") });
+        // Which model is in use and how its score is read travels with the status,
+        // so the page never has to assume a calibration.
+        post({
+          type: "modelStatus",
+          ready: !!reply.ready,
+          reason: reply.reason || (reply.ready ? "ready" : "absent"),
+          active: reply.active || "bundled",
+          model: reply.model || null,
+          calibration: typeof reply.calibration === "number" ? reply.calibration : null
+        });
       });
     } catch (error) {
       post({ type: "modelStatus", ready: false, reason: "absent" });

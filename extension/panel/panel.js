@@ -139,10 +139,11 @@
   // rules only" when the model could not be loaded. The rules always keep
   // working, whatever this card says.
 
-  var MODEL_OFFER = "Download a 110 MB model that runs on this computer. It catches hostile posts the simple rules miss. Nothing about your feed is sent anywhere.";
-  var MODEL_READY = "Runs on this computer. It catches hostile posts the simple rules miss. Nothing about your feed is sent anywhere.";
+  var MODEL_OFFER = "A stronger model catches more hostile posts than the small one that comes with Tolstoy. It is 110 MB and runs on this computer.";
+  var MODEL_READY = "The stronger model is on this computer, and it is the one in use.";
+  var MODEL_SMALL = "Using the small model that comes with Tolstoy.";
   var MODEL_SIZE = 110 * 1024 * 1024;
-  var model = { status: "absent", bytes: 0, files: 0 };
+  var model = { status: "absent", bytes: 0, files: 0, active: "bundled" };
 
   function el(id) {
     return document.getElementById(id);
@@ -223,8 +224,10 @@
       state.hidden = false;
       state.textContent = "Simple rules only.";
     } else {
-      state.hidden = true;
-      state.textContent = "";
+      // Not an empty line: the small model came with Tolstoy, so it is working,
+      // and the card should say which model is doing the reading.
+      state.hidden = false;
+      state.textContent = MODEL_SMALL;
     }
   }
 
@@ -235,11 +238,19 @@
       return;
     }
     chrome.runtime.sendMessage({ source: "tolstoy", type: "modelStatus" }, function (reply) {
-      var reason = reply && reply.reason ? reply.reason : "absent";
+      if (chrome.runtime.lastError || !reply) {
+        model = { status: "absent", bytes: 0, files: 0, active: "bundled" };
+        renderModel();
+        return;
+      }
+      // This card is about the optional stronger model, so its own state is what is
+      // shown. The bundled model is always here and the line underneath says so.
+      var stronger = reply.stronger && typeof reply.stronger === "object" ? reply.stronger : null;
       model = {
-        status: reply && reply.ready ? "ready" : reason,
-        bytes: (reply && reply.bytes) || 0,
-        files: (reply && reply.files) || 0
+        status: stronger ? stronger.status : (reply.ready ? "ready" : "absent"),
+        bytes: (stronger && stronger.bytes) || reply.bytes || 0,
+        files: (stronger && stronger.files) || reply.files || 0,
+        active: reply.active || "bundled"
       };
       renderModel();
     });

@@ -1,0 +1,2049 @@
+{
+  "note": "Raw label scores for the main eval set from the bundled MiniLM model, measured in Chromium through the extension's own vendored Transformers.js, reading the model from extension/models/ with no download and no network. Every label is kept so the calibration can be chosen from these numbers. Written by tolstoy-tools/measure-minilm.mjs.",
+  "modelId": "minilm-toxic-jigsaw",
+  "source": "https://huggingface.co/minuva/MiniLMv2-toxic-jigsaw",
+  "file": "onnx/model_quantized.onnx",
+  "dtype": "q8",
+  "device": "wasm",
+  "sha256": "cc79095ae612612e3006fae67def8137f520459d17e5b5b2b843ccc1716e1741",
+  "bytes": 22864976,
+  "id2label": {
+    "0": "toxic",
+    "1": "severe_toxic",
+    "2": "obscene",
+    "3": "threat",
+    "4": "insult",
+    "5": "identity_hate"
+  },
+  "wantedLabels": [
+    "insult",
+    "threat",
+    "identity_hate",
+    "severe_toxic"
+  ],
+  "ignoredLabels": [
+    "toxic",
+    "obscene"
+  ],
+  "warmSpeed": {
+    "twentyPostsOneCallMs": 162,
+    "tenCallsOfTwoMs": 160
+  },
+  "measured": "2026-10-23",
+  "requestsToOtherHosts": 0,
+  "rows": [
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "I love these people so much, best team ever",
+      "labels": {
+        "toxic": 0.0024186784867197275,
+        "obscene": 0.0007394253043457866,
+        "insult": 0.0006243980024009943,
+        "threat": 0.0004956974880769849,
+        "identity_hate": 0.0004887645482085645,
+        "severe_toxic": 0.00045859345118515193
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "News of the bake sale is spreading like wildfire",
+      "labels": {
+        "toxic": 0.009148634970188141,
+        "obscene": 0.0007629283354617655,
+        "insult": 0.0006056051352061331,
+        "identity_hate": 0.000355704891262576,
+        "threat": 0.0002465370635036379,
+        "severe_toxic": 0.0001873218861874193
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Got new frames for the photos, going to hang them this weekend",
+      "labels": {
+        "toxic": 0.002937475685030222,
+        "obscene": 0.0006591298151761293,
+        "insult": 0.0006077442085370421,
+        "identity_hate": 0.00045519613195210695,
+        "threat": 0.0004121279052924365,
+        "severe_toxic": 0.00038503759424202144
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Ants in the kitchen again, how do I get rid of them?",
+      "labels": {
+        "toxic": 0.012024808675050735,
+        "insult": 0.000728751125279814,
+        "obscene": 0.000594616518355906,
+        "identity_hate": 0.0004410256224218756,
+        "threat": 0.00022420741152018309,
+        "severe_toxic": 0.000167250691447407
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Shoot them a message if you want to join the hike",
+      "labels": {
+        "toxic": 0.018788719549775124,
+        "insult": 0.0006797058740630746,
+        "obscene": 0.0005890066968277097,
+        "threat": 0.0005807013367302716,
+        "identity_hate": 0.0004712069348897785,
+        "severe_toxic": 0.0001833069691201672
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Took the kids to see the clowns at the circus",
+      "labels": {
+        "toxic": 0.005493037402629852,
+        "insult": 0.0006667566485702991,
+        "obscene": 0.0005124874296598136,
+        "identity_hate": 0.0004345037159509957,
+        "threat": 0.0002546553441789001,
+        "severe_toxic": 0.0002273923746543005
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "My stupid printer jammed again",
+      "labels": {
+        "toxic": 0.9145233035087585,
+        "obscene": 0.4848949909210205,
+        "insult": 0.13783296942710876,
+        "severe_toxic": 0.004265112802386284,
+        "identity_hate": 0.0007122233510017395,
+        "threat": 0.00048519327538087964
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "I felt so stupid forgetting my own birthday",
+      "labels": {
+        "toxic": 0.4862794280052185,
+        "obscene": 0.08085217326879501,
+        "insult": 0.009225317277014256,
+        "severe_toxic": 0.0009059819858521223,
+        "threat": 0.0005235984572209418,
+        "identity_hate": 0.00045859566307626665
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Rescued animals who need homes: meet Biscuit",
+      "labels": {
+        "toxic": 0.02195674553513527,
+        "insult": 0.001105152303352952,
+        "identity_hate": 0.0007146812276914716,
+        "obscene": 0.0006367902387864888,
+        "threat": 0.0003351372724864632,
+        "severe_toxic": 0.00016825890634208918
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The way this factory treats its workers is appalling",
+      "labels": {
+        "toxic": 0.03523793816566467,
+        "obscene": 0.0013109721476212144,
+        "insult": 0.0012470168294385076,
+        "identity_hate": 0.00043802260188385844,
+        "threat": 0.0003184166853316128,
+        "severe_toxic": 0.00016551856242585927
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Animal cruelty is disgusting. Please adopt, do not shop.",
+      "labels": {
+        "toxic": 0.26227065920829773,
+        "insult": 0.00513827009126544,
+        "identity_hate": 0.004346571397036314,
+        "obscene": 0.003004510188475251,
+        "threat": 0.0025636334903538227,
+        "severe_toxic": 0.0005346054676920176
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Locusts are fascinating insects, here is a thread",
+      "labels": {
+        "toxic": 0.0073350174352526665,
+        "insult": 0.0006131501286290586,
+        "obscene": 0.0005661761970259249,
+        "identity_hate": 0.00041281600715592504,
+        "threat": 0.0002558012492954731,
+        "severe_toxic": 0.00019576390332076699
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "HAPPY BIRTHDAY GRANDMA, WE LOVE YOU",
+      "labels": {
+        "toxic": 0.0030376692302525043,
+        "obscene": 0.0005758411716669798,
+        "insult": 0.0005621360614895821,
+        "identity_hate": 0.0004333319084253162,
+        "threat": 0.00042955984827131033,
+        "severe_toxic": 0.00033456392702646554
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "We won the championship!!!",
+      "labels": {
+        "toxic": 0.005211856681853533,
+        "obscene": 0.0006038109422661364,
+        "insult": 0.0005222922773100436,
+        "identity_hate": 0.0003952453553210944,
+        "threat": 0.0002931432973127812,
+        "severe_toxic": 0.0002450545725878328
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The virus is infecting cells faster than expected, new study",
+      "labels": {
+        "toxic": 0.004634383134543896,
+        "obscene": 0.000573477242141962,
+        "insult": 0.0005363057716749609,
+        "identity_hate": 0.00041982854600064456,
+        "threat": 0.0003042345342691988,
+        "severe_toxic": 0.0002659471647348255
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "I am going to kill this boss fight tonight if it takes all evening",
+      "labels": {
+        "toxic": 0.7827519178390503,
+        "threat": 0.5307998061180115,
+        "obscene": 0.06199490651488304,
+        "insult": 0.044871337711811066,
+        "severe_toxic": 0.03264869004487991,
+        "identity_hate": 0.021962471306324005
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Finally beat the last boss after forty tries, hands still shaking",
+      "labels": {
+        "toxic": 0.0061440905556082726,
+        "obscene": 0.0006505179335363209,
+        "insult": 0.0006047514616511762,
+        "identity_hate": 0.0003514240379445255,
+        "threat": 0.00025279432884417474,
+        "severe_toxic": 0.0002160457952413708
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Two hours of chess puzzles and I am still losing to the computer",
+      "labels": {
+        "toxic": 0.0034361453726887703,
+        "obscene": 0.0006497363210655749,
+        "insult": 0.000608019414357841,
+        "identity_hate": 0.00042474467772990465,
+        "threat": 0.0003426135517656803,
+        "severe_toxic": 0.0003298264928162098
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Rebuilt the model railway bridge for the fourth time this month",
+      "labels": {
+        "toxic": 0.0026165135204792023,
+        "obscene": 0.000770720187574625,
+        "insult": 0.0006953384727239609,
+        "identity_hate": 0.00048232186236418784,
+        "severe_toxic": 0.00044800160685554147,
+        "threat": 0.00043220093357376754
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "This sauce is killer, I will be making it every week now",
+      "labels": {
+        "toxic": 0.0924072191119194,
+        "insult": 0.0017947860760614276,
+        "obscene": 0.0017017791979014874,
+        "threat": 0.0016456939047202468,
+        "identity_hate": 0.0008429739973507822,
+        "severe_toxic": 0.0003005538892466575
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "First sourdough loaf came out looking like a brick, tastes fine though",
+      "labels": {
+        "toxic": 0.012512792833149433,
+        "insult": 0.0009142821654677391,
+        "obscene": 0.0007143380353227258,
+        "identity_hate": 0.00038912746822461486,
+        "threat": 0.00021956217824481428,
+        "severe_toxic": 0.00016364155453629792
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The chilli has been on since noon and the whole street smells wonderful",
+      "labels": {
+        "toxic": 0.004000489134341478,
+        "obscene": 0.0006200407515279949,
+        "insult": 0.0005546768079511821,
+        "identity_hate": 0.00039764956454746425,
+        "threat": 0.0003107283846475184,
+        "severe_toxic": 0.00027684279484674335
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The cat has taken the entire sofa and will not be moving",
+      "labels": {
+        "toxic": 0.009241736494004726,
+        "insult": 0.0006470574298873544,
+        "obscene": 0.0006267566350288689,
+        "identity_hate": 0.0003403581213206053,
+        "threat": 0.0002369423018535599,
+        "severe_toxic": 0.00017680412565823644
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Took the dog to the lake and she swam until she could not stand up",
+      "labels": {
+        "toxic": 0.01377570815384388,
+        "insult": 0.0008868415025062859,
+        "obscene": 0.000603984750341624,
+        "identity_hate": 0.00043178684427402914,
+        "threat": 0.00026836511096917093,
+        "severe_toxic": 0.0001683407463133335
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The stray cat by the shop let me pet her today for the first time",
+      "labels": {
+        "toxic": 0.00899463426321745,
+        "obscene": 0.0005979525740258396,
+        "insult": 0.0005767738912254572,
+        "identity_hate": 0.00032598202233202755,
+        "threat": 0.00028597316122613847,
+        "severe_toxic": 0.00018242000078316778
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Lost the final by two points and I am still proud of this team",
+      "labels": {
+        "toxic": 0.003265775740146637,
+        "obscene": 0.0006431196234188974,
+        "insult": 0.0006083889747969806,
+        "identity_hate": 0.00043205529800616205,
+        "threat": 0.000351304275682196,
+        "severe_toxic": 0.000333118048729375
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Marathon training week six, my legs are jelly and the mornings are beautiful",
+      "labels": {
+        "toxic": 0.004784120712429285,
+        "obscene": 0.0006628534174524248,
+        "insult": 0.0005198003491386771,
+        "identity_hate": 0.0003697494394145906,
+        "threat": 0.00030939490534365177,
+        "severe_toxic": 0.0002564016613177955
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Five a side tonight, we were terrible and laughed the whole way through",
+      "labels": {
+        "toxic": 0.005456334445625544,
+        "obscene": 0.0006634184392169118,
+        "insult": 0.0005398034118115902,
+        "identity_hate": 0.0003873400273732841,
+        "threat": 0.0002839050139300525,
+        "severe_toxic": 0.00023763823264744133
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Set a humane trap for the mouse in the shed, no luck yet",
+      "labels": {
+        "toxic": 0.005326129030436277,
+        "insult": 0.0006302317488007247,
+        "obscene": 0.0005738862091675401,
+        "identity_hate": 0.00039003233541734517,
+        "threat": 0.0002788850397337228,
+        "severe_toxic": 0.00022952859580982476
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The moths have found my flour again, everything goes in jars now",
+      "labels": {
+        "toxic": 0.0039008748717606068,
+        "obscene": 0.0006023765308782458,
+        "insult": 0.0005804916145280004,
+        "identity_hate": 0.0004186481819488108,
+        "threat": 0.00031704839784651995,
+        "severe_toxic": 0.00029595399973914027
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Slugs have eaten the lettuce, the snails are innocent for once",
+      "labels": {
+        "toxic": 0.04788713529706001,
+        "insult": 0.0019123089732602239,
+        "obscene": 0.0013357747811824083,
+        "identity_hate": 0.0008665835484862328,
+        "threat": 0.00039050166378729045,
+        "severe_toxic": 0.0001946293341461569
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Repotted the whole windowsill of herbs and now the kitchen smells like summer",
+      "labels": {
+        "toxic": 0.005686373449862003,
+        "insult": 0.0005827900022268295,
+        "obscene": 0.0005330987623892725,
+        "identity_hate": 0.00037069074460305274,
+        "threat": 0.0002728886320255697,
+        "severe_toxic": 0.0002182572497986257
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "New study on soil microbes, the findings are stranger than I expected",
+      "labels": {
+        "toxic": 0.002742387820035219,
+        "obscene": 0.0007061309879645705,
+        "insult": 0.0006560110487043858,
+        "identity_hate": 0.0004800576134584844,
+        "severe_toxic": 0.00041437119944021106,
+        "threat": 0.00040677314973436296
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Astronomers found water vapour in a cloud far from any star",
+      "labels": {
+        "toxic": 0.0037053143605589867,
+        "obscene": 0.0005932915373705328,
+        "insult": 0.0005841516540385783,
+        "identity_hate": 0.0004368575173430145,
+        "threat": 0.0003296130453236401,
+        "severe_toxic": 0.0003077019937336445
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Fossil hunters found a fish with legs, again",
+      "labels": {
+        "toxic": 0.0034407335333526134,
+        "insult": 0.0006215894827619195,
+        "obscene": 0.0006122266058810055,
+        "identity_hate": 0.00044889203854836524,
+        "threat": 0.0003449350770097226,
+        "severe_toxic": 0.0003278792428318411
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "We shoot portraits on Sunday, come by the studio if you are free",
+      "labels": {
+        "toxic": 0.0029553852509707212,
+        "obscene": 0.0005880516837351024,
+        "insult": 0.0005813783500343561,
+        "identity_hate": 0.0004549217701423913,
+        "threat": 0.00043026229832321405,
+        "severe_toxic": 0.0003648934361990541
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Edited wedding photos all evening, three hundred still to go",
+      "labels": {
+        "toxic": 0.002697316464036703,
+        "obscene": 0.0007472720462828875,
+        "insult": 0.0006739958771504462,
+        "identity_hate": 0.0004742171731777489,
+        "severe_toxic": 0.00043039213051088154,
+        "threat": 0.00041663285810500383
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Shot a roll of film at the market, waiting on the lab now",
+      "labels": {
+        "toxic": 0.002626533852890134,
+        "obscene": 0.0007348914514295757,
+        "insult": 0.000681986624840647,
+        "identity_hate": 0.0004850300610996783,
+        "severe_toxic": 0.0004411177069414407,
+        "threat": 0.00043001052108593285
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Repainted the hallway a warm cream and it feels twice as big",
+      "labels": {
+        "toxic": 0.0031193529721349478,
+        "obscene": 0.0007097295601852238,
+        "insult": 0.0006396378157660365,
+        "identity_hate": 0.0004230571794323623,
+        "severe_toxic": 0.0003593794535845518,
+        "threat": 0.0003549357643350959
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Hung the new shelves, only one hole in the wrong place",
+      "labels": {
+        "toxic": 0.005752285942435265,
+        "obscene": 0.0007243485888466239,
+        "insult": 0.0005749960546381772,
+        "identity_hate": 0.0003529910754878074,
+        "threat": 0.00025645250570960343,
+        "severe_toxic": 0.000235926519962959
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Found a lamp at the market for almost nothing and it fits the corner perfectly",
+      "labels": {
+        "toxic": 0.003647837322205305,
+        "obscene": 0.0006434614188037813,
+        "insult": 0.0006194798625074327,
+        "identity_hate": 0.00040805578464642167,
+        "threat": 0.0003108629025518894,
+        "severe_toxic": 0.00030874693766236305
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "I am such an idiot, I locked my keys in the car",
+      "labels": {
+        "toxic": 0.7009932398796082,
+        "obscene": 0.28108683228492737,
+        "insult": 0.029499387368559837,
+        "severe_toxic": 0.0026868083514273167,
+        "threat": 0.0010943468660116196,
+        "identity_hate": 0.000881086743902415
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Called my teacher mum in year four and I still think about it at night",
+      "labels": {
+        "toxic": 0.006207140162587166,
+        "insult": 0.0006555788568221033,
+        "obscene": 0.0006486334605142474,
+        "identity_hate": 0.00034519427572377026,
+        "threat": 0.00022813181567471474,
+        "severe_toxic": 0.00020793304429389536
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "I am a fool for thinking the printer would work on the first try",
+      "labels": {
+        "toxic": 0.007196611724793911,
+        "obscene": 0.0006620399653911591,
+        "insult": 0.0005925207515247166,
+        "identity_hate": 0.00031243168632499874,
+        "threat": 0.00024987233337014914,
+        "severe_toxic": 0.00019772253290284425
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Left the house in slippers, said nothing all day, nobody noticed",
+      "labels": {
+        "toxic": 0.010122453793883324,
+        "insult": 0.0007171332254074514,
+        "obscene": 0.0006871592486277223,
+        "identity_hate": 0.0003445098118390888,
+        "threat": 0.00021247346012387425,
+        "severe_toxic": 0.00017649857909418643
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "WE DID IT!!! FIRST PLACE!!!",
+      "labels": {
+        "toxic": 0.006614352576434612,
+        "obscene": 0.0007126537966541946,
+        "insult": 0.0005251028924249113,
+        "identity_hate": 0.0003156014427077025,
+        "threat": 0.0002578780404292047,
+        "severe_toxic": 0.00021853460930287838
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "SHE SAID YES!!! I AM SO HAPPY!!!",
+      "labels": {
+        "toxic": 0.0035763615742325783,
+        "obscene": 0.0006431597867049277,
+        "insult": 0.000550550757907331,
+        "identity_hate": 0.00040312056080438197,
+        "threat": 0.0003442325396463275,
+        "severe_toxic": 0.00030846716254018247
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "THE BUS WAS EARLY TODAY!!! A MIRACLE!!!",
+      "labels": {
+        "toxic": 0.0037329525221139193,
+        "obscene": 0.0006592409918084741,
+        "insult": 0.000562397064641118,
+        "identity_hate": 0.00038516701897606254,
+        "threat": 0.00033080365392379463,
+        "severe_toxic": 0.00031041394686326385
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The landlord has left the heating off for three weeks and that is not right",
+      "labels": {
+        "toxic": 0.0032627766486257315,
+        "obscene": 0.0007000133045949042,
+        "insult": 0.0006275043706409633,
+        "identity_hate": 0.00042621599277481437,
+        "severe_toxic": 0.0003497615398373455,
+        "threat": 0.00033345483825542033
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The council cut the bus route without asking anyone",
+      "labels": {
+        "toxic": 0.003495169570669532,
+        "obscene": 0.0006477398565039039,
+        "insult": 0.0005797630874440074,
+        "identity_hate": 0.00041721650632098317,
+        "threat": 0.00032818602630868554,
+        "severe_toxic": 0.00032132837804965675
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Fining people for sleeping outside is cruel and it solves nothing",
+      "labels": {
+        "toxic": 0.32570356130599976,
+        "insult": 0.004788992926478386,
+        "obscene": 0.004768014885485172,
+        "threat": 0.0026744187343865633,
+        "identity_hate": 0.0021933235693722963,
+        "severe_toxic": 0.0005663140909746289
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The company's pay gap is disgraceful and they know it",
+      "labels": {
+        "toxic": 0.01762775145471096,
+        "insult": 0.0009166800300590694,
+        "obscene": 0.0008850203012116253,
+        "identity_hate": 0.0003708888543769717,
+        "threat": 0.0002333660377189517,
+        "severe_toxic": 0.00015729357255622745
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The ferry was late and the harbour was so quiet I did not mind at all",
+      "labels": {
+        "toxic": 0.0049150255508720875,
+        "obscene": 0.0006235562032088637,
+        "insult": 0.0005477890954352915,
+        "identity_hate": 0.0003673741011880338,
+        "threat": 0.00028462946647778153,
+        "severe_toxic": 0.00024363136617466807
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Wrote three letters by hand this week and posted every one of them",
+      "labels": {
+        "toxic": 0.0029138042591512203,
+        "obscene": 0.0007336350972764194,
+        "insult": 0.0006522773182950914,
+        "identity_hate": 0.000439565657870844,
+        "severe_toxic": 0.00039212251431308687,
+        "threat": 0.00038353248964995146
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Someone planted sunflowers all along the community garden fence",
+      "labels": {
+        "toxic": 0.0029311629477888346,
+        "obscene": 0.0007110795704647899,
+        "insult": 0.0006586010567843914,
+        "identity_hate": 0.0004408452950883657,
+        "severe_toxic": 0.000388159736758098,
+        "threat": 0.00037807144690304995
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "It rained all weekend so we baked and listened to the radio",
+      "labels": {
+        "toxic": 0.005768589675426483,
+        "obscene": 0.0005833666073158383,
+        "insult": 0.0005118552362546325,
+        "identity_hate": 0.00042185187339782715,
+        "threat": 0.0002715204027481377,
+        "severe_toxic": 0.00022685251315124333
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Volunteered at the repair cafe on Saturday and fixed two radios",
+      "labels": {
+        "toxic": 0.0026973793283104897,
+        "obscene": 0.0007604981074109674,
+        "insult": 0.0006802969146519899,
+        "identity_hate": 0.00046664520050399005,
+        "severe_toxic": 0.00043501536129042506,
+        "threat": 0.0004189805476926267
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The neighbours brought over soup when we were ill, twice",
+      "labels": {
+        "toxic": 0.007662175688892603,
+        "insult": 0.0007164941634982824,
+        "obscene": 0.0005074582877568901,
+        "identity_hate": 0.000486681325128302,
+        "threat": 0.00024044059682637453,
+        "severe_toxic": 0.00019865416106767952
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "My grandmother taught me to knit over a video call, badly",
+      "labels": {
+        "toxic": 0.011384457349777222,
+        "obscene": 0.0010030526900663972,
+        "insult": 0.000645283202175051,
+        "identity_hate": 0.0003457377024460584,
+        "threat": 0.0002248204982606694,
+        "severe_toxic": 0.00019242867711000144
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The library extended its hours and the reading room is full again",
+      "labels": {
+        "toxic": 0.002800149377435446,
+        "obscene": 0.0007575101917609572,
+        "insult": 0.0006718973745591938,
+        "identity_hate": 0.0004561345558613539,
+        "severe_toxic": 0.00041530330781824887,
+        "threat": 0.00038768304511904716
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Fog on the way in this morning, the whole valley disappeared",
+      "labels": {
+        "toxic": 0.0044370731338858604,
+        "insult": 0.0006064368644729257,
+        "obscene": 0.0006059760926291347,
+        "identity_hate": 0.0004043322987854481,
+        "threat": 0.0002744405355770141,
+        "severe_toxic": 0.00026078621158376336
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The allotment is producing more courgettes than we can possibly eat",
+      "labels": {
+        "toxic": 0.00833249930292368,
+        "obscene": 0.0006061689928174019,
+        "insult": 0.0005985860479995608,
+        "identity_hate": 0.0003690806624945253,
+        "threat": 0.000239652581512928,
+        "severe_toxic": 0.00018100668967235833
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Cycled to work in the rain and arrived laughing",
+      "labels": {
+        "toxic": 0.0056928773410618305,
+        "insult": 0.0005975101958028972,
+        "obscene": 0.0005680077010765672,
+        "identity_hate": 0.00037641875678673387,
+        "threat": 0.0002646344364620745,
+        "severe_toxic": 0.00021954019030090421
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The bus driver waited while I ran for it, twice this month",
+      "labels": {
+        "toxic": 0.0027319747023284435,
+        "obscene": 0.0007672397769056261,
+        "insult": 0.0006670515285804868,
+        "identity_hate": 0.0004772698157466948,
+        "severe_toxic": 0.0004277150146663189,
+        "threat": 0.00040312056080438197
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Spent the evening sorting old photographs with my sister",
+      "labels": {
+        "toxic": 0.003926872741430998,
+        "insult": 0.0006195103051140904,
+        "obscene": 0.0005790559807792306,
+        "identity_hate": 0.00042114692041650414,
+        "threat": 0.0003132029087282717,
+        "severe_toxic": 0.0002887655282393098
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "What an idiot I was to skip sunscreen today",
+      "labels": {
+        "toxic": 0.9410780072212219,
+        "insult": 0.7060524225234985,
+        "obscene": 0.38992539048194885,
+        "severe_toxic": 0.006936121731996536,
+        "identity_hate": 0.0033971029333770275,
+        "threat": 0.0007188705494627357
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "I'm such a moron, I left the keys inside again",
+      "labels": {
+        "toxic": 0.5760205388069153,
+        "obscene": 0.33874082565307617,
+        "insult": 0.05259174108505249,
+        "severe_toxic": 0.0031803182791918516,
+        "identity_hate": 0.0015084472252056003,
+        "threat": 0.0010903743095695972
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "what a clown I am for believing the weather app",
+      "labels": {
+        "toxic": 0.07312063127756119,
+        "insult": 0.0032467904966324568,
+        "obscene": 0.0016071652062237263,
+        "identity_hate": 0.0006968416855670512,
+        "threat": 0.00042803885298781097,
+        "severe_toxic": 0.00018445185560267419
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Such an idiot move, I booked the wrong week entirely",
+      "labels": {
+        "toxic": 0.8707062602043152,
+        "insult": 0.5467540621757507,
+        "obscene": 0.23349033296108246,
+        "severe_toxic": 0.0035016860347241163,
+        "identity_hate": 0.0023913374170660973,
+        "threat": 0.0005552734946832061
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "I am such a fool for trusting the printer again",
+      "labels": {
+        "toxic": 0.031429752707481384,
+        "obscene": 0.0016842529876157641,
+        "insult": 0.0009518688311800361,
+        "identity_hate": 0.0003554968861863017,
+        "threat": 0.0003023282333742827,
+        "severe_toxic": 0.00017986568855121732
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "This sauce is fucking incredible, I'm making it every week",
+      "labels": {
+        "toxic": 0.9620963335037231,
+        "obscene": 0.900711178779602,
+        "insult": 0.10952192544937134,
+        "severe_toxic": 0.05386226624250412,
+        "threat": 0.002181606600061059,
+        "identity_hate": 0.0015873588854447007
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Damn, this hike nearly killed me but the view was worth it",
+      "labels": {
+        "toxic": 0.5796279907226562,
+        "obscene": 0.45498284697532654,
+        "insult": 0.015222852118313313,
+        "severe_toxic": 0.004560529720038176,
+        "threat": 0.0007201730040833354,
+        "identity_hate": 0.00061439024284482
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "Shit, I forgot the tickets again",
+      "labels": {
+        "toxic": 0.8582149147987366,
+        "obscene": 0.7244648337364197,
+        "insult": 0.03516194224357605,
+        "severe_toxic": 0.012772408314049244,
+        "identity_hate": 0.000788502162322402,
+        "threat": 0.0007879020413383842
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "The referee was bloody awful tonight, worst call of the season",
+      "labels": {
+        "toxic": 0.20359572768211365,
+        "obscene": 0.00922740064561367,
+        "insult": 0.0035075743217021227,
+        "threat": 0.001370137557387352,
+        "identity_hate": 0.000978567753918469,
+        "severe_toxic": 0.0004878596810158342
+      }
+    },
+    {
+      "set": "eval",
+      "label": "calm",
+      "text": "That film was a mess, the ending was garbage",
+      "labels": {
+        "toxic": 0.23133650422096252,
+        "obscene": 0.018895898014307022,
+        "insult": 0.007740415167063475,
+        "identity_hate": 0.0008387179113924503,
+        "threat": 0.0005046509322710335,
+        "severe_toxic": 0.00045519808190874755
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "You are such an idiot",
+      "labels": {
+        "toxic": 0.9842153191566467,
+        "insult": 0.9266118407249451,
+        "obscene": 0.6408060789108276,
+        "severe_toxic": 0.053958140313625336,
+        "identity_hate": 0.014623521827161312,
+        "threat": 0.0028014250565320253
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "What a moron",
+      "labels": {
+        "toxic": 0.9783678650856018,
+        "insult": 0.9185498356819153,
+        "obscene": 0.7198951840400696,
+        "severe_toxic": 0.03677959367632866,
+        "identity_hate": 0.016707664355635643,
+        "threat": 0.0012058204738423228
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "He is an idiot and she is a clown",
+      "labels": {
+        "toxic": 0.9773417115211487,
+        "insult": 0.9158216118812561,
+        "obscene": 0.4750753939151764,
+        "identity_hate": 0.05041782557964325,
+        "severe_toxic": 0.03278651088476181,
+        "threat": 0.0021416018716990948
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "They are a bunch of morons",
+      "labels": {
+        "toxic": 0.9791213274002075,
+        "insult": 0.91702800989151,
+        "obscene": 0.5446048378944397,
+        "identity_hate": 0.09883519262075424,
+        "severe_toxic": 0.039302244782447815,
+        "threat": 0.002522310707718134
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "@rude_ron is a clown",
+      "labels": {
+        "toxic": 0.40099889039993286,
+        "insult": 0.056371286511421204,
+        "obscene": 0.0068765669129788876,
+        "identity_hate": 0.003665757831186056,
+        "threat": 0.00078206742182374,
+        "severe_toxic": 0.0005332418368197978
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Idiots like you ruined this place",
+      "labels": {
+        "toxic": 0.9814963936805725,
+        "insult": 0.8873127698898315,
+        "obscene": 0.4823293387889862,
+        "severe_toxic": 0.029572784900665283,
+        "identity_hate": 0.011022133752703667,
+        "threat": 0.002396498341113329
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "All of these clowns should be quiet",
+      "labels": {
+        "toxic": 0.0485326424241066,
+        "insult": 0.0026849231217056513,
+        "identity_hate": 0.0008280996116809547,
+        "obscene": 0.000785009644459933,
+        "threat": 0.0004688786284532398,
+        "severe_toxic": 0.0001735032710712403
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "You're such a loser for saying that",
+      "labels": {
+        "toxic": 0.9202693700790405,
+        "insult": 0.6569216251373291,
+        "obscene": 0.07693397998809814,
+        "identity_hate": 0.00659347465261817,
+        "severe_toxic": 0.005236603319644928,
+        "threat": 0.0017840024083852768
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "What an imbecile",
+      "labels": {
+        "toxic": 0.9655680656433105,
+        "insult": 0.8998410105705261,
+        "obscene": 0.5660882592201233,
+        "identity_hate": 0.04304010048508644,
+        "severe_toxic": 0.026686446741223335,
+        "threat": 0.0015223012305796146
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "She is a scumbag and everyone knows it",
+      "labels": {
+        "toxic": 0.9485359191894531,
+        "insult": 0.8832677006721497,
+        "obscene": 0.6105846762657166,
+        "identity_hate": 0.0952034667134285,
+        "severe_toxic": 0.03203963488340378,
+        "threat": 0.0019864521455019712
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "They're all a pack of fools",
+      "labels": {
+        "toxic": 0.9385710954666138,
+        "insult": 0.750808835029602,
+        "obscene": 0.11490679532289505,
+        "identity_hate": 0.030771702527999878,
+        "severe_toxic": 0.007922763004899025,
+        "threat": 0.0020820421632379293
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Those jackasses in the comments are at it again",
+      "labels": {
+        "toxic": 0.6198660135269165,
+        "obscene": 0.42556264996528625,
+        "insult": 0.2289714366197586,
+        "identity_hate": 0.008199775591492653,
+        "severe_toxic": 0.006363528314977884,
+        "threat": 0.0012995530851185322
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "You're an idiot for believing that",
+      "labels": {
+        "toxic": 0.9755426049232483,
+        "insult": 0.8982370495796204,
+        "obscene": 0.4855634272098541,
+        "severe_toxic": 0.029491566121578217,
+        "identity_hate": 0.010809496976435184,
+        "threat": 0.002005604561418295
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "These people are vermin",
+      "labels": {
+        "toxic": 0.06500715017318726,
+        "insult": 0.0029439700301736593,
+        "identity_hate": 0.0012943834299221635,
+        "obscene": 0.0008819253998808563,
+        "threat": 0.0004197921371087432,
+        "severe_toxic": 0.0001875129237305373
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "You people are parasites",
+      "labels": {
+        "toxic": 0.8883585333824158,
+        "insult": 0.3682004511356354,
+        "obscene": 0.02966543845832348,
+        "identity_hate": 0.01918223686516285,
+        "severe_toxic": 0.002862559864297509,
+        "threat": 0.002734729088842869
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "People like them are a plague",
+      "labels": {
+        "toxic": 0.2116122543811798,
+        "insult": 0.006934348493814468,
+        "identity_hate": 0.0034177370835095644,
+        "obscene": 0.002164623700082302,
+        "threat": 0.0009087641374208033,
+        "severe_toxic": 0.00034130935091525316
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Subhuman behaviour, honestly",
+      "labels": {
+        "toxic": 0.020634310320019722,
+        "insult": 0.0010696693789213896,
+        "obscene": 0.0008736169547773898,
+        "identity_hate": 0.0006829319754615426,
+        "threat": 0.00024833378847688437,
+        "severe_toxic": 0.00017779768677428365
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "They are animals and should not live near us",
+      "labels": {
+        "toxic": 0.5222229361534119,
+        "insult": 0.03503667190670967,
+        "identity_hate": 0.03100682608783245,
+        "threat": 0.0066502951085567474,
+        "obscene": 0.005293755792081356,
+        "severe_toxic": 0.001488872105255723
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "These cockroaches need to be exterminated",
+      "labels": {
+        "toxic": 0.45012009143829346,
+        "insult": 0.04102282598614693,
+        "obscene": 0.03152941167354584,
+        "identity_hate": 0.003891146741807461,
+        "threat": 0.0020475841592997313,
+        "severe_toxic": 0.0010544267715886235
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Those leeches deserve nothing",
+      "labels": {
+        "toxic": 0.6836649775505066,
+        "insult": 0.0864892303943634,
+        "obscene": 0.03786786273121834,
+        "identity_hate": 0.011843490414321423,
+        "threat": 0.0026639096904546022,
+        "severe_toxic": 0.0015996159054338932
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "They are rats, every single one of them",
+      "labels": {
+        "toxic": 0.45163705945014954,
+        "insult": 0.058314528316259384,
+        "obscene": 0.007377305068075657,
+        "identity_hate": 0.006311532109975815,
+        "threat": 0.0013385178754106164,
+        "severe_toxic": 0.0007046909886412323
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Cull them all before this gets worse",
+      "labels": {
+        "toxic": 0.08181672543287277,
+        "obscene": 0.002707444364205003,
+        "insult": 0.0015491371741518378,
+        "threat": 0.0005848274449817836,
+        "identity_hate": 0.0005525876767933369,
+        "severe_toxic": 0.00024277203192468733
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "They are a disease on this town",
+      "labels": {
+        "toxic": 0.10462667047977448,
+        "insult": 0.002955702831968665,
+        "identity_hate": 0.0028287353925406933,
+        "obscene": 0.0012208650587126613,
+        "threat": 0.000580213381908834,
+        "severe_toxic": 0.0002843707043211907
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "These people are cockroaches",
+      "labels": {
+        "toxic": 0.6119710206985474,
+        "insult": 0.1565803438425064,
+        "obscene": 0.055666834115982056,
+        "identity_hate": 0.00889517180621624,
+        "severe_toxic": 0.001644396223127842,
+        "threat": 0.0012387336464598775
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "They should be hanged for this",
+      "labels": {
+        "toxic": 0.6453503966331482,
+        "threat": 0.348034530878067,
+        "identity_hate": 0.04682427644729614,
+        "insult": 0.02686658874154091,
+        "obscene": 0.015650596469640732,
+        "severe_toxic": 0.014325108379125595
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Kill them all",
+      "labels": {
+        "toxic": 0.8383516073226929,
+        "threat": 0.7198972702026367,
+        "insult": 0.07137758284807205,
+        "obscene": 0.06711547821760178,
+        "severe_toxic": 0.06606905907392502,
+        "identity_hate": 0.06323905289173126
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Death to these people",
+      "labels": {
+        "toxic": 0.6995123624801636,
+        "threat": 0.5712524652481079,
+        "insult": 0.03922206908464432,
+        "identity_hate": 0.03451114520430565,
+        "severe_toxic": 0.029633453115820885,
+        "obscene": 0.027309618890285492
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "I hope you get hurt",
+      "labels": {
+        "toxic": 0.7732894420623779,
+        "threat": 0.6663214564323425,
+        "insult": 0.06978429108858109,
+        "severe_toxic": 0.048594970256090164,
+        "obscene": 0.03895600885152817,
+        "identity_hate": 0.036139536648988724
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Someone should hurt him",
+      "labels": {
+        "toxic": 0.34531113505363464,
+        "threat": 0.01719420962035656,
+        "obscene": 0.005486737005412579,
+        "insult": 0.005415006540715694,
+        "identity_hate": 0.0034414660185575485,
+        "severe_toxic": 0.0012931764358654618
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "They should all be shot",
+      "labels": {
+        "toxic": 0.5733591914176941,
+        "threat": 0.4416874051094055,
+        "identity_hate": 0.028894023969769478,
+        "insult": 0.02116611786186695,
+        "severe_toxic": 0.018803678452968597,
+        "obscene": 0.016679657623171806
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "He deserves to be beaten",
+      "labels": {
+        "toxic": 0.619611382484436,
+        "threat": 0.19128458201885223,
+        "insult": 0.02407308854162693,
+        "identity_hate": 0.022082824259996414,
+        "obscene": 0.012491128407418728,
+        "severe_toxic": 0.0073586259968578815
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Go die",
+      "labels": {
+        "toxic": 0.8941311836242676,
+        "threat": 0.7754632234573364,
+        "insult": 0.1762753129005432,
+        "severe_toxic": 0.09943605214357376,
+        "obscene": 0.09693139791488647,
+        "identity_hate": 0.050922852009534836
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Someone needs to smash his face in",
+      "labels": {
+        "toxic": 0.8526895046234131,
+        "threat": 0.3491666615009308,
+        "insult": 0.06458346545696259,
+        "obscene": 0.06391591578722,
+        "severe_toxic": 0.0212410818785429,
+        "identity_hate": 0.01793612353503704
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Hang them all",
+      "labels": {
+        "toxic": 0.03223534673452377,
+        "obscene": 0.0011860608356073499,
+        "threat": 0.0007422527996823192,
+        "insult": 0.0007136926287785172,
+        "identity_hate": 0.00044368745875544846,
+        "severe_toxic": 0.0002386222331551835
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "WAKE UP!!! THIS IS DISGUSTING AND NOBODY IS TALKING ABOUT IT, YOU WON'T BELIEVE WHAT THEY ARE DOING, SHARE BEFORE IT'S DELETED!!!",
+      "labels": {
+        "toxic": 0.34960755705833435,
+        "insult": 0.005842403043061495,
+        "obscene": 0.005331737454980612,
+        "threat": 0.0019397820578888059,
+        "identity_hate": 0.0010768551146611571,
+        "severe_toxic": 0.0004471572465263307
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "DISGUSTING!!! NOBODY IS TALKING ABOUT THIS!!!",
+      "labels": {
+        "toxic": 0.40189021825790405,
+        "obscene": 0.008099508471786976,
+        "insult": 0.007114079315215349,
+        "identity_hate": 0.0011452481849119067,
+        "threat": 0.0009820607956498861,
+        "severe_toxic": 0.0004469320410862565
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "YOU WON'T BELIEVE WHAT HAPPENED!!! SHARE BEFORE IT'S DELETED!!!",
+      "labels": {
+        "toxic": 0.01497484277933836,
+        "obscene": 0.0007302562589757144,
+        "insult": 0.000597383186686784,
+        "identity_hate": 0.00030337602947838604,
+        "threat": 0.0002742187352851033,
+        "severe_toxic": 0.00016028914251364768
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "OUTRAGEOUS!!! THIS IS APPALLING AND EVERYONE NEEDS TO SEE IT!!!",
+      "labels": {
+        "toxic": 0.033210232853889465,
+        "obscene": 0.0012206208193674684,
+        "insult": 0.0008656480931676924,
+        "identity_hate": 0.0003068995429202914,
+        "threat": 0.00027115203556604683,
+        "severe_toxic": 0.00015695705951657146
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "NOBODY IS TALKING ABOUT THIS AND EVERYONE NEEDS TO SEE IT!!! IT IS DISGUSTING!!!",
+      "labels": {
+        "toxic": 0.20419077575206757,
+        "obscene": 0.00338563765399158,
+        "insult": 0.002868849551305175,
+        "threat": 0.00081600685371086,
+        "identity_hate": 0.0007953414460644126,
+        "severe_toxic": 0.00028965395176783204
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "THEY DESTROYED EVERYTHING!!! THIS IS OUTRAGEOUS!!! SHARE BEFORE IT'S DELETED!!!",
+      "labels": {
+        "toxic": 0.16691623628139496,
+        "obscene": 0.0024559958837926388,
+        "insult": 0.002155434573069215,
+        "threat": 0.0013655793154612184,
+        "identity_hate": 0.0008850337471812963,
+        "severe_toxic": 0.0003367204626556486
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "honestly disgusting!!! share before it's deleted!!!",
+      "labels": {
+        "toxic": 0.5484505891799927,
+        "obscene": 0.014231045730412006,
+        "insult": 0.013925368897616863,
+        "identity_hate": 0.001553336507640779,
+        "threat": 0.0014974437654018402,
+        "severe_toxic": 0.0006447022897191346
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "THIS IS VILE!!! LOOK WHAT THEY DID!!! DISGUSTING!!!",
+      "labels": {
+        "toxic": 0.694235622882843,
+        "insult": 0.02120308205485344,
+        "obscene": 0.01352115347981453,
+        "identity_hate": 0.0042016454972326756,
+        "threat": 0.003101636655628681,
+        "severe_toxic": 0.0010492851724848151
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "Every single one of these clowns is an idiot, and the people defending them are pathetic.",
+      "labels": {
+        "toxic": 0.9392039775848389,
+        "insult": 0.783162534236908,
+        "obscene": 0.23191002011299133,
+        "identity_hate": 0.010421558283269405,
+        "severe_toxic": 0.007391663268208504,
+        "threat": 0.001093490282073617
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "These parasites and vermin are spreading like a disease through our town.",
+      "labels": {
+        "toxic": 0.05813496187329292,
+        "insult": 0.002141795586794615,
+        "identity_hate": 0.0015936398413032293,
+        "obscene": 0.0007913954323157668,
+        "threat": 0.0005875785718671978,
+        "severe_toxic": 0.0002224326744908467
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "You are such a faggot",
+      "labels": {
+        "toxic": 0.9930732250213623,
+        "insult": 0.9652228951454163,
+        "obscene": 0.9079122543334961,
+        "identity_hate": 0.6398863196372986,
+        "severe_toxic": 0.26104381680488586,
+        "threat": 0.015410871244966984
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "f4ggot",
+      "labels": {
+        "toxic": 0.943297803401947,
+        "insult": 0.7961718440055847,
+        "obscene": 0.7903925180435181,
+        "identity_hate": 0.34089386463165283,
+        "severe_toxic": 0.07597249746322632,
+        "threat": 0.010552206076681614
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "f@ggot",
+      "labels": {
+        "toxic": 0.9533818960189819,
+        "obscene": 0.8214391469955444,
+        "insult": 0.7539138793945312,
+        "identity_hate": 0.6051269173622131,
+        "severe_toxic": 0.12891529500484467,
+        "threat": 0.015746181830763817
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "f*ggot",
+      "labels": {
+        "toxic": 0.9949304461479187,
+        "obscene": 0.9726760983467102,
+        "insult": 0.9553366899490356,
+        "identity_hate": 0.7375534176826477,
+        "severe_toxic": 0.4545215964317322,
+        "threat": 0.02689102105796337
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "That chink should go back where he came from",
+      "labels": {
+        "toxic": 0.0731177031993866,
+        "obscene": 0.0033873324282467365,
+        "insult": 0.00334712746553123,
+        "identity_hate": 0.0011401778319850564,
+        "threat": 0.0005601691082119942,
+        "severe_toxic": 0.0002762371732387692
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "these pakis are everywhere now",
+      "labels": {
+        "toxic": 0.036904361099004745,
+        "identity_hate": 0.0041720387525856495,
+        "obscene": 0.0014139876002445817,
+        "insult": 0.0013403032207861543,
+        "threat": 0.0006059795268811285,
+        "severe_toxic": 0.00039059604750946164
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "shut up retard",
+      "labels": {
+        "toxic": 0.9878582954406738,
+        "insult": 0.9275007843971252,
+        "obscene": 0.5884861350059509,
+        "identity_hate": 0.04653337225317955,
+        "severe_toxic": 0.0458662323653698,
+        "threat": 0.0031894573476165533
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "So funny this toothless crackhead consistently reaches out to people in my circle. This loser has a wife and kid but still consistently embarrasses their existence. Never change bozo",
+      "labels": {
+        "toxic": 0.7052276134490967,
+        "insult": 0.2727321684360504,
+        "obscene": 0.029348354786634445,
+        "identity_hate": 0.005193234421312809,
+        "severe_toxic": 0.0012388156028464437,
+        "threat": 0.0009163416689261794
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "You and your cohorts created this monster.",
+      "labels": {
+        "toxic": 0.03727792203426361,
+        "insult": 0.0014891577884554863,
+        "obscene": 0.0008051428594626486,
+        "threat": 0.0005073497304692864,
+        "identity_hate": 0.0004270983627066016,
+        "severe_toxic": 0.00016092484293039888
+      }
+    },
+    {
+      "set": "eval",
+      "label": "heated",
+      "text": "You are a worthless parasite, nobody asked for your advice",
+      "labels": {
+        "toxic": 0.949329674243927,
+        "insult": 0.7504088282585144,
+        "obscene": 0.17145122587680817,
+        "severe_toxic": 0.008241319097578526,
+        "identity_hate": 0.005567070562392473,
+        "threat": 0.001581225311383605
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "coffee",
+      "label": "calm",
+      "text": "Pour over is worth the extra five minutes, the cup is simply better.",
+      "labels": {
+        "toxic": 0.0031700071413069963,
+        "obscene": 0.000709995802026242,
+        "insult": 0.0006136022857390344,
+        "identity_hate": 0.0004326630150899291,
+        "severe_toxic": 0.0003566490195225924,
+        "threat": 0.0003534667193889618
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "coffee",
+      "label": "calm",
+      "text": "Espresso is quicker and just as good, I do not need a ceremony in the morning.",
+      "labels": {
+        "toxic": 0.004041839856654406,
+        "obscene": 0.0006770190084353089,
+        "insult": 0.0005753606092184782,
+        "identity_hate": 0.00041306085768155754,
+        "threat": 0.00029177620308473706,
+        "severe_toxic": 0.00028423164621926844
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "coffee",
+      "label": "heated",
+      "text": "Anyone with a machine is an idiot, and you are a clown for defending it.",
+      "labels": {
+        "toxic": 0.9470353126525879,
+        "insult": 0.8430930376052856,
+        "obscene": 0.29121872782707214,
+        "severe_toxic": 0.01124156080186367,
+        "identity_hate": 0.009747586213052273,
+        "threat": 0.0011405260302126408
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "coffee",
+      "label": "heated",
+      "text": "You people are morons for wasting twenty minutes on a single cup.",
+      "labels": {
+        "toxic": 0.9544246196746826,
+        "insult": 0.8444687724113464,
+        "obscene": 0.38896214962005615,
+        "severe_toxic": 0.012193306349217892,
+        "identity_hate": 0.008278947323560715,
+        "threat": 0.000886707566678524
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "cats-dogs",
+      "label": "calm",
+      "text": "Cats are better company, they ask for nothing and sit with you anyway.",
+      "labels": {
+        "toxic": 0.006187000311911106,
+        "insult": 0.0006211799336597323,
+        "obscene": 0.0004799903545062989,
+        "identity_hate": 0.0003927293000742793,
+        "threat": 0.00027880739071406424,
+        "severe_toxic": 0.0001993645855691284
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "cats-dogs",
+      "label": "calm",
+      "text": "Dogs are better company, they want to be with you the whole day.",
+      "labels": {
+        "toxic": 0.03674008324742317,
+        "insult": 0.0014646874042227864,
+        "identity_hate": 0.0009300595265813172,
+        "obscene": 0.0007057841285131872,
+        "threat": 0.0005087751778773963,
+        "severe_toxic": 0.00018011711654253304
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "cats-dogs",
+      "label": "heated",
+      "text": "Cat people are losers who cannot handle real affection.",
+      "labels": {
+        "toxic": 0.8562635183334351,
+        "insult": 0.49304917454719543,
+        "obscene": 0.041855763643980026,
+        "identity_hate": 0.012041639536619186,
+        "severe_toxic": 0.002555251121520996,
+        "threat": 0.0010132900206372142
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "cats-dogs",
+      "label": "heated",
+      "text": "Dog owners are a bunch of morons who cannot be alone with themselves.",
+      "labels": {
+        "toxic": 0.9527836441993713,
+        "insult": 0.8340796828269958,
+        "obscene": 0.3293077349662781,
+        "identity_hate": 0.05887538567185402,
+        "severe_toxic": 0.015022147446870804,
+        "threat": 0.0017027233261615038
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "paper-screens",
+      "label": "calm",
+      "text": "Paper books are worth the shelf space, I remember more of what I read.",
+      "labels": {
+        "toxic": 0.0027905870229005814,
+        "obscene": 0.0006831331411376595,
+        "insult": 0.0006224155658856034,
+        "identity_hate": 0.0004661832354031503,
+        "threat": 0.00039720648783259094,
+        "severe_toxic": 0.00039367147837765515
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "paper-screens",
+      "label": "calm",
+      "text": "An e-reader holds a hundred books and my shoulders thank me for it.",
+      "labels": {
+        "toxic": 0.00239701010286808,
+        "obscene": 0.0007816852303221822,
+        "insult": 0.0006982390186749399,
+        "identity_hate": 0.0005060355179011822,
+        "severe_toxic": 0.0004828064702451229,
+        "threat": 0.00047223936417140067
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "paper-screens",
+      "label": "heated",
+      "text": "Screen readers are idiots, every one of you.",
+      "labels": {
+        "toxic": 0.9509735107421875,
+        "insult": 0.818976640701294,
+        "obscene": 0.2729140520095825,
+        "severe_toxic": 0.010451830923557281,
+        "identity_hate": 0.0066831763833761215,
+        "threat": 0.0010871922131627798
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "paper-screens",
+      "label": "heated",
+      "text": "You are a moron if you paid for a shelf full of paper you never open.",
+      "labels": {
+        "toxic": 0.9461389780044556,
+        "insult": 0.8496368527412415,
+        "obscene": 0.4555423855781555,
+        "severe_toxic": 0.013158277608454227,
+        "identity_hate": 0.008855788968503475,
+        "threat": 0.0008964002481661737
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "morning-evening",
+      "label": "calm",
+      "text": "Running before work sets up my whole day.",
+      "labels": {
+        "toxic": 0.00533650629222393,
+        "obscene": 0.0006851471262052655,
+        "insult": 0.0005430062301456928,
+        "identity_hate": 0.00037118420004844666,
+        "threat": 0.00026416531181894243,
+        "severe_toxic": 0.00024070414656307548
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "morning-evening",
+      "label": "calm",
+      "text": "Evening runs are better, my body is awake and the streets are quiet.",
+      "labels": {
+        "toxic": 0.0037644694093614817,
+        "obscene": 0.0005914016510359943,
+        "insult": 0.0005414937040768564,
+        "identity_hate": 0.0004219198308419436,
+        "threat": 0.0003317688242532313,
+        "severe_toxic": 0.0002884488203562796
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "morning-evening",
+      "label": "heated",
+      "text": "Evening runners are clowns who simply cannot get out of bed.",
+      "labels": {
+        "toxic": 0.13449041545391083,
+        "insult": 0.008152407594025135,
+        "obscene": 0.001844864571467042,
+        "identity_hate": 0.0012671616859734058,
+        "threat": 0.000579455925617367,
+        "severe_toxic": 0.00023249433434102684
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "morning-evening",
+      "label": "heated",
+      "text": "Morning runners are idiots and nobody cares about your sunrise.",
+      "labels": {
+        "toxic": 0.9075666069984436,
+        "insult": 0.6379993557929993,
+        "obscene": 0.09808912873268127,
+        "identity_hate": 0.00638545211404562,
+        "severe_toxic": 0.003666121745482087,
+        "threat": 0.0009781146654859185
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "greetings",
+      "label": "calm",
+      "text": "Saying hello to strangers is what makes a street feel like a place.",
+      "labels": {
+        "toxic": 0.00819860864430666,
+        "insult": 0.0005921876290813088,
+        "obscene": 0.0005729073891416192,
+        "identity_hate": 0.0003960500471293926,
+        "threat": 0.00023949428577907383,
+        "severe_toxic": 0.00017973726789932698
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "greetings",
+      "label": "calm",
+      "text": "I would rather nod and keep walking, not every stranger wants a chat.",
+      "labels": {
+        "toxic": 0.00343547435477376,
+        "obscene": 0.0006126574007794261,
+        "insult": 0.000568823073990643,
+        "identity_hate": 0.0004325937479734421,
+        "threat": 0.0003547588421497494,
+        "severe_toxic": 0.0003112131089437753
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "greetings",
+      "label": "heated",
+      "text": "Idiots like you never say hello and then complain the street feels dead.",
+      "labels": {
+        "toxic": 0.9801257848739624,
+        "insult": 0.8823376297950745,
+        "obscene": 0.41427674889564514,
+        "severe_toxic": 0.022312387824058533,
+        "identity_hate": 0.015877345576882362,
+        "threat": 0.002974220784381032
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "greetings",
+      "label": "heated",
+      "text": "You people are clowns for greeting every single person you pass.",
+      "labels": {
+        "toxic": 0.35218897461891174,
+        "insult": 0.05104835331439972,
+        "obscene": 0.0037283641286194324,
+        "identity_hate": 0.001685096649453044,
+        "threat": 0.0009918909054249525,
+        "severe_toxic": 0.00042842054972425103
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "made-bed",
+      "label": "calm",
+      "text": "Making the bed every morning is a small kindness to your evening self.",
+      "labels": {
+        "toxic": 0.008053919300436974,
+        "insult": 0.000600923434831202,
+        "obscene": 0.0004949725116603076,
+        "identity_hate": 0.0003481870808172971,
+        "threat": 0.0002994575770571828,
+        "severe_toxic": 0.0001736239210003987
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "made-bed",
+      "label": "calm",
+      "text": "I never make the bed, it is five good minutes I would rather spend elsewhere.",
+      "labels": {
+        "toxic": 0.004701024387031794,
+        "obscene": 0.0007020790362730622,
+        "insult": 0.0005190232768654823,
+        "identity_hate": 0.0003618202172219753,
+        "threat": 0.00029763110796920955,
+        "severe_toxic": 0.00026222883025184274
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "made-bed",
+      "label": "heated",
+      "text": "You are a lazy idiot if you never make your bed.",
+      "labels": {
+        "toxic": 0.9814240336418152,
+        "insult": 0.9148328304290771,
+        "obscene": 0.5902172327041626,
+        "severe_toxic": 0.03906834498047829,
+        "identity_hate": 0.012008719146251678,
+        "threat": 0.002383213024586439
+      }
+    },
+    {
+      "set": "eval-pair",
+      "id": "made-bed",
+      "label": "heated",
+      "text": "You're a moron for tidying a bed you are going to get straight back into.",
+      "labels": {
+        "toxic": 0.9615163803100586,
+        "insult": 0.8729205131530762,
+        "obscene": 0.4573707580566406,
+        "severe_toxic": 0.01688366010785103,
+        "identity_hate": 0.007880325429141521,
+        "threat": 0.0014025844866409898
+      }
+    }
+  ]
+}

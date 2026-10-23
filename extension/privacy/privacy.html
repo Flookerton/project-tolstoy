@@ -22,13 +22,13 @@
 
     <section class="privacy-section">
       <h2 class="panel-heading">What it stores</h2>
-      <p class="reading">Only your settings, and only in this browser: the temperature, whether heated posts are blurred instead of moved, and whether the on-device model is present. Nothing about your feed is stored, not the posts, not the handles, not the counts. The model files live in this browser's own cache, about 110 MB of them, and the Remove link in the panel deletes them. Removing Tolstoy removes the settings and the model.</p>
+      <p class="reading">Only your settings, and only in this browser: the temperature, whether heated posts are blurred instead of moved, and whether the optional stronger model is present. Nothing about your feed is stored, not the posts, not the handles, not the counts. The small model that Tolstoy reads tone with is part of the extension itself and is not stored anywhere. The stronger model's files live in this browser's own cache, about 110 MB of them, and the Remove link in the panel deletes them. Removing Tolstoy removes the settings and the model.</p>
     </section>
 
     <section class="privacy-section">
       <h2 class="panel-heading">What it sends</h2>
       <p class="reading">Nothing about your feed. There is no Tolstoy server, no account, no analytics, and no user id. Scoring happens in the page, on this computer, and the list of posts that moved is forgotten when you close the tab.</p>
-      <p class="reading">There is one exception, and you have to agree to it. The optional model is downloaded once from <a href="https://huggingface.co/Xenova/toxic-bert">Hugging Face</a> when you press Download, and it is about 110 MB. That download sends Hugging Face nothing but the request for the file, the way any download works. The model is then read from this computer's cache, and it never sends anything back. If you never press Download, the extension makes no network request at all.</p>
+      <p class="reading">There is one exception, and you have to agree to it. The optional stronger model is downloaded once from <a href="https://huggingface.co/Xenova/toxic-bert">Hugging Face</a> when you press Download, and it is about 110 MB. That download sends Hugging Face nothing but the request for the file, the way any download works. The model is then read from this computer's cache, and it never sends anything back. If you never press Download, the extension makes no network request at all.</p>
     </section>
 
     <section class="privacy-section">
@@ -42,7 +42,7 @@
         <li><strong>storage</strong> remembers your settings between visits. Settings only.</li>
         <li><strong>search</strong> lets the search bar use your own search engine.</li>
         <li><strong>Access to x.com</strong> lets the calm feed read the timeline you are already looking at, and move posts down. It is the only site Tolstoy touches.</li>
-        <li><strong>offscreen</strong> runs the optional on-device model in a hidden extension page. It is how the model keeps working while you scroll, and it reads nothing on its own.</li>
+        <li><strong>offscreen</strong> runs the on-device model in a hidden extension page, either the small one that comes with Tolstoy or the stronger one if it has been downloaded. It is how the model keeps working while you scroll, and it reads nothing on its own.</li>
       </ul>
     </section>
 

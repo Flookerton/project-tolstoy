@@ -18,20 +18,19 @@
 
 import { env, pipeline } from "../vendor/transformers/transformers.js";
 
-const MODEL_ID = "Xenova/toxic-bert";
+const BUNDLED_MODEL = { id: "minilm-toxic-jigsaw", bundled: true };
+const STRONGER_MODEL = { id: "Xenova/toxic-bert", bundled: false };
 const WANTED_LABELS = ["insult", "threat", "identity_hate", "severe_toxic"];
 
-// The model is fetched once, with the person's consent, by the service worker,
-// and lands in the browser's own cache. From then on this page reads it from
-// there. Remote models are off, which means the library throws on a cache miss
-// instead of reaching for the network: it cannot fetch anything, even by
-// accident. Local models stay on because that is the switch that lets the
-// library consult the cache at all. The local path points at the vendor folder,
-// which holds no model files at all.
+// Remote models are off, which means the library throws rather than reaching for
+// the network: it cannot fetch anything, even by accident. Local models stay on
+// because that is the switch that lets the library read a model on this machine.
+// The small model is read from the extension's own models folder, so it needs no
+// cache and no download. The stronger model is read from the browser cache the
+// consent download fills, and only when it is there. What each model needs, the
+// loader below sets.
 env.allowRemoteModels = false;
 env.allowLocalModels = true;
-env.localModelPath = chrome.runtime.getURL("vendor/");
-env.useBrowserCache = true;
 env.cacheKey = "transformers-cache";
 env.backends.onnx.wasm.wasmPaths = chrome.runtime.getURL("vendor/transformers/");
 // An offscreen document is not cross-origin isolated, so threads are not
@@ -51,7 +50,30 @@ function report(state) {
   }
 }
 
-async function load() {
+// Which model to run arrives with each message from the worker, which is the only
+// place the choice can come from: an offscreen document may use chrome.runtime and
+// nothing else, so there is no chrome.storage here to read it out of. The worker
+// decides from the same stored state that it reports to the page, so the model that
+// produced a reason and the reason a person reads cannot disagree.
+let choice = null;
+
+function modelFrom(message) {
+  if (message && message.model && typeof message.model.id === "string") {
+    return message.model;
+  }
+  return choice || BUNDLED_MODEL;
+}
+
+async function load(message) {
+  const wanted = modelFrom(message);
+  if (classifier && choice && choice.id !== wanted.id) {
+    // The person just downloaded the stronger model, or removed it, and the message
+    // that carried this request also carried the new choice. Drop what is loaded and
+    // load what they asked for.
+    classifier = null;
+    loading = null;
+  }
+  choice = wanted;
   if (classifier) {
     return classifier;
   }
@@ -72,9 +94,18 @@ async function load() {
       attempts.push("webgpu");
     }
 
+    env.useBrowserCache = !choice.bundled;
+    env.localModelPath = chrome.runtime.getURL(choice.bundled ? "models/" : "vendor/");
+
     for (const candidate of attempts) {
       try {
-        classifier = await pipeline("text-classification", MODEL_ID, { dtype: "q8", device: candidate });
+        const options = { dtype: "q8", device: candidate };
+        if (choice.bundled) {
+          // Nothing else on this machine has that model id, and there is nothing to
+          // fetch, so only the files inside the extension will do.
+          options.local_files_only = true;
+        }
+        classifier = await pipeline("text-classification", choice.id, options);
         device = candidate;
         failure = "";
         report({ status: "ready", device: device });
@@ -156,7 +187,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return false;
   }
   if (message.type === "modelLoad") {
-    load()
+    load(message)
       .then(() => sendResponse({ ok: true, device: device }))
       .catch((error) => sendResponse({ ok: false, message: String((error && error.message) || error) }));
     return true;
@@ -168,7 +199,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "modelWarm") {
     (async () => {
       try {
-        const model = await load();
+        const model = await load(message);
         await model("warm", { top_k: null });
         sendResponse({ ok: true, device: device });
       } catch (error) {
@@ -178,7 +209,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   if (message.type === "modelScore") {
-    scoreTexts(Array.isArray(message.texts) ? message.texts : [])
+    load(message).then(() => scoreTexts(Array.isArray(message.texts) ? message.texts : []))
       .then((result) => sendResponse({ ok: true, scores: result.scores, labels: result.labels, device }))
       .catch((error) => sendResponse({ ok: false, message: String((error && error.message) || error) }));
     return true;

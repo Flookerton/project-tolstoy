@@ -13,8 +13,11 @@
   var DEFAULTS = { temperature: "balanced", blur: false };
 
   var HELP_TEXT = {
-    calm: "Heated posts move to the bottom. You can always show them.",
-    balanced: "Only clearly hostile posts move down. You can always show them.",
+    // One line each, deliberately. The popup is capped at 600px tall by Chrome and this
+    // card's second line was costing 23px of it; the promise these make is the same in
+    // a line as in two.
+    calm: "Heated posts move to the bottom.",
+    balanced: "Only clearly hostile posts move down.",
     unfiltered: "Tolstoy only counts. Nothing is moved."
   };
 
@@ -139,8 +142,8 @@
   // rules only" when the model could not be loaded. The rules always keep
   // working, whatever this card says.
 
-  var MODEL_OFFER = "A stronger model catches more hostile posts than the small one that comes with Tolstoy. It is 110 MB and runs on this computer.";
-  var MODEL_READY = "The stronger model is on this computer, and it is the one in use.";
+  var MODEL_OFFER = "Catches about twice as many hostile posts in our tests. 110 MB, on this computer.";
+  var MODEL_READY = "On this computer, and it is the one in use.";
   var MODEL_SMALL = "Using the small model that comes with Tolstoy.";
   var MODEL_SIZE = 110 * 1024 * 1024;
   var model = { status: "absent", bytes: 0, files: 0, active: "bundled" };
@@ -148,6 +151,24 @@
   function el(id) {
     return document.getElementById(id);
   }
+
+  // The "Today's feed weather" card holds sample numbers, not real ones, and a popup
+  // that has to scroll to show placeholders is worse than one that does not. It is
+  // hidden whenever there is not room for it, which is the popup case, and shows itself
+  // again when the panel is opened as its own tab. The markup and the styles stay, so
+  // real numbers can bring it back by doing nothing at all.
+  function fitWeather() {
+    var card = document.querySelector(".weather-card");
+    if (!card) {
+      return;
+    }
+    // 700 rather than 600: a popup at its cap leaves no room for this card, and a tab
+    // at 700 or more has room for it and the rest.
+    card.hidden = document.documentElement.clientHeight < 700;
+  }
+
+  window.addEventListener("resize", fitWeather);
+  fitWeather();
 
   function humanMb(bytes) {
     return Math.max(0, Math.round(bytes / (1024 * 1024)));

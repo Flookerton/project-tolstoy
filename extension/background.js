@@ -333,8 +333,15 @@ async function warmModel() {
 
 // ------------------------------------------------------------------- the scores
 
+// Two caches, one per model, because the two do not share a scale and a score
+// remembered from one is not an answer for the other.
 var textCache = new Map();
+var strongCache = new Map();
 var TEXT_CACHE_MAX = 2000;
+
+function cacheFor(model) {
+  return model && model.id === STRONGER_MODEL.id ? strongCache : textCache;
+}
 // Four posts per model call, measured on this machine: one call takes about
 // 120ms plus about 45ms per post on WASM, so four posts land in about 250ms,
 // comfortably inside the page's 400ms hold. Eight posts take about 490ms and
@@ -342,23 +349,25 @@ var TEXT_CACHE_MAX = 2000;
 var SCORE_GROUP = 4;
 var SCORE_BUDGET_MS = 370;
 
-function remember(text, score, label) {
-  textCache.set(text, { score: score, label: label || "" });
-  while (textCache.size > TEXT_CACHE_MAX) {
-    const oldest = textCache.keys().next();
+function remember(text, score, label, model) {
+  const cache = cacheFor(model);
+  cache.set(text, { score: score, label: label || "" });
+  while (cache.size > TEXT_CACHE_MAX) {
+    const oldest = cache.keys().next();
     if (oldest.done) {
       break;
     }
-    textCache.delete(oldest.value);
+    cache.delete(oldest.value);
   }
 }
 
-function collect(texts) {
+function collect(texts, model) {
+  const cache = cacheFor(model);
   const scores = {};
   const labels = {};
   for (const text of texts) {
-    if (textCache.has(text)) {
-      const held = textCache.get(text);
+    if (cache.has(text)) {
+      const held = cache.get(text);
       scores[text] = held.score;
       labels[text] = held.label || "";
     }
@@ -385,7 +394,55 @@ function sleepUntil(deadline) {
 // A timer is kept as a safety net in case a group hangs. It is not the main path:
 // Chrome clamps timers in a service worker, so it can fire later than asked. The
 // page's own hold is the guarantee that nothing waits past 400ms.
-async function scoreTexts(texts, budgetMs) {
+// The stronger model, when the person has downloaded it, reads every batch as well.
+// The small model answers inside the deadline so the batch can go out on time; these
+// answers arrive afterwards, where they soften a post in place rather than moving it,
+// and on a scroll batch, whose budget is longer, they often arrive in time to be used
+// for the ordering itself. Nothing here waits for this: it is started after the batch
+// has been answered, and its scores are pushed to the page as they come.
+async function scoreWithStronger(texts, id) {
+  const state = await readState();
+  if (state.stronger.status !== "ready") {
+    return;
+  }
+  const groups = [];
+  for (let start = 0; start < texts.length; start += SCORE_GROUP) {
+    groups.push(texts.slice(start, start + SCORE_GROUP));
+  }
+  for (let i = 0; i < groups.length; i += 1) {
+    const group = groups[i];
+    const missing = group.filter((text) => !strongCache.has(text));
+    if (missing.length) {
+      const answer = await tellOffscreen({ type: "modelScore", texts: missing, model: STRONGER_MODEL });
+      if (!answer || !answer.ok || !answer.scores) {
+        // The stronger model could not answer for this group. Stop: a page that is
+        // waiting for scores it will never get is worse than a page that never asked.
+        return { ok: false, message: (answer && answer.message) || "the stronger model did not answer" };
+      }
+      for (const text of missing) {
+        remember(
+          text,
+          typeof answer.scores[text] === "number" ? answer.scores[text] : 0,
+          (answer.labels && answer.labels[text]) || "",
+          STRONGER_MODEL
+        );
+      }
+    }
+    const held = collect(group, STRONGER_MODEL);
+    broadcast({
+      type: "modelScores",
+      id: id || null,
+      model: STRONGER_MODEL.id,
+      calibration: STRONGER_MODEL.calibration,
+      scores: held.scores,
+      labels: held.labels,
+      done: i === groups.length - 1
+    });
+  }
+  return { ok: true };
+}
+
+async function scoreTexts(texts, budgetMs, id) {
   const wanted = [];
   for (const text of texts) {
     if (typeof text !== "string" || !text) {
@@ -447,11 +504,19 @@ async function scoreTexts(texts, budgetMs) {
 
   await Promise.race([first, guard]);
 
+  // The batch has been answered. Anything the small model could not finish, and the
+  // whole batch for the stronger model if it is here, carries on in the background.
+  scoreWithStronger(wanted, id).catch(function () {
+    // Nothing to do about it: the page has its answer and the rules carry the rest.
+  });
+
   const held = collect(wanted);
   const reply = {
     ok: true,
     scores: held.scores,
     labels: held.labels,
+    model: BUNDLED_MODEL.id,
+    calibration: BUNDLED_MODEL.calibration,
     modelled: modelled,
     asked: wanted.length,
     partial: Object.keys(held.scores).length < wanted.length
@@ -493,6 +558,16 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
         active: inUse.bundled ? "bundled" : "stronger",
         model: inUse.id,
         calibration: inUse.calibration,
+        // Both models, with the calibration each is read at, so the page can use
+        // whichever answers without assuming a scale.
+        models: {
+          bundled: { id: BUNDLED_MODEL.id, calibration: BUNDLED_MODEL.calibration },
+          stronger: {
+            id: STRONGER_MODEL.id,
+            calibration: STRONGER_MODEL.calibration,
+            ready: state.stronger.status === "ready"
+          }
+        },
         reason: state.stronger.status,
         stronger: state.stronger,
         bytes: state.stronger.bytes || 0,
@@ -560,7 +635,7 @@ chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     // reports if it cannot load, and a failed stronger model falls back to it.
     readState()
       .then(function () {
-        return scoreTexts(Array.isArray(message.texts) ? message.texts : [], message.budgetMs);
+        return scoreTexts(Array.isArray(message.texts) ? message.texts : [], message.budgetMs, message.id);
       })
       .then(function (result) {
         if (result !== null) {

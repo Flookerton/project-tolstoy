@@ -59,7 +59,8 @@
           reason: reply.reason || (reply.ready ? "ready" : "absent"),
           active: reply.active || "bundled",
           model: reply.model || null,
-          calibration: typeof reply.calibration === "number" ? reply.calibration : null
+          calibration: typeof reply.calibration === "number" ? reply.calibration : null,
+          models: reply.models || null
         });
       });
     } catch (error) {
@@ -103,7 +104,7 @@
         return;
       }
       try {
-        chrome.runtime.sendMessage({ source: SOURCE, type: "score", texts: part }, function (reply) {
+        chrome.runtime.sendMessage({ source: SOURCE, type: "score", texts: part, id: id }, function (reply) {
           if (chrome.runtime.lastError) {
             post({ type: "scoreResult", id: id, scores: {}, done: true });
             stop();
@@ -112,7 +113,15 @@
           var scores = (reply && reply.scores) || {};
           var labels = (reply && reply.labels) || {};
           var answered = Object.keys(scores).length > 0;
-          post({ type: "scoreResult", id: id, scores: scores, labels: labels, done: !queue.length });
+          post({
+            type: "scoreResult",
+            id: id,
+            scores: scores,
+            labels: labels,
+            model: (reply && reply.model) || null,
+            calibration: (reply && typeof reply.calibration === "number") ? reply.calibration : null,
+            done: !queue.length
+          });
           if (!answered && reply && reply.ok === false) {
             // The model is not available, so there is nothing to wait for. The
             // page falls back to the rules on its own timer either way.
@@ -215,6 +224,19 @@
       }
       if (message.type === "settingsChanged") {
         read();
+      }
+      if (message.type === "modelScores" && message.scores) {
+        // The stronger model, answering after the batch has been drawn. Same request
+        // id, so the page knows which batch it belongs to and softens in place.
+        post({
+          type: "scoreResult",
+          id: message.id || null,
+          scores: message.scores,
+          labels: message.labels || {},
+          model: message.model || null,
+          calibration: typeof message.calibration === "number" ? message.calibration : null,
+          done: !!message.done
+        });
       }
       if (message.type === "modelChanged") {
         post({

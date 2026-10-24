@@ -256,7 +256,7 @@ checks passed, with the model calling 3 of the 5 hostile and all 3 dealt with.
 | # | Requirement | Where it stands |
 | --- | --- | --- |
 | 1 | No "undefined" reason anywhere, each model-caught post shows the model's reason | Done, Part A, and asserted in the browser test |
-| 2 | A first page load with the model present says "Scored by: rules and the on-device model" | Done, Part B and Part D: 18 of 18 first-batch posts scored by the model on a browser that has been running 8 seconds (`tolstoy-tools/check-bundled-first-load.mjs`, 11 of 12, the twelfth being a check-script assumption I fixed) |
+| 2 | A first page load with the model present says "Scored by: rules and the on-device model" | Done, Part B and Part D: `tolstoy-tools/check-bundled-first-load.mjs` passes 12 of 12 on a browser that has been running 8 seconds, with 18 of 18 first-batch posts scored by the model, the footer reading "Scored by: rules and the on-device model", 3 of the 5 AI-only posts moved down and listed, and no late catches needed. The check counted only veils at first, so it reported 0 of 5 for posts that were moved rather than softened; it now counts what a person would see, a row in Show them, and the claim above is the run after that fix |
 | 3 | A late catch shown working, with a committed screenshot | Done, Part C, `docs/screenshots/late-catch.png` |
 | 4 | Part D's table reported and the rule applied | Done, above |
 | 5 | Coverage and fallback numbers reported, with no contradictions | Done, above, after fixing the counter that made them contradict |

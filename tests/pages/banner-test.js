@@ -43,6 +43,15 @@
   };
   window.tolstoyTest = test;
 
+  // Says "the model is not here" to the page whenever a check wants it to, which is
+  // what a half-woken service worker looks like from the page. A check posts this and
+  // then asks for another batch, so the batch is asked about while the page believes
+  // there is no model: it must be queued, and must still be scored once the real
+  // answer arrives. Nothing in the extension knows this exists.
+  test.sayModelIsAbsent = function () {
+    window.postMessage({ source: "tolstoy", type: "modelStatus", ready: false, reason: "absent" }, window.location.origin);
+  };
+
   // A stand-in for the model, for the timing checks and nothing else.
   //
   // ?fakeModel=50 answers every score request after 50ms, ?fakeModel=never never
@@ -51,6 +60,16 @@
   // deadline behaviour without waiting on a real model. The interceptor drops a reply
   // that arrives for a request it has already finished, so the real bridge answering
   // later cannot disturb either case. Without the query string this does nothing.
+  // ?falseStatus=1 tells the page the model is not here, before the first timeline
+  // arrives. That is what a half-woken service worker can look like from the page, and
+  // it exists so a check can prove that a batch asked about then is queued rather than
+  // dropped. The real answer follows it a moment later.
+  var params = null;
+  try {
+    params = new URLSearchParams(window.location.search);
+  } catch (error) {
+    params = null;
+  }
   var fakeModel = null;
   try {
     fakeModel = new URLSearchParams(window.location.search).get("fakeModel");
@@ -329,7 +348,13 @@
     try {
       var params = new URLSearchParams(window.location.search);
       var isDetail = params.get("detail") === "1";
-      var body = await fetchTimeline(isDetail ? DETAIL : TIMELINE);
+      // Said here, immediately before the timeline is asked for, because that is the
+    // moment that matters: the batch arrives with the page believing the model is not
+    // there, which is what a half-woken worker looks like.
+    if (params && params.get("falseStatus") === "1") {
+      window.postMessage({ source: "tolstoy", type: "modelStatus", ready: false, reason: "absent" }, window.location.origin);
+    }
+    var body = await fetchTimeline(isDetail ? DETAIL : TIMELINE);
       var json = JSON.parse(body);
       var entries = isDetail ? entriesOfDetail(json) : entriesOf(json);
       test.entryIds = entries.map(function (entry) {

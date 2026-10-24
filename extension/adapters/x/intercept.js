@@ -63,6 +63,19 @@
   // that answer arrives, and the model that is always there is the small one.
   var MODEL_CALIBRATION = 0.8;
 
+  // The calibration each model is read at, keyed by the model's id. The worker reports
+  // both when it reports its status, so the page never assumes a scale: the two models
+  // do not share one, and the figures were each chosen from that model's own measured
+  // scores on the main eval set.
+  var CALIBRATIONS = {};
+
+  function calibrationFor(modelId) {
+    if (modelId && typeof CALIBRATIONS[modelId] === "number" && CALIBRATIONS[modelId] > 0) {
+      return CALIBRATIONS[modelId];
+    }
+    return MODEL_CALIBRATION;
+  }
+
   // The model's labels, said in plain words. Whichever label produced the score is
   // the reason shown first, and no post is ever left without a reason at all: a
   // missing or unrecognised label falls back to "Hostile tone." rather than the
@@ -120,7 +133,10 @@
   // the whole visit. Ask again a few times, and on earlier batches. This costs one
   // message per attempt and nothing else.
   function askModelStatusAgain() {
-    if (modelStatusSeen || modelAsks >= 5) {
+    // Asked again whenever the answer is not "ready", not only when there has been no
+    // answer at all: one early "not ready" from a worker that was still waking used to
+    // be believed for the rest of the visit.
+    if (model.ready || modelAsks >= 8) {
       return;
     }
     modelAsks += 1;
@@ -182,6 +198,10 @@
           source: SOURCE,
           type: "lateCaught",
           caught: caught,
+          // The model did this reading, so the footer has to say so on the late path
+          // too. Without it the page credited the rules while the model was softening
+          // posts in front of the person.
+          by: "rules+model",
           mode: mode(),
           temperature: settings.temperature
         },
@@ -216,12 +236,81 @@
 
   var pending = {};
   var pendingCount = 0;
+
+  // Batches asked about before the model was ready, waiting for it. Nothing is lost
+  // and nothing waits on screen: the caller is answered at once with "no scores yet",
+  // and these go out as late asks, whose answers soften posts in place.
+  var queued = [];
+  var queuedBatches = 0;
+  var flushedBatches = 0;
+  var flushTries = 0;
+  var flushTimer = null;
+
+  // Hand a set of texts to the bridge as an ask that is already past its deadline, so
+  // whatever comes back is treated as late by definition.
+  function askLate(texts, onLate) {
+    var id = "score-" + (pendingCount += 1);
+    pending[id] = {
+      scores: {},
+      labels: {},
+      texts: texts,
+      onLate: onLate || null,
+      released: true,
+      done: false,
+      finish: null
+    };
+    try {
+      window.postMessage({ source: SOURCE, type: "scoreRequest", id: id, texts: texts }, window.location.origin);
+    } catch (error) {
+      delete pending[id];
+    }
+  }
+
+  // Send what was queued. This runs as soon as a ready answer arrives, and also on a
+  // timer while anything is still waiting, because the answer that silences the model
+  // can also be the one that is wrong: if the status never says ready but the model is
+  // there, the texts still need to be asked about. Asking costs one message, and the
+  // bridge answers at once when there is no model to ask.
+  function flushQueue() {
+    if (!queued.length) {
+      return;
+    }
+    var items = queued.splice(0, queued.length);
+    items.forEach(function (item) {
+      // This is the ask, delayed: it counts as one, in the batch kind it came from.
+      flushedBatches += 1;
+      askedBatchCount += 1;
+      coverage[item.batch || "first"].asked += item.texts.length;
+      askLate(item.texts, item.onLate);
+    });
+  }
+
+  function armFlush() {
+    if (flushTimer !== null || flushTries >= 5) {
+      return;
+    }
+    flushTries += 1;
+    flushTimer = window.setTimeout(function () {
+      flushTimer = null;
+      if (queued.length) {
+        flushQueue();
+      }
+      // And ask again, in case the status is what is wrong.
+      askModelStatusAgain();
+      if (queued.length) {
+        armFlush();
+      }
+    }, 1500);
+  }
   var firstBatchDone = false;
   var lateCaught = 0;
   // Coverage, for the report only: how many posts of each batch had a model
   // score before the batch was handed to X, counted for the first batch of the
   // page load and for the batches scrolling asks for, separately.
-  var coverage = { first: { asked: 0, scored: 0 }, scroll: { asked: 0, scored: 0 } };
+  // Per batch kind: asked is the posts the model was given, scored is the posts it
+  // answered about before they were drawn, and late is the posts it answered about
+  // afterwards, which is what the late catch works from.
+  var coverage = { first: { asked: 0, scored: 0, late: 0 }, scroll: { asked: 0, scored: 0, late: 0 } };
 
   // The only test seam in this file. The browser checks set
   // sessionStorage.tolstoyTestHoldMs to pin the model deadline, so a late catch can
@@ -251,13 +340,23 @@
   // place instead of moving it, so nothing that has already been shown ever jumps
   // position.
   function askModel(texts, onLate) {
-    // Only skip when there is definitely no model. If the page has not heard back
-    // yet, ask anyway: the answer comes back inside the budget either way, and the
-    // bridge says so at once when the model is not there. Gating on "we have not
-    // heard yet" meant the first batch of a page load was scored by the rules even
-    // when the model was already warm and waiting.
-    if (!texts.length || (modelStatusSeen && !model.ready)) {
+    if (!texts.length) {
       return Promise.resolve(null);
+    }
+    if (modelStatusSeen && !model.ready) {
+      // Not a drop. A batch asked about while the model is not known to be ready is
+      // remembered and scored the moment it is, because the posts on screen have
+      // already been drawn by then and there is nothing else left to do with them.
+      // Dropping here is what let a single early "not ready" answer, from a worker
+      // that was still waking, silence the model for the whole visit.
+      queued.push({ texts: texts, onLate: onLate || null, batch: firstBatchDone ? "scroll" : "first" });
+      queuedBatches += 1;
+      askModelStatusAgain();
+      armFlush();
+      // Not null: the caller counts its batches, and this one has not been asked yet.
+      // It is counted as an ask when it is actually sent, so that a batch is never
+      // counted twice and never counted as a deadline that fell through.
+      return Promise.resolve({ queued: true });
     }
     var id = "score-" + (pendingCount += 1);
     var pinned = testHoldMs();
@@ -271,6 +370,7 @@
       onLate: onLate || null,
       released: false,
       done: false,
+      batch: firstBatchDone ? "scroll" : "first",
       finish: null
     };
     pending[id] = record;
@@ -365,8 +465,46 @@
       }
     });
 
-    var modelScores = {};
-    var modelLabels = {};
+    // Scores per model, because the two do not share a scale. The score that decides a
+    // post is the largest any model gives after its own calibration, and the reason
+    // shown is the one from whichever model produced it.
+    var byModel = {};
+
+    function noteScores(modelId, calibration, scores, labels) {
+      if (!scores) {
+        return;
+      }
+      var key = modelId || "bundled";
+      if (!byModel[key]) {
+        byModel[key] = {
+          scores: {},
+          labels: {},
+          calibration: typeof calibration === "number" && calibration > 0 ? calibration : calibrationFor(modelId)
+        };
+      }
+      Object.keys(scores).forEach(function (text) {
+        byModel[key].scores[text] = typeof scores[text] === "number" ? scores[text] : 0;
+      });
+      Object.keys(labels || {}).forEach(function (text) {
+        byModel[key].labels[text] = labels[text] || "";
+      });
+    }
+
+    // The strongest reading of one post across every model that has answered, already
+    // scaled by that model's calibration.
+    function verdictFor(text) {
+      var best = { score: 0, label: "", model: null };
+      Object.keys(byModel).forEach(function (key) {
+        var entry = byModel[key];
+        var raw = typeof entry.scores[text] === "number" ? entry.scores[text] : 0;
+        var scaled = raw * entry.calibration;
+        if (scaled > best.score) {
+          best = { score: scaled, label: entry.labels[text] || "", model: key };
+        }
+      });
+      return best;
+    }
+
     var by = "rules";
     var movedIds = {};
 
@@ -376,6 +514,10 @@
     function onLateScores(latePayload) {
       var lateScores = (latePayload && latePayload.scores) || {};
       var lateLabels = (latePayload && latePayload.labels) || {};
+      // Which model these came from matters: it carries its own calibration.
+      var lateCalibration = (latePayload && typeof latePayload.calibration === "number" && latePayload.calibration > 0)
+        ? latePayload.calibration
+        : calibrationFor(latePayload && latePayload.model);
       if (mode() === "off") {
         return;
       }
@@ -390,7 +532,7 @@
           return;
         }
         var base = typeof rules[entry.text] === "number" ? rules[entry.text] : rulesScoreOf(entry.text, scoreFn);
-        if (fromModel * MODEL_CALIBRATION >= limit && base < limit) {
+        if (fromModel * lateCalibration >= limit && base < limit) {
           movedIds[entry.id] = true;
           var body = typeof entry.text === "string" ? entry.text : "";
           caught.push({
@@ -406,6 +548,9 @@
         return;
       }
       lateCaught += caught.length;
+      // A late catch is the model doing the reading, so the footer has to say so:
+      // without this the page credited the rules while the model was softening posts.
+      modelEverUsed = true;
       reportLate(caught);
     }
 
@@ -414,6 +559,10 @@
 
     return askModel(asked, onLateScores).then(function (answer) {
       batchCount += 1;
+      if (answer && answer.queued) {
+        // Waiting for the model. It is counted when its ask actually goes out.
+        return;
+      }
       var got = answer && answer.scores ? Object.keys(answer.scores).length : 0;
       coverage[whichBatch].asked += asked.length;
       coverage[whichBatch].scored += got;
@@ -427,10 +576,7 @@
       if (answer && answer.scores && Object.keys(answer.scores).length) {
         by = "rules+model";
         modelBatchCount += 1;
-        asked.forEach(function (text) {
-          modelScores[text] = typeof answer.scores[text] === "number" ? answer.scores[text] : 0;
-          modelLabels[text] = (answer.labels && answer.labels[text]) || "";
-        });
+        noteScores(answer.model, answer.calibration, answer.scores, answer.labels);
       }
 
       entries.forEach(function (entry) {
@@ -438,14 +584,15 @@
           return;
         }
         var base = typeof rules[entry.text] === "number" ? rules[entry.text] : rulesScoreOf(entry.text, scoreFn);
-        var fromModel = modelScores[entry.text] || 0;
-        var blended = Math.max(base, fromModel * MODEL_CALIBRATION);
+        var verdict = verdictFor(entry.text);
+        var blended = Math.max(base, verdict.score);
         var ruleReasons = cleanReasons(scoreFn(entry.text).reasons);
         var reason = ruleReasons;
         if (blended > base) {
-          // The model is what crossed the line, so its reason leads and the rules'
-          // reasons follow it.
-          reason = cleanReasons([modelReason(modelLabels[entry.text])].concat(ruleReasons));
+          // A model is what crossed the line, so its reason leads and the rules'
+          // reasons follow it. It is the reason of the model that produced the score
+          // that decided the post, not of whichever model happened to answer last.
+          reason = cleanReasons([modelReason(verdict.label)].concat(ruleReasons));
         }
         if (!reason.length) {
           reason = [HOSTILE_TONE];
@@ -467,7 +614,7 @@
           return value;
         }
         var base = typeof rules[text] === "number" ? rules[text] : rulesScoreOf(text, scoreFn);
-        return Math.max(base, (modelScores[text] || 0) * MODEL_CALIBRATION);
+        return Math.max(base, verdictFor(text).score);
       }
 
       // The reasons that belong with that score. The reranker used to be handed the
@@ -487,10 +634,10 @@
           return value;
         }
         var ruleReasons = cleanReasons(scoreFn(text).reasons);
-        var fromModel = (modelScores[text] || 0) * MODEL_CALIBRATION;
+        var reading = verdictFor(text);
         var rulesOnly = typeof rules[text] === "number" ? rules[text] : rulesScoreOf(text, scoreFn);
-        if (fromModel > rulesOnly) {
-          return cleanReasons([modelReason(modelLabels[text])].concat(ruleReasons));
+        if (reading.score > rulesOnly) {
+          return cleanReasons([modelReason(reading.label)].concat(ruleReasons));
         }
         return ruleReasons.length ? ruleReasons : [HOSTILE_TONE];
       }
@@ -883,6 +1030,15 @@
     if (data.type === "scoreResult" && data.id && pending[data.id]) {
       var record = pending[data.id];
       var incoming = data.scores || {};
+      if (record.released) {
+        // These arrived after the batch was drawn. They still count, in their own
+        // column, so that asked equals scored plus late plus nothing.
+        var lateGot = Object.keys(incoming).length;
+        if (lateGot) {
+          record.lateGot = (record.lateGot || 0) + lateGot;
+          coverage[record.batch || "first"].late += lateGot;
+        }
+      }
       var incomingLabels = data.labels || {};
       Object.keys(incoming).forEach(function (text) {
         record.scores[text] = incoming[text];
@@ -895,7 +1051,12 @@
         // This batch is already on screen. A score that arrives now can soften a
         // post in place, but it can never move one.
         if (record.onLate) {
-          record.onLate({ scores: incoming, labels: incomingLabels });
+          record.onLate({
+            scores: incoming,
+            labels: incomingLabels,
+            model: data.model || null,
+            calibration: typeof data.calibration === "number" ? data.calibration : null
+          });
         }
         if (data.done) {
           delete pending[data.id];
@@ -926,8 +1087,21 @@
         modelReadyAt = Math.round(window.performance.now());
       }
       model.ready = !!data.ready;
+      if (data.ready) {
+        flushQueue();
+      }
+      if (data.models && typeof data.models === "object") {
+        // Both models and both calibrations, so whichever answers is read on its own
+        // scale.
+        Object.keys(data.models).forEach(function (key) {
+          var entry = data.models[key];
+          if (entry && typeof entry.id === "string" && typeof entry.calibration === "number") {
+            CALIBRATIONS[entry.id] = entry.calibration;
+          }
+        });
+      }
       if (typeof data.calibration === "number" && data.calibration > 0) {
-        // Each model has its own scale, and each was calibrated on its own scores.
+        // The model the worker says is in use, and the scale it is read at.
         MODEL_CALIBRATION = data.calibration;
       }
       model.reason = data.reason || (data.ready ? "ready" : "absent");
@@ -973,11 +1147,29 @@
       settingsSeen: settingsSeen,
       temperature: settings.temperature,
       blur: settings.blur,
+      // What each counter counts, because they were read as contradictory when they
+      // were only measuring different things:
+      //   batches            every batch the interceptor handled
+      //   askedBatches       batches whose texts were actually sent to the model
+      //   modelBatches       batches the model answered about before they were drawn
+      //   deadlineFallbacks  batches that were asked and got nothing before the deadline
+      //   knownBatches       batches that needed no ask, every post already scored
+      //   queuedBatches      batches asked while the model was not known to be ready
+      //   flushedBatches     queued batches whose texts were sent once the model was
+      //   queuedNow          batches still waiting for the model at this moment
+      //
+      // The invariant, which the cold-start browser test checks: every batch either
+      // needed no ask, was asked, or is still waiting.
+      //   batches === knownBatches + askedBatches + queuedNow
       batches: batchCount,
       modelBatches: modelBatchCount,
       askedBatches: askedBatchCount,
       deadlineFallbacks: deadlineFallbacks,
       knownBatches: batchCount - askedBatchCount,
+      queuedBatches: queuedBatches,
+      flushedBatches: flushedBatches,
+      queuedNow: queued.length,
+      flushTries: flushTries,
       fallbacks: batchCount - modelBatchCount,
       lateCaught: lateCaught,
       holdFirstMs: HOLD_FIRST_MS,

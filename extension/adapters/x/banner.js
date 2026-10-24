@@ -459,6 +459,9 @@
     // The model flagged a post after its batch had already been shown. It was
     // softened where it stood, never moved, so this only adds a line.
     if (data.type === "lateCaught") {
+      if (typeof data.by === "string") {
+        by = data.by;
+      }
       if (Array.isArray(data.caught) && data.caught.length) {
         lateCaught += data.caught.length;
         // Listed like anything else that was softened, so the panel says why.

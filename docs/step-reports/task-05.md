@@ -114,10 +114,16 @@ banner merges a late catch into the rows.
 commands, the licence, the labels, the file hash and the calibration are all in
 `docs/model-notes.md`, and the conversion script is `tolstoy-tools/export-minilm.py`.
 
-| Model | MB on disk | 20 posts warm (WASM) | Main set, Balanced | Main set, Calm | Held-out, both temperatures | AI-only caught |
-| --- | --- | --- | --- | --- | --- | --- |
-| `minilm-toxic-jigsaw` (bundled) | 21.8 | 162ms | 1 calm of 77 flagged, 62 heated of 66 (94%) | 1 calm of 77, 64 heated of 66 (97%) | 1 calm of 16 flagged, 4 heated of 16 caught | 3 of 5 |
-| `Xenova/toxic-bert` (download) | 106 | about 1,270ms | 1 calm of 77, 63 heated of 66 (95%) | 2 calm of 77, 65 heated of 66 (98%) | 0 calm of 16 flagged, 9 heated of 16 caught | 3 of 5 |
+| Model | MB on disk | 20 posts warm (WASM) | Main set, Balanced | Main set, Calm | Held-out, Balanced | Held-out, Calm | AI-only caught |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| `minilm-toxic-jigsaw` (bundled) | 21.8 | 162ms | 1 calm of 77 flagged, 62 heated of 66 (94%) | 1 calm of 77, 64 heated of 66 (97%) | 1 calm of 16 flagged, 4 heated of 16 caught | 1 calm of 16 flagged, 4 heated of 16 caught | 3 of 5 |
+| `Xenova/toxic-bert` (download) | 106 | about 1,270ms | 1 calm of 77, 63 heated of 66 (95%) | 2 calm of 77, 65 heated of 66 (98%) | 0 calm of 16 flagged, 9 heated of 16 caught | 1 calm of 16 flagged, 10 heated of 16 caught | 3 of 5 |
+
+The held-out rows are given for both temperatures because the two models differ there: the
+stronger one catches one more post at Calm, and flags one calm post it does not flag at
+Balanced, while the bundled model reads the same at both. The rules alone catch 1 of the
+16 held-out heated posts at either temperature, so the rest of the held-out column is the
+model's contribution.
 
 The main-set numbers are measured through the extension's own vendored runtime in
 Chromium, with the score for every label written to
@@ -136,8 +142,8 @@ model". The bundled model is read from the extension's own files with
 Two honest notes, because the bars alone do not tell the whole story:
 
 * On the main eval set the bundled model rescues **none** of the heated posts the rules
-  alone miss, and on the held-out set it catches 4 of 16 against 9 of 16 for the
-  stronger model. The main-set bars are met by the rules alone, so they cannot tell the
+  alone miss, and on the held-out set it catches 4 of 16 against 9 of 16 for the stronger
+  model at Balanced, and 4 of 16 against 10 of 16 at Calm. The main-set bars are met by the rules alone, so they cannot tell the
   two models apart. What the small model buys is speed and the absence of any network
   use; what it costs is recalled hostility on language the rules were not written
   against. The stronger model remains one press away, and the panel says which model is
